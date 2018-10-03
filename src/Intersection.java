@@ -191,6 +191,23 @@ public class Intersection
 	{
 		return vertCycleTime;
 	}
+	
+	public LinkedList<Vehicle> getLane(Direction dir)
+	{
+		switch (dir)
+		{
+		case NORTH:
+			return entryPoint[0];
+		case EAST:
+			return entryPoint[1];
+		case SOUTH:
+			return entryPoint[2];
+		case WEST:
+			return entryPoint[3];
+		default:
+			return null;
+		}
 
+	}
 
 }
