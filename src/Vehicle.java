@@ -11,9 +11,9 @@ public class Vehicle implements Serializable {
 
     protected int mph;
 
-    protected int[] path;
+    protected Direction[] path;
 
-    protected int[] color;
+    protected Color color;
 
     /*******************************************************************
      * The default constructor
@@ -25,7 +25,7 @@ public class Vehicle implements Serializable {
         color = null;
     }
 
-    public Vehicle(int size, int mph, int[] path, Color color){
+    public Vehicle(int size, int mph, Direction[] path, Color color){
         this.size = size;
         this.mph = mph;
         this.path = path;
@@ -49,21 +49,24 @@ public class Vehicle implements Serializable {
         this.mph = mph;
     }
 
-
-    public int[] getPath() {
+    public Direction[] getPath() {
         return path;
     }
 
-    public void setPath(int[] path) {
+    public void setPath(Direction[] path) {
         this.path = path;
     }
 
-    public void setColor(int[] color) {
+    public void setColor(Color color) {
         this.color = color;
     }
 
-    public int[] getColor() {
+    public Color getColor() {
         return color;
+    }
+
+    public Direction getNext(int x){
+        return path[x];
     }
 
 }
