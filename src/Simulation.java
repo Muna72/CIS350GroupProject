@@ -14,68 +14,56 @@ import javax.swing.*;
  */
 public class Simulation extends JPanel {
     
-    private Vehicle[][] cafeteria;
+    private Vehicle[][] route;
 
-    public ArrayList <Vehicle> allPeople;
+    public ArrayList <Vehicle> allVehicles;
     public ArrayList<Double> allAvgTimes;
-    public ArrayList<Double> allAvgCheckTimes;
+    public ArrayList<Double> allAvgTimeStopped;
     public ArrayList<Integer> allQueLengths;
-    public ArrayList<Integer> allCheckQueLengths;
-    public LinkedList<Vehicle> checkout1;
-    public LinkedList<Vehicle> checkout2;
-    public LinkedList<Vehicle> checkout3;
-    public LinkedList<Vehicle> checkout4;
+    public Intersection intersection1;
+    public Intersection intersection2;
     public LinkedList<Vehicle> rest1;
     public LinkedList<Vehicle> rest2;
     public LinkedList<Vehicle> rest3;
     public LinkedList<Vehicle> rest4;
     public LinkedList<Vehicle> rest5;
-    public LinkedList<Vehicle> rest6;
-    public LinkedList<Vehicle> rest7;
 
     private final int ROWS=80, COLUMNS=120, SIZE=10;
-    private final int MAX_PEOPLE = 500;
+    private final int MAX_VEHICLES = 500;
 
     //Instance variable declarations
     private double secsTillNextVehicle;
     private double pTime;
-    private double avgCashSec;
+    private double avgStoppedSec;
     private double totalTime;
-    private double avgEatSec;
-    private double secBeforeVehicleLeaves;
+    private double vehicleSpeed;
     private double simTimeLeft;
     private double timeVehicleAdded;
-    private int numOfEateries;
-    private int numOfPeople;
-    private int numOfRegPpl;
-    private int numOfSpecPpl;
-    private int numOfLimPpl;
-    private int numOfCheckouts;
+    private int numOfVehicles;
+    private int numOfIntersections;
+    private int maxLaneLength;
     private int finished;
-    private int maxRestLength;
-    private int maxCheckLength;
     private double totalAvgVehicleTime;
-    private double totalAvgCheckTime;
+    private double totalAvgStoppedTime;
     private boolean firstPer = false;
     private Random rand = new Random();
-    Vehicle pHolder = new RegularVehicle(10,10,10,10);
+    Vehicle vHolder = new Car(10,10,10,10);
     
 
 /**
  * Class Constructor initializes instance variables
  * @param secNext
- * @param avgCash
+ * @param vSpeed
  * @param totTime
- * @param avgEat
- * @param secLeave
- * @param numEats 
+ * @param avgStopTime
+ * @param numOfInts
  */
-    public Simulation(double secNext, double avgCash, double totTime, double avgEat, double secLeave, int numEats){
+    public Simulation(double secNext, double vSpeed, double totTime, double avgStopTime, int numOfInts){
         
-        cafeteria = new Vehicle[ROWS][COLUMNS];
-        allPeople = new ArrayList<Vehicle>();  
+        route = new Vehicle[ROWS][COLUMNS];
+        allVehicles = new ArrayList<Vehicle>();
         allAvgTimes = new ArrayList<Double>();
-        allAvgCheckTimes = new ArrayList<Double>();
+        allAvgTimeStopped = new ArrayList<Double>();
         allQueLengths = new ArrayList<Integer>();
         allCheckQueLengths = new ArrayList<Integer>();
         rest1 = new LinkedList<Vehicle>();
@@ -83,25 +71,21 @@ public class Simulation extends JPanel {
         rest3 = new LinkedList<Vehicle>();
         rest4 = new LinkedList<Vehicle>();
         rest5 = new LinkedList<Vehicle>();
-        rest6 = new LinkedList<Vehicle>();
-        rest7 = new LinkedList<Vehicle>();
-        checkout1 = new LinkedList<Vehicle>();
-        checkout2 = new LinkedList<Vehicle>();
-        checkout3 = new LinkedList<Vehicle>();
-        checkout4 = new LinkedList<Vehicle>();
+        intersection1 = new Intersection();
+        intersection2 = new Intersection();
 
         secsTillNextVehicle = secNext;
-        avgCashSec = avgCash;
+        avgStoppedSec = avgStopTime;
         totalTime = totTime;
-        avgEatSec = avgEat;
-        secBeforeVehicleLeaves = secLeave;
-        numOfEateries = numEats;
-        numOfPeople = 0;
-        numOfCheckouts = 2;
+        if(numOfInts > 1) {
+            numOfIntersections = numOfInts;
+        } else {
+            numOfIntersections = 1;
+        }
+        numOfVehicles = 0;
         timeVehicleAdded = 0;
-        maxRestLength = 0;
-        maxCheckLength = 0;
-        
+        maxLaneLength = 0;
+        vehicleSpeed = vSpeed;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
     
@@ -112,13 +96,21 @@ public class Simulation extends JPanel {
     public void setSecsTillNextVehicle(double secNext) {
         secsTillNextVehicle = secNext;
     }
-    
+
+    /**
+     * Method to set average cashier seconds
+     * @param avgStop
+     */
+    public void setVehicleSpeed(double speed) { //TODO MAY NOT NEED THIS AT ALL, JUST CHANGE DELAY
+        vehicleSpeed = 1000 * speed;
+    }
+
     /**
      * Method to set average cashier seconds 
-     * @param avgCash 
+     * @param avgStop
      */
-    public void setAvgCashSec(double avgCash) {
-        avgCashSec = avgCash;
+    public void setAvgCashSec(double avgStop) {
+        avgStoppedSec = avgStop;
     }
     
     /**
@@ -138,19 +130,11 @@ public class Simulation extends JPanel {
     }
     
     /**
-     * Method to set average seconds before a Vehicle leaves
-     * @param secLeaves 
-     */
-    public void setSecBeforeVehicleLeaves(double secLeaves) {
-        secBeforeVehicleLeaves = secLeaves;
-    }
-    
-    /**
      * Method to set number of eateries at beginning of simulation
-     * @param numEats 
+     * @param numInts
      */
-    public void setNumOfEateries(int numEats) {
-        numOfEateries = numEats;
+    public void setNumOfIntersections(int numInts) {
+        numOfIntersections = numInts;
     }
     
     /**
@@ -167,7 +151,7 @@ public class Simulation extends JPanel {
      */
     private void placeVehicle(Vehicle p){   
         
-        int gen = rand.nextInt(numOfEateries - 1 + 1) + 1; 
+        int gen = rand.nextInt(numOfEateries - 1 + 1) + 1;
         
         switch(gen) {
             case 1:  gen = 1;
@@ -218,15 +202,12 @@ public class Simulation extends JPanel {
     public void reset() {
         
         secsTillNextVehicle = 0;
-        avgCashSec = 0;
         totalTime = 0;
-        avgEatSec = 0;
-        secBeforeVehicleLeaves = 0;
-        numOfEateries = 0;
-        numOfCheckouts = 2;
+        avgStoppedSec = 0;
+        numOfIntersections = 1; //base case until user input allowed
         timeVehicleAdded = 0;
         finished = 0;
-        allPeople.clear();
+        allVehicles.clear();
         allAvgTimes.clear();
         allQueLengths.clear();
         allCheckQueLengths.clear();
@@ -234,17 +215,12 @@ public class Simulation extends JPanel {
         rest2.clear();
         rest3.clear();
         rest4.clear();
-        rest5.clear();
-        rest6.clear();
-        rest7.clear();
-        checkout1.clear();
-        checkout2.clear();
-        checkout3.clear();
-        checkout4.clear();
+        intersection1.clear();
+        intersection2.clear(); //TODO IMPLEMENT THIS METHOD
         
         for(int i = 0; i < ROWS; ++i) {
             for(int y = 0; y < COLUMNS; ++y) {
-                cafeteria[i][y] = null;
+                route[i][y] = null;
             }
         }
     }
@@ -273,78 +249,10 @@ public class Simulation extends JPanel {
         
         LinkedList<Vehicle> holder = p.getQue();
         
-        cafeteria[p.getLocation().getRow()][p.getLocation().getCol()] = null;
+        route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
         holder.remove(p);
-        allPeople.remove(p);
+        allVehicles.remove(p);
         repaint();
-    }    
-    
-    /**
-     * Method to remove eatery
-     */
-    public void removeEatery() {
-  
-        if(numOfEateries == 2) {
-            if(rest2.isEmpty()) {
-                --numOfEateries;
-                repaint();    
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot remove eatery with people in line");
-            }
-        }  
-        if(numOfEateries == 3) {
-            if(rest3.isEmpty()) {
-                --numOfEateries;
-                repaint();    
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot remove eatery with people in line");
-            }
-        } 
-        if(numOfEateries == 4) {
-            if(rest4.isEmpty()) {
-                --numOfEateries;
-                repaint();    
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot remove eatery with people in line");
-            }
-        }
-    }
-    
-    /**
-     * Method to remove a checkout
-     */
-    public void removeCheckout(){
-        
-        if(numOfCheckouts == 2) {
-            if(checkout2.isEmpty()) {
-                --numOfCheckouts;
-                repaint();    
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot remove checkout with people in line");
-            }
-        } 
-        if(numOfCheckouts == 3) {
-            if(checkout3.isEmpty()) {
-                --numOfCheckouts;
-                repaint();    
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot remove checkout with people in line");
-            }
-        }
-        if(numOfCheckouts == 4) {
-            if(checkout4.isEmpty()) {
-                --numOfCheckouts;
-                repaint();    
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot remove checkout with people in line");
-            }
-        }
     }
 
     /**
@@ -357,23 +265,23 @@ public class Simulation extends JPanel {
         int gen = rand.nextInt(3 - 1 + 1) + 1;
             
             
-        if(numOfPeople <= MAX_PEOPLE) {    
+        if(numOfVehicles <= MAX_VEHICLES) {
             if(gen == 1) {
-                p = new RegularVehicle(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());  
+                p = new Car(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
                 ++numOfRegPpl;
             }
             if(gen == 2) {
-                p = new SpecialNeedsVehicle(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft()); 
+                p = new SpecialNeedsVehicle(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
                 ++numOfSpecPpl;
             }
             if(gen == 3) {
-                p = new LimitedTimeVehicle(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft()); 
+                p = new SemiTruck(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
                 ++numOfLimPpl;
-            }   
+            }
             p.setCreateTime(getSimTimeLeft());
             placeVehicle(p);
-            allPeople.add(p);
-            ++numOfPeople;
+            allVehicles.add(p);
+            ++numOfVehicles;
         }    
     }
     
@@ -381,76 +289,87 @@ public class Simulation extends JPanel {
      * Method to select checkout for a Vehicle (splits them up evenly)
      * @param p 
      */
-    public void selectCheckout(Vehicle p) {
+    public void selectIntersection(Vehicle p) {
         
-        if(numOfCheckouts == 2) {
-            if(pHolder.getQue() == null) {
+        if(numOfIntersections == 2) {
+            if(vHolder.getQue() == null) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
-                pHolder.setQue(checkout1);
+                vHolder.setQue(checkout1);
             } 
-            else if(pHolder.getQue() == checkout1){
+            else if(vHolder.getQue() == intersection1){
                 checkout2.add(p);
                 p.setQue(checkout2);
-                pHolder.setQue(checkout2);
+                vHolder.setQue(checkout2);
             }
-            else if(pHolder.getQue() == checkout2) {
+            else if(vHolder.getQue() == intersection2) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
-                pHolder.setQue(checkout1);    
+                vHolder.setQue(checkout1);    
             }
         }
         if(numOfCheckouts == 3) {
-            if(pHolder.getQue() == null) {
+            if(vHolder.getQue() == null) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
-                pHolder.setQue(checkout1);
+                vHolder.setQue(checkout1);
             } 
-            else if(pHolder.getQue() == checkout1){
+            else if(vHolder.getQue() == checkout1){
                 checkout2.add(p);
                 p.setQue(checkout2);
-                pHolder.setQue(checkout2);
+                vHolder.setQue(checkout2);
             }
-            else if(pHolder.getQue() == checkout2) {
+            else if(vHolder.getQue() == checkout2) {
                 checkout3.add(p);
                 p.setQue(checkout3); 
-                pHolder.setQue(checkout3);    
+                vHolder.setQue(checkout3);    
             } 
-            else if(pHolder.getQue() == checkout3) {
+            else if(vHolder.getQue() == checkout3) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
-                pHolder.setQue(checkout1);   
+                vHolder.setQue(checkout1);   
             }
         }
         if(numOfCheckouts == 4) {
-            if(pHolder.getQue() == null) {
+            if(vHolder.getQue() == null) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
-                pHolder.setQue(checkout1);
+                vHolder.setQue(checkout1);
             } 
-            else if(pHolder.getQue() == checkout1){
+            else if(vHolder.getQue() == checkout1){
                 checkout2.add(p);
                 p.setQue(checkout2);
-                pHolder.setQue(checkout2);
+                vHolder.setQue(checkout2);
             }
-            else if(pHolder.getQue() == checkout2) {
+            else if(vHolder.getQue() == checkout2) {
                 checkout3.add(p);
                 p.setQue(checkout3); 
-                pHolder.setQue(checkout3);    
+                vHolder.setQue(checkout3);    
             } 
-            else if(pHolder.getQue() == checkout3) {
+            else if(vHolder.getQue() == checkout3) {
                 checkout4.add(p);
                 p.setQue(checkout4); 
-                pHolder.setQue(checkout4);   
+                vHolder.setQue(checkout4);   
             }    
-            else if(pHolder.getQue() == checkout4) {
+            else if(vHolder.getQue() == checkout4) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
-                pHolder.setQue(checkout1);   
+                vHolder.setQue(checkout1);   
             }
         }
     }
-    
+
+    /**
+     * Method to place user's car in the appropriate place
+     * @param place
+     * @return
+     */
+     public void placeUserCar(String place) {
+
+
+
+     }
+
     /**
      * Method to see of a Vehicle is in any of the checkout lines
      * @param p
@@ -501,7 +420,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest1.size(); ++p) {
                     Location loc = new Location(r,y);
                     rest1.get(p).setLocation(loc);
-                    cafeteria[rest1.get(p).getLocation().getRow()][rest1.get(p).getLocation().getCol()] = rest1.get(p);
+                    route[rest1.get(p).getLocation().getRow()][rest1.get(p).getLocation().getCol()] = rest1.get(p);
                     y = y - 2;
                 }  
             }
@@ -509,7 +428,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,0);
                     rest1.get(p).setLocation(loc);
-                    cafeteria[rest1.get(p).getLocation().getRow()][rest1.get(p).getLocation().getCol()] = rest1.get(p);
+                    route[rest1.get(p).getLocation().getRow()][rest1.get(p).getLocation().getCol()] = rest1.get(p);
                     y = y - 2;
                 }            
             }    
@@ -524,7 +443,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest2.size(); ++p) {
                     Location loc = new Location(r,y);
                     rest2.get(p).setLocation(loc);
-                    cafeteria[rest2.get(p).getLocation().getRow()][rest2.get(p).getLocation().getCol()] = rest2.get(p);
+                    route[rest2.get(p).getLocation().getRow()][rest2.get(p).getLocation().getCol()] = rest2.get(p);
                     y = y - 2;
                 }  
             }
@@ -532,7 +451,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     rest2.get(p).setLocation(loc);
-                    cafeteria[rest2.get(p).getLocation().getRow()][rest2.get(p).getLocation().getCol()] = rest2.get(p);
+                    route[rest2.get(p).getLocation().getRow()][rest2.get(p).getLocation().getCol()] = rest2.get(p);
                     y = y - 2;
                 }             
             } 
@@ -547,7 +466,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest3.size(); ++p) {
                     Location loc = new Location(r,y);
                     rest3.get(p).setLocation(loc);
-                    cafeteria[rest3.get(p).getLocation().getRow()][rest3.get(p).getLocation().getCol()] = rest3.get(p);
+                    route[rest3.get(p).getLocation().getRow()][rest3.get(p).getLocation().getCol()] = rest3.get(p);
                     y = y - 2;
                 }  
             }
@@ -555,7 +474,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     rest3.get(p).setLocation(loc);
-                    cafeteria[rest3.get(p).getLocation().getRow()][rest3.get(p).getLocation().getCol()] = rest3.get(p);
+                    route[rest3.get(p).getLocation().getRow()][rest3.get(p).getLocation().getCol()] = rest3.get(p);
                     y = y - 2;
                 }             
             }   
@@ -570,7 +489,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest4.size(); ++p) {
                     Location loc = new Location(r,y);
                     rest4.get(p).setLocation(loc);
-                    cafeteria[rest4.get(p).getLocation().getRow()][rest4.get(p).getLocation().getCol()] = rest4.get(p);
+                    route[rest4.get(p).getLocation().getRow()][rest4.get(p).getLocation().getCol()] = rest4.get(p);
                     y = y - 2;
                 }  
             }
@@ -578,7 +497,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     rest4.get(p).setLocation(loc);
-                    cafeteria[rest4.get(p).getLocation().getRow()][rest4.get(p).getLocation().getCol()] = rest4.get(p);
+                    route[rest4.get(p).getLocation().getRow()][rest4.get(p).getLocation().getCol()] = rest4.get(p);
                     y = y - 2;
                 }             
             } 
@@ -593,7 +512,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest5.size(); ++p) {
                     Location loc = new Location(r,y);
                     rest5.get(p).setLocation(loc);
-                    cafeteria[rest5.get(p).getLocation().getRow()][rest5.get(p).getLocation().getCol()] = rest5.get(p);
+                    route[rest5.get(p).getLocation().getRow()][rest5.get(p).getLocation().getCol()] = rest5.get(p);
                     y = y - 2;
                 }  
             }
@@ -601,7 +520,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     rest5.get(p).setLocation(loc);
-                    cafeteria[rest5.get(p).getLocation().getRow()][rest5.get(p).getLocation().getCol()] = rest5.get(p);
+                    route[rest5.get(p).getLocation().getRow()][rest5.get(p).getLocation().getCol()] = rest5.get(p);
                     y = y - 2;
                 }             
             }  
@@ -616,7 +535,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest6.size(); ++p) {
                             Location loc = new Location(r,y);
                             rest6.get(p).setLocation(loc);
-                            cafeteria[rest6.get(p).getLocation().getRow()][rest6.get(p).getLocation().getCol()] = rest6.get(p);
+                            route[rest6.get(p).getLocation().getRow()][rest6.get(p).getLocation().getCol()] = rest6.get(p);
                     y = y - 2;
                 }  
             }
@@ -624,7 +543,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     rest6.get(p).setLocation(loc);
-                    cafeteria[rest6.get(p).getLocation().getRow()][rest6.get(p).getLocation().getCol()] = rest6.get(p);
+                    route[rest6.get(p).getLocation().getRow()][rest6.get(p).getLocation().getCol()] = rest6.get(p);
                     y = y - 2;
                 }             
             }  
@@ -639,7 +558,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < rest7.size(); ++p) {
                     Location loc = new Location(r,y);
                     rest7.get(p).setLocation(loc);
-                    cafeteria[rest7.get(p).getLocation().getRow()][rest7.get(p).getLocation().getCol()] = rest7.get(p);
+                    route[rest7.get(p).getLocation().getRow()][rest7.get(p).getLocation().getCol()] = rest7.get(p);
                     y = y - 2;
                 }  
             }
@@ -647,7 +566,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     rest7.get(p).setLocation(loc);
-                    cafeteria[rest7.get(p).getLocation().getRow()][rest7.get(p).getLocation().getCol()] = rest7.get(p);
+                    route[rest7.get(p).getLocation().getRow()][rest7.get(p).getLocation().getCol()] = rest7.get(p);
                     y = y - 2;
                 }              
             }  
@@ -662,7 +581,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < checkout1.size(); ++p) {
                     Location loc = new Location(r,y);
                     checkout1.get(p).setLocation(loc);
-                    cafeteria[checkout1.get(p).getLocation().getRow()][checkout1.get(p).getLocation().getCol()] = checkout1.get(p);
+                    route[checkout1.get(p).getLocation().getRow()][checkout1.get(p).getLocation().getCol()] = checkout1.get(p);
                     y = y - 2;
                 }  
             }
@@ -670,7 +589,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     checkout1.get(p).setLocation(loc);
-                    cafeteria[checkout1.get(p).getLocation().getRow()][checkout1.get(p).getLocation().getCol()] = checkout1.get(p);
+                    route[checkout1.get(p).getLocation().getRow()][checkout1.get(p).getLocation().getCol()] = checkout1.get(p);
                     y = y - 2;
                 }             
             }
@@ -685,7 +604,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < checkout2.size(); ++p) {
                     Location loc = new Location(r,y);
                     checkout2.get(p).setLocation(loc);
-                    cafeteria[checkout2.get(p).getLocation().getRow()][checkout2.get(p).getLocation().getCol()] = checkout2.get(p);
+                    route[checkout2.get(p).getLocation().getRow()][checkout2.get(p).getLocation().getCol()] = checkout2.get(p);
                     y = y - 2;
                 }  
             }
@@ -693,7 +612,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     checkout2.get(p).setLocation(loc);
-                    cafeteria[checkout2.get(p).getLocation().getRow()][checkout2.get(p).getLocation().getCol()] = checkout2.get(p);
+                    route[checkout2.get(p).getLocation().getRow()][checkout2.get(p).getLocation().getCol()] = checkout2.get(p);
                     y = y - 2;
                 }            
             }
@@ -708,7 +627,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < checkout3.size(); ++p) {
                     Location loc = new Location(r,y);
                     checkout3.get(p).setLocation(loc);
-                    cafeteria[checkout3.get(p).getLocation().getRow()][checkout3.get(p).getLocation().getCol()] = checkout3.get(p);
+                    route[checkout3.get(p).getLocation().getRow()][checkout3.get(p).getLocation().getCol()] = checkout3.get(p);
                     y = y - 2;
                 }  
             }
@@ -716,7 +635,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     checkout3.get(p).setLocation(loc);
-                    cafeteria[checkout3.get(p).getLocation().getRow()][checkout3.get(p).getLocation().getCol()] = checkout3.get(p);
+                    route[checkout3.get(p).getLocation().getRow()][checkout3.get(p).getLocation().getCol()] = checkout3.get(p);
                     y = y - 2;
                 }              
             } 
@@ -731,7 +650,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < checkout4.size(); ++p) {
                     Location loc = new Location(r,y);
                     checkout4.get(p).setLocation(loc);
-                    cafeteria[checkout4.get(p).getLocation().getRow()][checkout4.get(p).getLocation().getCol()] = checkout4.get(p);
+                    route[checkout4.get(p).getLocation().getRow()][checkout4.get(p).getLocation().getCol()] = checkout4.get(p);
                     y = y - 2;
                 }  
             }
@@ -739,7 +658,7 @@ public class Simulation extends JPanel {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
                     checkout4.get(p).setLocation(loc);
-                    cafeteria[checkout4.get(p).getLocation().getRow()][checkout4.get(p).getLocation().getCol()] = checkout4.get(p);
+                    route[checkout4.get(p).getLocation().getRow()][checkout4.get(p).getLocation().getCol()] = checkout4.get(p);
                     y = y - 2;
                 }             
             } 
@@ -788,8 +707,8 @@ public class Simulation extends JPanel {
         }
         
         for(int i = 0; i < allQueLengths.size(); ++i) {
-            if(allQueLengths.get(i) > maxRestLength) {
-                maxRestLength = allQueLengths.get(i);
+            if(allQueLengths.get(i) > maxLaneLength) {
+                maxLaneLength = allQueLengths.get(i);
             }
         }
         for(int y = 0; y < allCheckQueLengths.size(); ++y) {
@@ -824,9 +743,9 @@ public class Simulation extends JPanel {
         }
         
         int VehicleNum = 1;
-        for(int u = 0; u < allPeople.size(); ++u) { 
+        for(int u = 0; u < allVehicles.size(); ++u) {
             
-            Vehicle p = allPeople.get(u);
+            Vehicle p = allVehicles.get(u);
             
             if(p.getCreateTime() - currTime < p.getLeaveTime()) {
                 if(isInCheckout(p) == false) {
@@ -837,7 +756,7 @@ public class Simulation extends JPanel {
                             p.setBeginEatTime(currTime);
                         }
                         if((p.getBeginEatTime() - currTime) >= p.getEateryTime()) {
-                            cafeteria[p.getLocation().getRow()][p.getLocation().getCol()] = null;
+                            route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
                             eatHolder.remove(p);
                             selectCheckout(p);
                         }    
@@ -882,16 +801,8 @@ public class Simulation extends JPanel {
      * Method to get number of eateries
      * @return 
      */
-    public int getNumOfEateries() {
-        return numOfEateries;
-    }
-    
-    /**
-     * Method to get number of checkouts
-     * @return 
-     */
-    public int getNumOfCheckouts() {
-        return numOfCheckouts;
+    public int getNumOfIntersections() {
+        return numOfIntersections;
     }
     
     /**
@@ -899,7 +810,7 @@ public class Simulation extends JPanel {
      * @return 
      */
     public int getNumOfPeople() {
-        return numOfPeople;
+        return numOfVehicles;
     }
     
     /**
@@ -947,20 +858,13 @@ public class Simulation extends JPanel {
     }
     
     /**
-     * Metho to get max restaurant que length
+     * Metho to get max lane que length
      * @return 
      */
-    public int getMaxRestLength() {
-        return maxRestLength;
-    }
-    
-    /**
-     * Method to get max checkout que length
-     * @return 
-     */
-    public int getMaxCheckLength() {
-        return maxCheckLength;
-    }
+    public int getMaxLaneLength() {
+        return maxLaneLength;
+    } //Do we need more than one variation of this?
+
     
     /**
      * Get the total average time for a Vehicle from start to finish
@@ -973,7 +877,7 @@ public class Simulation extends JPanel {
         for(int i = 0; i < allAvgTimes.size(); ++i) {
             sum = sum + allAvgTimes.get(i);  
         }  
-        totalAvgVehicleTime = (sum / numOfPeople) / 1000;
+        totalAvgVehicleTime = (sum / numOfVehicles) / 1000;
         return totalAvgVehicleTime;
     }
     
@@ -981,97 +885,15 @@ public class Simulation extends JPanel {
      * Method to get average checkout time
      * @return 
      */
-    public double getAvgCheckoutTime() {
+    public double getAvgStoppedTime() {
         
         double sum = 0;
         
-        for(int i = 0; i < allAvgCheckTimes.size(); ++i) {
-            sum = sum + allAvgCheckTimes.get(i);    
+        for(int i = 0; i < allAvgTimeStopped.size(); ++i) {
+            sum = sum + allAvgTimeStopped.get(i);
         }  
-        totalAvgCheckTime = (sum / numOfPeople) / 1000;
-        return totalAvgCheckTime;
-    }
-    
-    /**
-     * Method to get most popular Vehicle type
-     * @return 
-     */
-    public String getMostPop() {
-    
-        String mostPop = null;
-        
-        if(numOfRegPpl > numOfSpecPpl) {
-            if(numOfRegPpl > numOfLimPpl) {
-                mostPop = "Regular Vehicle";
-            }
-            if(numOfRegPpl == numOfLimPpl) {
-                mostPop = "Regular and Limited Time People";
-            }
-            if(numOfRegPpl < numOfLimPpl){
-                mostPop = "Limited Time Vehicle";
-            }
-        }
-        if(numOfRegPpl == numOfSpecPpl) {
-            if(numOfRegPpl < numOfLimPpl) {
-                mostPop = "Limited Time Vehicle";
-            }
-            if(numOfRegPpl > numOfLimPpl) {
-                mostPop = "Regular and SN People";
-            }
-        }
-        if(numOfRegPpl < numOfSpecPpl) {
-            if(numOfSpecPpl < numOfLimPpl) {
-                mostPop = "Limited Time Vehicle";
-            }
-            if(numOfSpecPpl > numOfLimPpl) {
-                mostPop = "Special Needs Vehicle";
-            }
-            if(numOfSpecPpl == numOfLimPpl) {
-                mostPop = "Special Needs and LT People";
-            }
-        }
-        return mostPop;
-    }
-    
-    /**
-     * Method to get least popular Vehicle type
-     * @return 
-     */
-    public String getLeastPop() {
-        
-        String leastPop = null;
-        
-        if(numOfRegPpl > numOfSpecPpl) {
-            if(numOfSpecPpl > numOfLimPpl) {
-                leastPop = "Limited Time Vehicle";
-            }
-            if(numOfSpecPpl == numOfLimPpl) {
-                leastPop = "Special and LT People";
-            }
-            if(numOfSpecPpl < numOfLimPpl){
-                leastPop = "Special Needs Vehicle";
-            }
-        }
-        if(numOfRegPpl == numOfSpecPpl) {
-            if(numOfRegPpl > numOfLimPpl) {
-                leastPop = "Limited Time Vehicle";
-            }
-            if(numOfRegPpl < numOfLimPpl) {
-                leastPop = "Regular and SN People";
-            }
-        }
-        if(numOfRegPpl < numOfSpecPpl) {
-            if(numOfSpecPpl < numOfLimPpl) {
-                leastPop = "Regular Vehicle";
-            }
-            if(numOfRegPpl == numOfLimPpl) {
-                leastPop = "Regular and LT People";
-            }
-            if(numOfRegPpl > numOfLimPpl) {
-                leastPop = "Limited Time Vehicle";
-            }
-        }
-        return leastPop;    
+        totalAvgStoppedTime = (sum / numOfVehicles) / 1000;
+        return totalAvgStoppedTime;
     }
 
     /**
@@ -1081,7 +903,7 @@ public class Simulation extends JPanel {
     public void paintComponent(Graphics g){
         for(int row=0; row<ROWS; row++){
             for(int col=0; col<COLUMNS; col++){
-                Vehicle p = cafeteria[row][col];
+                Vehicle p = route[row][col];
                 
                 // set color to white if no critter here
                 if(p == null){
@@ -1095,7 +917,7 @@ public class Simulation extends JPanel {
                 g.fillRect(col*SIZE, row*SIZE, SIZE, SIZE);
             }
         }
-        if(numOfEateries == 1) {
+        if(numOfIntersections == 1) {
             
             g.setColor(Color.RED);
             g.fillRect(350, 40, 65, 65);
@@ -1151,7 +973,7 @@ public class Simulation extends JPanel {
                 g.drawString("Check4", 936, 515);
             }
         }
-        if(numOfEateries == 2) {
+        if(numOfIntersections == 2) {
             
             g.setColor(Color.RED);
             g.fillRect(350, 40, 65, 65);
@@ -1161,210 +983,6 @@ public class Simulation extends JPanel {
             g.fillRect(350, 140, 65, 65);
             g.setColor(Color.BLACK);
             g.drawString("Rest2", 365, 175);
-            
-            if(numOfCheckouts == 1) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-            }
-            if(numOfCheckouts == 2) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-            }
-            if(numOfCheckouts == 3) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-            }
-            if(numOfCheckouts == 4) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 480, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check4", 936, 515);
-            }
-        }
-        if(numOfEateries == 3) {
-            
-            g.setColor(Color.RED);
-            g.fillRect(350, 40, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest1", 365, 75);
-            g.setColor(Color.CYAN);
-            g.fillRect(350, 140, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest2", 365, 175);
-            g.setColor(Color.GREEN);
-            g.fillRect(350, 240, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest3", 365, 275);
-            
-            if(numOfCheckouts == 1) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-            }
-            if(numOfCheckouts == 2) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-            }
-            if(numOfCheckouts == 3) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-            }
-            if(numOfCheckouts == 4) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 480, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check4", 936, 515);
-            }
-        }
-        if(numOfEateries == 4) {
-            
-            g.setColor(Color.RED);
-            g.fillRect(350, 40, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest1", 365, 75);
-            g.setColor(Color.CYAN);
-            g.fillRect(350, 140, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest2", 365, 175);
-            g.setColor(Color.GREEN);
-            g.fillRect(350, 240, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest3", 365, 275);
-            g.setColor(Color.MAGENTA);
-            g.fillRect(350, 340, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest4", 365, 375);
-            
-            if(numOfCheckouts == 1) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-            }
-            if(numOfCheckouts == 2) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-            }
-            if(numOfCheckouts == 3) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-            }
-            if(numOfCheckouts == 4) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 480, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check4", 936, 515);
-            }
-        }
-        if(numOfEateries == 5) {
-            
-            g.setColor(Color.RED);
-            g.fillRect(350, 40, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest1", 365, 75);
-            g.setColor(Color.CYAN);
-            g.fillRect(350, 140, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest2", 365, 175);
-            g.setColor(Color.GREEN);
-            g.fillRect(350, 240, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest3", 365, 275);
-            g.setColor(Color.MAGENTA);
-            g.fillRect(350, 340, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest4", 365, 375);
-            g.setColor(Color.BLUE);
-            g.fillRect(350, 440, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest5", 365, 475);
             
             if(numOfCheckouts == 1) {
                 g.setColor(Color.LIGHT_GRAY);

@@ -5,16 +5,18 @@ import java.util.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
 import javax.swing.border.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 /**
  *
  * @author Muna Gigowski
  * @version September 2018
  */
-public class TrafficSimulation extends JFrame implements ActionListener, Runnable{
+public class TrafficSimulationGUI extends JFrame implements ActionListener, Runnable{
 
 
     //Declaring instance variables
-    private final int DELAY = 20;
+    private int DELAY = 20;
     private boolean isRunning;
     private boolean firstTimeStartPressed;
     private boolean loop = true;
@@ -26,10 +28,9 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
     private double cTime;
     private double eTime;
     private double avgEatSec;
-    private double secBeforePersonLeaves;
-    private int numOfEateries;
+    private int numOfIntersections;
     public Timer simTimer;
-    private Location startLoc;
+    //private Location startLoc;
     private Random r = new Random();
     DecimalFormat df = new DecimalFormat("#.00");
     private JPanel input;
@@ -43,13 +44,10 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
     JButton stop;
     JButton pause;
 
-    //define JTextFields
-    JTextField in1;
-    JTextField in2;
-    JTextField in3;
-    JTextField in4;
-    JTextField in5;
-    JTextField in6;
+    //define JComboBoxes
+    JComboBox<String> congestionLevel;
+    JComboBox<String> weatherConditions;
+    JComboBox<String> leaveTime;
 
     //define JLabels
     private JLabel inputLabel;
@@ -90,12 +88,25 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
      */
     public static void main(String[] args) {
         try{
-            TrafficSimulation gui = new TrafficSimulation();
+            TrafficSimulationGUI gui = new TrafficSimulationGUI();
             gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             gui.setTitle("Food Court Simulation");
             gui.setSize(1200,1200);
             gui.pack();
             gui.setVisible(true);
+            gui.addWindowListener(new WindowAdapter() {
+
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    if(JOptionPane.showConfirmDialog(gui,
+                        "Closing window while simulation is running" +
+                                " will cause you to lose all simulation data. Proceed in closing?", "Close Window?",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                        System.exit(0);
+                    }
+                }
+            });
         }
         catch(Exception e){
             e.printStackTrace();
@@ -105,7 +116,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
     /**
      * Class constructor initializes instance variables
      */
-    public TrafficSimulation(){
+    public TrafficSimulationGUI(){
 
         isRunning = false;
         firstTimeStartPressed = true;
@@ -146,40 +157,47 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
 
         font = new Font("SansSerif Bold", Font.BOLD, 13);
 
-        in1 = new JTextField(8);
-        in1.setMinimumSize(in1.getPreferredSize());
+        String[] congestionOptions = new String[] {"Low", "Medium",
+                "High", "Rush Hour"};
+        String[] weatherOptions = new String[] {"Clear Day", "Light Rain",
+                "Light Snow", "Heavy Rain", "Heavy Snow", "Fog"};
+        String[] leaveTimes = new String[] {"Left Early", "On Time",
+                "Left Late"};
+
+        leaveTime = new JComboBox<>(leaveTimes);
+        leaveTime.setMinimumSize(leaveTime.getPreferredSize());
         position = makeConstraints(3,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,-20,0,20);
-        input.add(in1, position);
+        input.add(leaveTime, position);
         in1Lab = new JLabel("Average Seconds Until Next Person: ");
         in1Lab.setFont(font);
         position = makeConstraints(2,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,0,0,20);
         input.add(in1Lab, position);
 
-        in2 = new JTextField(8);
-        in2.setMinimumSize(in2.getPreferredSize());
+        congestionLevel = new JComboBox<>(congestionOptions);
+        congestionLevel.setMinimumSize(congestionLevel.getPreferredSize());
         position = makeConstraints(3,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-20,0,20);
-        input.add(in2, position);
+        input.add(congestionLevel, position);
         in2Lab = new JLabel("Average Seconds Per Cashier: ");
         in2Lab.setFont(font);
         position = makeConstraints(2,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         input.add(in2Lab, position);
 
-        in3 = new JTextField(8);
-        in3.setMinimumSize(in3.getPreferredSize());
+        weatherConditions = new JComboBox<>(weatherOptions);
+        weatherConditions.setMinimumSize(weatherConditions.getPreferredSize());
         position = makeConstraints(3,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-20,0,20);
-        input.add(in3, position);
+        input.add(weatherConditions, position);
         in3Lab = new JLabel("Total Time In Seconds: ");
         in3Lab.setFont(font);
         position = makeConstraints(2,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         input.add(in3Lab, position);
 
-        in4 = new JTextField(8);
+        /* in4 = new JTextField(8);
         in4.setMinimumSize(in4.getPreferredSize());
         position = makeConstraints(5,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(-5,-20,0,20);
@@ -199,18 +217,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         in5Lab.setFont(font);
         position = makeConstraints(4,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(7,-5,0,20);
-        input.add(in5Lab, position);
-
-        in6 = new JTextField(8);
-        in6.setMinimumSize(in6.getPreferredSize());
-        position = makeConstraints(5,5,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(5,-20,0,20);
-        input.add(in6, position);
-        in6Lab = new JLabel("Number Of Eateries: ");
-        in6Lab.setFont(font);
-        position = makeConstraints(4,5,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-5,0,20);
-        input.add(in6Lab, position);
+        input.add(in5Lab, position); */
 
 
         //Adding stats to statsArea JPanel
@@ -235,7 +242,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out1, position);
 
-        avgStarFin = new JLabel("Average Time for a Person from Start to Finish:");
+        avgStarFin = new JLabel("Number of Lights Run");
         avgStarFin.setFont(font);
         position = makeConstraints(0,2,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,-110,0,20);
@@ -246,7 +253,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out2, position);
 
-        avgCheckTime = new JLabel("Average Checkout Time:");
+        avgCheckTime = new JLabel("Number of Accidents:");
         avgCheckTime.setFont(font);
         position = makeConstraints(0,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
@@ -268,7 +275,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out4, position);
 
-        maxQLength = new JLabel("Max Q Length at Cashier:");
+        maxQLength = new JLabel("Average Vehicle Time Stopped:");
         maxQLength.setFont(font);
         position = makeConstraints(0,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
@@ -279,7 +286,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets = new Insets(10,0,0,20);
         statsArea.add(out5, position);
 
-        maxQRestLength = new JLabel("Max Q Length at Restaraunt:");
+        maxQRestLength = new JLabel("Average Vehicle Speed:");
         maxQRestLength.setFont(font);
         position = makeConstraints(0,6,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
@@ -290,7 +297,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out6, position);
 
-        mostPopPerson = new JLabel("Most Frequent Customer Type:");
+        mostPopPerson = new JLabel("Your Route Completion Time:");
         mostPopPerson.setFont(font);
         position = makeConstraints(0,7,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
@@ -301,7 +308,7 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out7, position);
 
-        leastPopPerson = new JLabel("Least Frequent Customer Type:");
+        leastPopPerson = new JLabel("Average Vehicle Route Completion Time:");
         leastPopPerson.setFont(font);
         position = makeConstraints(0,8,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
@@ -327,12 +334,6 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         position.insets =  new Insets(-26,-180,0,20);
         input.add(stop, position);
 
-        pause = new JButton( "Add Eatery" );
-        pause.setForeground(Color.ORANGE);
-        position = makeConstraints(0,0,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-70,0,0);
-        buttons.add(pause, position);
-
         //create and add menu items
         menu = new JMenuBar();
         file = new JMenu("File");
@@ -344,6 +345,9 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
         setJMenuBar(menu);
 
         //add all action listeners
+        congestionLevel.addActionListener(this);
+        weatherConditions.addActionListener(this);
+        leaveTime.addActionListener(this);
         start.addActionListener(this);
         stop.addActionListener(this);
         pause.addActionListener(this);
@@ -357,6 +361,66 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
      * @param e
      */
     public void actionPerformed(ActionEvent e){
+
+        //set route congestion level based on user input
+        if (e.getSource() == congestionLevel){
+            isRunning = false;
+            if(congestionLevel.getSelectedItem() == "Low") {
+                secsTillNextVehicle = 5;
+            }
+            if(congestionLevel.getSelectedItem() == "Medium") {
+                secsTillNextVehicle = 3;
+            }
+            if(congestionLevel.getSelectedItem() == "High") {
+                secsTillNextVehicle = 2;
+            }
+            if(congestionLevel.getSelectedItem() == "Rush Hour") {
+                secsTillNextVehicle = 1;
+            }
+        }
+
+        //set weather condition variables based on user input
+        if (e.getSource() == weatherConditions){
+            isRunning = false;
+
+            switch(weatherConditions.getSelectedItem().toString()) {
+                case "Clear Day":
+                    DELAY = 20;
+                    break;
+                case "Light Rain":
+                    DELAY = 18;
+                    System.out.print(DELAY);
+                    break;
+                case "Light Snow":
+                    DELAY = 18;
+                    break;
+                case "Heavy Rain":
+                    DELAY = 17;
+                    break;
+                case "Heavy Snow":
+                    DELAY = 15;
+                    break;
+                case "Fog":
+                    DELAY = 18;
+                    break;
+                default:
+                    DELAY = 20;
+                    break;
+        }
+
+        //set where user's car generates based on input
+        if (e.getSource() == leaveTime){
+            isRunning = false;
+            if(leaveTime.getSelectedItem() == "Left Early") {
+                trafficMap.placeUserCar("front");
+            }
+            if(leaveTime.getSelectedItem() == "On Time") {
+                trafficMap.placeUserCar("middle");
+            }
+            if(leaveTime.getSelectedItem() == "Left Late") {
+                trafficMap.placeUserCar("back");
+            }
+        }
 
         //exit application if QUIT menu item
         if (e.getSource() == quit){
@@ -387,17 +451,6 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
             trafficMap.reset();
             firstTimeStartPressed = true;
         }
-
-        //Add eatery
-        if(e.getSource() == pause){
-
-            if(trafficMap.getNumOfEateries() < 7) {
-                trafficMap.addIntersection();
-            }
-            else {
-                JOptionPane.showMessageDialog(null, "Cannot add any more eateries.");
-            }
-        }
         //update GUI
         trafficMap.repaint();
     }
@@ -408,13 +461,10 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
     public void updateGUI() {
 
         out1.setText(trafficMap.getFinished() + " with max = 500");
-        out2.setText(df.format(trafficMap.getTotalAvgPersonTime()) + " seconds");
-        out3.setText(df.format(trafficMap.getAvgCheckoutTime()) + " seconds");
-        out4.setText(trafficMap.getPeopleLeft() + " people");
+        out3.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds"); //ONLY ONES THAT ARE CALCULATED HERE?
+        out4.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
         out5.setText(trafficMap.getMaxCheckLength() + " people");
-        out6.setText(trafficMap.getMaxRestLength() + " people");
-        out7.setText(trafficMap.getMostPop());
-        out8.setText(trafficMap.getLeastPop());
+        out6.setText(trafficMap.getMaxLaneLength() + " people");
     }
 
     /**
@@ -427,15 +477,13 @@ public class TrafficSimulation extends JFrame implements ActionListener, Runnabl
             avgIntersectionWaitTime = 1000 * Double.parseDouble(in2.getText());
             totalTime = 1000 * Double.parseDouble(in3.getText());
             avgEatSec = 1000 * Double.parseDouble(in4.getText());
-            secBeforePersonLeaves = 1000 * Double.parseDouble(in5.getText());
-            numOfEateries = Integer.parseInt(in6.getText());
+            //numOfIntersections = Integer.parseInt(in6.getText());
 
-            trafficMap.setsecsTillNextVehicle(secsTillNextVehicle);
-            trafficMap.setavgIntersectionWaitTime(avgIntersectionWaitTime);
+            trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
+            //trafficMap.setavgIntersectionWaitTime(avgIntersectionWaitTime);
             trafficMap.setTotalTime(totalTime);
             trafficMap.setAvgEatSec(avgEatSec);
-            trafficMap.setSecBeforePersonLeaves(secBeforePersonLeaves);
-            trafficMap.setNumOfEateries(numOfEateries);
+            trafficMap.setNumOfIntersections(numOfIntersections);
             trafficMap.setPTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
 
             timeLeft = totalTime;
