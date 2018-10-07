@@ -26,7 +26,7 @@ public class UtilityVehicle extends Vehicle{
 			this.setColor(Color.red);
 		}
 		else{
-			this.setColor(Color.green);
+			this.setColor(Color.orange);
 		}
 		
 	}
