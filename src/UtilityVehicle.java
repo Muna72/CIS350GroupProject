@@ -1,19 +1,21 @@
 import java.awt.Color;
 import java.util.LinkedList;
 
-public class SemiTruck extends Vehicle {
-	
+
+public class UtilityVehicle extends Vehicle{
+
 	public String type() {
-		return "SemiTruck";
+		return "UtilityVehicle";
 	}
+	
 	private boolean isUserCar;
 	
-	public SemiTruck(){
+	public UtilityVehicle (){
 		super();
 		isUserCar = false;
 	}
 	
-	public SemiTruck(int size, int mph, Direction[] path, double createTime, 
+	public UtilityVehicle(int size, int mph, Direction[] path, double createTime, 
 			LinkedList<Vehicle> currentList, boolean isUserCar){
 		this.size = size;
 		this.mph = mph;
@@ -39,5 +41,4 @@ public class SemiTruck extends Vehicle {
 	
 	public void validPath (Direction[] path) {
 	}
-
 }
