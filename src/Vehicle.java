@@ -1,5 +1,5 @@
 import java.awt.Color;
-
+import java.util.LinkedList;
 
 public abstract class Vehicle {
 
@@ -8,8 +8,11 @@ public abstract class Vehicle {
     protected int mph;
 
     protected Direction[] path;
+    protected Location location;
 
     protected Color color;
+
+    protected LinkedList<Vehicle> que;
 
     /*******************************************************************
      * The default constructor
@@ -19,6 +22,8 @@ public abstract class Vehicle {
         mph = 0;
         path = null;
         color = null;
+        que = null;
+        location = null;
     }
 
     public Vehicle(int size, int mph, Direction[] path, Color color){
@@ -58,5 +63,21 @@ public abstract class Vehicle {
 
     public Color getColor() {
         return color;
+    }
+
+    public LinkedList<Vehicle> getQue() {
+        return que;
+    }
+
+    public void setQue(LinkedList<Vehicle> q) {
+        que = q;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location loc) {
+        location = loc;
     }
 }
