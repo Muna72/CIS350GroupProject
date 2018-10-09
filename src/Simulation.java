@@ -47,7 +47,7 @@ public class Simulation extends JPanel {
     private double totalAvgStoppedTime;
     private boolean firstPer = false;
     private Random rand = new Random();
-    Vehicle vHolder = new Car(10,10,10,10);
+    //Vehicle vHolder = new Car(4,4,Direction.EAST,);
     
 
 /**
@@ -65,7 +65,7 @@ public class Simulation extends JPanel {
         allAvgTimes = new ArrayList<Double>();
         allAvgTimeStopped = new ArrayList<Double>();
         allQueLengths = new ArrayList<Integer>();
-        allCheckQueLengths = new ArrayList<Integer>();
+        //allCheckQueLengths = new ArrayList<Integer>();
         rest1 = new LinkedList<Vehicle>();
         rest2 = new LinkedList<Vehicle>();
         rest3 = new LinkedList<Vehicle>();
@@ -120,14 +120,7 @@ public class Simulation extends JPanel {
     public void setTotalTime(double totTime) {
         totalTime = totTime;
     }
-    
-    /**
-     * Method to set average eatery time
-     * @param avgEat 
-     */
-    public void setAvgEatSec(double avgEat) {
-        avgEatSec = avgEat;
-    }
+
     
     /**
      * Method to set number of eateries at beginning of simulation
@@ -151,8 +144,9 @@ public class Simulation extends JPanel {
      */
     private void placeVehicle(Vehicle p){   
         
-        int gen = rand.nextInt(numOfEateries - 1 + 1) + 1;
-        
+        //int gen = rand.nextInt(numOfEateries - 1 + 1) + 1;
+        int gen = 1;
+
         switch(gen) {
             case 1:  gen = 1;
                      rest1.add(p);
@@ -173,14 +167,6 @@ public class Simulation extends JPanel {
             case 5:  gen = 5;
                      rest5.add(p);
                      p.setQue(rest5);
-                     break;
-            case 6:  gen = 6;
-                     rest6.add(p);
-                     p.setQue(rest6);
-                     break;
-            case 7:  gen = 7;
-                     rest7.add(p);
-                     p.setQue(rest7);
                      break;
             default: 
                      rest1.add(p);
@@ -865,7 +851,24 @@ public class Simulation extends JPanel {
         return maxLaneLength;
     } //Do we need more than one variation of this?
 
-    
+    public double calculateAvgVehicleThruTime(ArrayList<Double> allTimes) {
+        double avgTime;
+
+        return avgTime;
+    }
+
+    public double calculateUserThruTime(Double endTime) {
+        double thruTime;
+
+        return thruTime;
+    }
+
+    public double calculateAvgTimeStopped(ArrayList<Double> allTimes) {
+        double avgTime;
+
+        return avgTime;
+    }
+
     /**
      * Get the total average time for a Vehicle from start to finish
      * @return 

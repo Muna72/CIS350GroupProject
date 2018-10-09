@@ -1,11 +1,7 @@
-import java.io.Serializable;
 import java.awt.Color;
-/*******************************************************************
- * Vehicle is a parent class for all types of vehicles that can be
- * on the road
- ******************************************************************/
-public class Vehicle implements Serializable {
-    private static final long serialVersionUID = 1L;
+
+
+public abstract class Vehicle {
 
     protected int size;
 
@@ -31,7 +27,6 @@ public class Vehicle implements Serializable {
         this.path = path;
         this.color = color;
     }
-
 
     public int getSize() {
         return size;
@@ -64,9 +59,4 @@ public class Vehicle implements Serializable {
     public Color getColor() {
         return color;
     }
-
-    public Direction getNext(int x){
-        return path[x];
-    }
-
 }

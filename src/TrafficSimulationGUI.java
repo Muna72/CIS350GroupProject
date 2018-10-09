@@ -34,7 +34,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private Random r = new Random();
     DecimalFormat df = new DecimalFormat("#.00");
     private JPanel input;
-    Simulation trafficMap;
+    //Simulation trafficMap;
+    JPanel trafficMap;
     private JPanel simPanel;
     private JPanel statsArea;
     JPanel buttons;
@@ -57,15 +58,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private JLabel in3Lab;
     private JLabel in4Lab;
     private JLabel in5Lab;
-    private JLabel in6Lab;
     private JLabel thru;
     private JLabel avgStarFin;
-    private JLabel avgCheckTime;
-    private JLabel numPplLeft;
-    private JLabel maxQLength;
-    private JLabel maxQRestLength;
-    private JLabel mostPopPerson;
-    private JLabel leastPopPerson;
+    private JLabel userStarFin;
+    private JLabel avgTimStop;
+    private JLabel numOfAcc;
+    private JLabel avgVSpeed;
+    private JLabel numLRun;
     private JLabel out1;
     private JLabel out2;
     private JLabel out3;
@@ -73,8 +72,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private JLabel out5;
     private JLabel out6;
     private JLabel out7;
-    private JLabel out8;
-
 
     //define menu items
     private JMenuBar menu;
@@ -99,10 +96,10 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                 @Override
                 public void windowClosing(WindowEvent e) {
                     if(JOptionPane.showConfirmDialog(gui,
-                        "Closing window while simulation is running" +
-                                " will cause you to lose all simulation data. Proceed in closing?", "Close Window?",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                            "Closing window while simulation is running" +
+                                    " will cause you to lose all simulation data. Proceed in closing?", "Close Window?",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
                         System.exit(0);
                     }
                 }
@@ -142,7 +139,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
         add(statsArea,position);
 
-        trafficMap = new Simulation(secsTillNextVehicle, avgIntersectionWaitTime,totalTime,avgEatSec,secBeforePersonLeaves,numOfEateries);
+        // trafficMap = new Simulation(secsTillNextVehicle, avgIntersectionWaitTime,totalTime,avgEatSec, 4); //TODO ADD TO THIS
+        trafficMap = new JPanel();
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
         position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
@@ -169,7 +167,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(3,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,-20,0,20);
         input.add(leaveTime, position);
-        in1Lab = new JLabel("Average Seconds Until Next Person: ");
+        in1Lab = new JLabel("Commute departure time: ");
         in1Lab.setFont(font);
         position = makeConstraints(2,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,0,0,20);
@@ -180,7 +178,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(3,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-20,0,20);
         input.add(congestionLevel, position);
-        in2Lab = new JLabel("Average Seconds Per Cashier: ");
+        in2Lab = new JLabel("Current level of road congestion: ");
         in2Lab.setFont(font);
         position = makeConstraints(2,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
@@ -191,7 +189,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(3,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-20,0,20);
         input.add(weatherConditions, position);
-        in3Lab = new JLabel("Total Time In Seconds: ");
+        in3Lab = new JLabel("Current weather conditions: ");
         in3Lab.setFont(font);
         position = makeConstraints(2,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
@@ -236,89 +234,78 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(0,1,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,-110,0,20);
         statsArea.add(thru, position);
-        out1 = new JLabel(trafficMap.getFinished() + " with max = 500");
+        out1 = new JLabel("TBD");
+        //out1 = new JLabel(trafficMap.getFinished() + " with max = 500");
         out1.setFont(font);
         position = makeConstraints(2,1,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out1, position);
 
-        avgStarFin = new JLabel("Number of Lights Run");
-        avgStarFin.setFont(font);
+        numLRun = new JLabel("Number of Lights Run");
+        numLRun.setFont(font);
         position = makeConstraints(0,2,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(0,-110,0,20);
-        statsArea.add(avgStarFin, position);
+        statsArea.add(numLRun, position);
         out2 = new JLabel("TBD");
         out2.setFont(font);
         position = makeConstraints(2,2,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out2, position);
 
-        avgCheckTime = new JLabel("Number of Accidents:");
-        avgCheckTime.setFont(font);
+        numOfAcc = new JLabel("Number of Accidents:");
+        numOfAcc.setFont(font);
         position = makeConstraints(0,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
-        statsArea.add(avgCheckTime, position);
+        statsArea.add(numOfAcc, position);
         out3 = new JLabel("TBD");
         out3.setFont(font);
         position = makeConstraints(2,3,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out3, position);
 
-        numPplLeft = new JLabel("Number of People Left in Line:");
-        numPplLeft.setFont(font);
+        avgTimStop = new JLabel("Average Vehicle Time Stopped:");
+        avgTimStop.setFont(font);
         position = makeConstraints(0,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
-        statsArea.add(numPplLeft, position);
+        statsArea.add(avgTimStop, position);
         out4 = new JLabel("TBD");
         out4.setFont(font);
         position = makeConstraints(2,4,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out4, position);
 
-        maxQLength = new JLabel("Average Vehicle Time Stopped:");
-        maxQLength.setFont(font);
+        avgVSpeed = new JLabel("Average Vehicle Speed:");
+        avgVSpeed.setFont(font);
         position = makeConstraints(0,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
-        statsArea.add(maxQLength, position);
+        statsArea.add(avgVSpeed, position);
         out5 = new JLabel("TBD");
         out5.setFont(font);
         position = makeConstraints(2,5,1,1,GridBagConstraints.LINE_START);
         position.insets = new Insets(10,0,0,20);
         statsArea.add(out5, position);
 
-        maxQRestLength = new JLabel("Average Vehicle Speed:");
-        maxQRestLength.setFont(font);
+        userStarFin = new JLabel("Your Route Completion Time:");
+        userStarFin.setFont(font);
         position = makeConstraints(0,6,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
-        statsArea.add(maxQRestLength, position);
+        statsArea.add(userStarFin, position);
         out6 = new JLabel("TBD");
         out6.setFont(font);
         position = makeConstraints(2,6,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out6, position);
 
-        mostPopPerson = new JLabel("Your Route Completion Time:");
-        mostPopPerson.setFont(font);
+        avgStarFin = new JLabel("Average Vehicle Route Completion Time:");
+        avgStarFin.setFont(font);
         position = makeConstraints(0,7,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,-110,0,20);
-        statsArea.add(mostPopPerson, position);
+        statsArea.add(avgStarFin, position);
         out7 = new JLabel("TBD");
         out7.setFont(font);
         position = makeConstraints(2,7,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         statsArea.add(out7, position);
-
-        leastPopPerson = new JLabel("Average Vehicle Route Completion Time:");
-        leastPopPerson.setFont(font);
-        position = makeConstraints(0,8,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-110,0,20);
-        statsArea.add(leastPopPerson, position);
-        out8 = new JLabel("TBD");
-        out8.setFont(font);
-        position = makeConstraints(2,8,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
-        statsArea.add(out8, position);
-
 
 
         //place each button
@@ -350,7 +337,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         leaveTime.addActionListener(this);
         start.addActionListener(this);
         stop.addActionListener(this);
-        pause.addActionListener(this);
         file.addActionListener(this);
         quit.addActionListener(this);
         reset.addActionListener(this);
@@ -360,30 +346,30 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
      * Action performed method
      * @param e
      */
-    public void actionPerformed(ActionEvent e){
+    public void actionPerformed(ActionEvent e) {
 
         //set route congestion level based on user input
-        if (e.getSource() == congestionLevel){
+        if (e.getSource() == congestionLevel) {
             isRunning = false;
-            if(congestionLevel.getSelectedItem() == "Low") {
+            if (congestionLevel.getSelectedItem() == "Low") {
                 secsTillNextVehicle = 5;
             }
-            if(congestionLevel.getSelectedItem() == "Medium") {
+            if (congestionLevel.getSelectedItem() == "Medium") {
                 secsTillNextVehicle = 3;
             }
-            if(congestionLevel.getSelectedItem() == "High") {
+            if (congestionLevel.getSelectedItem() == "High") {
                 secsTillNextVehicle = 2;
             }
-            if(congestionLevel.getSelectedItem() == "Rush Hour") {
+            if (congestionLevel.getSelectedItem() == "Rush Hour") {
                 secsTillNextVehicle = 1;
             }
         }
 
         //set weather condition variables based on user input
-        if (e.getSource() == weatherConditions){
+        if (e.getSource() == weatherConditions) {
             isRunning = false;
 
-            switch(weatherConditions.getSelectedItem().toString()) {
+            switch (weatherConditions.getSelectedItem().toString()) {
                 case "Clear Day":
                     DELAY = 20;
                     break;
@@ -406,65 +392,67 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                 default:
                     DELAY = 20;
                     break;
-        }
-
-        //set where user's car generates based on input
-        if (e.getSource() == leaveTime){
-            isRunning = false;
-            if(leaveTime.getSelectedItem() == "Left Early") {
-                trafficMap.placeUserCar("front");
             }
-            if(leaveTime.getSelectedItem() == "On Time") {
-                trafficMap.placeUserCar("middle");
+
+            //set where user's car generates based on input
+            if (e.getSource() == leaveTime) {
+                isRunning = false;
+                if (leaveTime.getSelectedItem() == "Left Early") {
+                    //  trafficMap.placeUserCar("front");
+                }
+                if (leaveTime.getSelectedItem() == "On Time") {
+                    //trafficMap.placeUserCar("middle");
+                }
+                if (leaveTime.getSelectedItem() == "Left Late") {
+                    //trafficMap.placeUserCar("back");
+                }
             }
-            if(leaveTime.getSelectedItem() == "Left Late") {
-                trafficMap.placeUserCar("back");
+
+            //exit application if QUIT menu item
+            if (e.getSource() == quit) {
+                System.exit(1);
             }
-        }
 
-        //exit application if QUIT menu item
-        if (e.getSource() == quit){
-            System.exit(1);
-        }
-
-        //set running variable to true if START button
-        if (e.getSource() == start){
-            if (firstTimeStartPressed) {
-                isRunning = true;
-                new Thread(this).start();
-                firstTimeStartPressed = false;
+            //set running variable to true if START button
+            if (e.getSource() == start) {
+                if (firstTimeStartPressed) {
+                    isRunning = true;
+                    new Thread(this).start();
+                    firstTimeStartPressed = false;
+                } else {
+                    simTimer.start();
+                }
             }
-            else {
-                simTimer.start();
+
+
+            //set running variable to false if STOP button
+            if (e.getSource() == stop) {
+                isRunning = false;
+                simTimer.stop();
             }
-        }
 
+            //reset simulation if RESET menu item
+            if (e.getSource() == reset) {
+                // trafficMap.reset();
+                firstTimeStartPressed = true;
+            }
 
-        //set running variable to false if STOP button
-        if (e.getSource() == stop){
-            isRunning = false;
-            simTimer.stop();
+            //update GUI
+            trafficMap.repaint();
         }
-
-        //reset simulation if RESET menu item
-        if (e.getSource() == reset){
-            trafficMap.reset();
-            firstTimeStartPressed = true;
-        }
-        //update GUI
-        trafficMap.repaint();
     }
-
     /**
      * Method to update stats in the GUI
      */
     public void updateGUI() {
 
-        out1.setText(trafficMap.getFinished() + " with max = 500");
-        out3.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds"); //ONLY ONES THAT ARE CALCULATED HERE?
-        out4.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
-        out5.setText(trafficMap.getMaxCheckLength() + " people");
-        out6.setText(trafficMap.getMaxLaneLength() + " people");
+        // out1.setText(trafficMap.getFinished() + " with max = 500");
+        //out3.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds"); //ONLY ONES THAT ARE CALCULATED HERE?
+        //out4.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
+        // out5.setText(trafficMap.getMaxCheckLength() + " people");
+        //out6.setText(trafficMap.getMaxLaneLength() + " people");
+
+        //WILL NEED TO UPDATE LIGHTS RUN AND ACCIDENTS HERE ONLY
     }
 
     /**
@@ -473,26 +461,27 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     public void run(){
         try {
 
-            secsTillNextVehicle = 1000 * Double.parseDouble(in1.getText());
-            avgIntersectionWaitTime = 1000 * Double.parseDouble(in2.getText());
-            totalTime = 1000 * Double.parseDouble(in3.getText());
-            avgEatSec = 1000 * Double.parseDouble(in4.getText());
+            // secsTillNextVehicle = 1000 * Double.parseDouble(in1.getText());
+            //avgIntersectionWaitTime = 1000 * Double.parseDouble(in2.getText());
+            //totalTime = 1000 * Double.parseDouble(in3.getText());
+            //avgEatSec = 1000 * Double.parseDouble(in4.getText());
             //numOfIntersections = Integer.parseInt(in6.getText());
 
-            trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
-            //trafficMap.setavgIntersectionWaitTime(avgIntersectionWaitTime);
-            trafficMap.setTotalTime(totalTime);
-            trafficMap.setAvgEatSec(avgEatSec);
-            trafficMap.setNumOfIntersections(numOfIntersections);
-            trafficMap.setPTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
+            // trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
+            //trafficMap.calculateAvgTimeStopped();
+            //trafficMap.calculateAvgVehicleThruTime();
+            //trafficMap.calculateUserVehicleThurTime();
+            //trafficMap.setTotalTime(totalTime);
+            //trafficMap.setNumOfIntersections(numOfIntersections);
+            //trafficMap.setPTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
 
             timeLeft = totalTime;
 
             simTimer = new Timer(DELAY,new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    trafficMap.setSimTimeLeft(timeLeft);
-                    trafficMap.takeAction();
+                    //  trafficMap.setSimTimeLeft(timeLeft);
+                    // trafficMap.takeAction();
 
                     timeLeft = timeLeft - DELAY;
 
