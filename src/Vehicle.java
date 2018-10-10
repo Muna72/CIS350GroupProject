@@ -13,6 +13,7 @@ public abstract class Vehicle {
     protected Color color;
 
     protected LinkedList<Vehicle> que;
+    protected double timeCreated;
 
     /*******************************************************************
      * The default constructor
@@ -24,6 +25,7 @@ public abstract class Vehicle {
         color = null;
         que = null;
         location = null;
+        timeCreated = 0;
     }
 
     public Vehicle(int size, int mph, Direction[] path, Color color){
@@ -79,5 +81,13 @@ public abstract class Vehicle {
 
     public void setLocation(Location loc) {
         location = loc;
+    }
+
+    public void setCreateTime(double time) {
+     timeCreated = time;
+    }
+
+    public double getCreateTime() {
+        return timeCreated;
     }
 }

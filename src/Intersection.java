@@ -210,4 +210,15 @@ public class Intersection
 
     }
 
+    public void clear() {
+        entryPoint[0].clear();
+        entryPoint[1].clear();
+        entryPoint[2].clear();
+        entryPoint[3].clear();
+    }
+
+
+    public void setLocation(LinkedList<Vehicle> list, Location loc) {
+
+    }
 }

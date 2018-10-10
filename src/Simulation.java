@@ -47,7 +47,7 @@ public class Simulation extends JPanel {
     private double totalAvgStoppedTime;
     private boolean firstPer = false;
     private Random rand = new Random();
-    //Vehicle vHolder = new Car(4,4,Direction.EAST,);
+    Vehicle vHolder = new Car(); //need to give parameters
     
 
 /**
@@ -99,7 +99,7 @@ public class Simulation extends JPanel {
 
     /**
      * Method to set average cashier seconds
-     * @param avgStop
+     * @param speed
      */
     public void setVehicleSpeed(double speed) { //TODO MAY NOT NEED THIS AT ALL, JUST CHANGE DELAY
         vehicleSpeed = 1000 * speed;
@@ -175,7 +175,7 @@ public class Simulation extends JPanel {
         } 
         
         if(firstPer == true) {
-            p.setBeginEatTime(getSimTimeLeft());
+           // p.setBeginEatTime(getSimTimeLeft());
             firstPer = false;
         }
         createLines();
@@ -196,13 +196,12 @@ public class Simulation extends JPanel {
         allVehicles.clear();
         allAvgTimes.clear();
         allQueLengths.clear();
-        allCheckQueLengths.clear();
         rest1.clear();
         rest2.clear();
         rest3.clear();
         rest4.clear();
         intersection1.clear();
-        intersection2.clear(); //TODO IMPLEMENT THIS METHOD
+        intersection2.clear();
         
         for(int i = 0; i < ROWS; ++i) {
             for(int y = 0; y < COLUMNS; ++y) {
@@ -253,16 +252,14 @@ public class Simulation extends JPanel {
             
         if(numOfVehicles <= MAX_VEHICLES) {
             if(gen == 1) {
-                p = new Car(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
-                ++numOfRegPpl;
+               p = new Car();
+                // p = new Car(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
             }
             if(gen == 2) {
-                p = new SpecialNeedsVehicle(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
-                ++numOfSpecPpl;
+                p = new UtilityVehicle();
             }
             if(gen == 3) {
-                p = new SemiTruck(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
-                ++numOfLimPpl;
+                p = new SemiTruck();
             }
             p.setCreateTime(getSimTimeLeft());
             placeVehicle(p);
@@ -277,7 +274,7 @@ public class Simulation extends JPanel {
      */
     public void selectIntersection(Vehicle p) {
         
-        if(numOfIntersections == 2) {
+    /*    if(numOfIntersections == 1) {
             if(vHolder.getQue() == null) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
@@ -294,7 +291,7 @@ public class Simulation extends JPanel {
                 vHolder.setQue(checkout1);    
             }
         }
-        if(numOfCheckouts == 3) {
+        if(numOfIntersections == 2) {
             if(vHolder.getQue() == null) {
                 checkout1.add(p);
                 p.setQue(checkout1); 
@@ -315,34 +312,7 @@ public class Simulation extends JPanel {
                 p.setQue(checkout1); 
                 vHolder.setQue(checkout1);   
             }
-        }
-        if(numOfCheckouts == 4) {
-            if(vHolder.getQue() == null) {
-                checkout1.add(p);
-                p.setQue(checkout1); 
-                vHolder.setQue(checkout1);
-            } 
-            else if(vHolder.getQue() == checkout1){
-                checkout2.add(p);
-                p.setQue(checkout2);
-                vHolder.setQue(checkout2);
-            }
-            else if(vHolder.getQue() == checkout2) {
-                checkout3.add(p);
-                p.setQue(checkout3); 
-                vHolder.setQue(checkout3);    
-            } 
-            else if(vHolder.getQue() == checkout3) {
-                checkout4.add(p);
-                p.setQue(checkout4); 
-                vHolder.setQue(checkout4);   
-            }    
-            else if(vHolder.getQue() == checkout4) {
-                checkout1.add(p);
-                p.setQue(checkout1); 
-                vHolder.setQue(checkout1);   
-            }
-        }
+        } */
     }
 
     /**
@@ -361,11 +331,11 @@ public class Simulation extends JPanel {
      * @param p
      * @return 
      */
-    public boolean isInCheckout(Vehicle p) {
+    public boolean isInLane(Vehicle p) {
         
         boolean isInCheck = false;
         
-        if(checkout1 != null) {
+      /*  if(checkout1 != null) {
             if(p.getQue().equals(checkout1)) { 
                 isInCheck = true;
             }
@@ -384,7 +354,7 @@ public class Simulation extends JPanel {
             if(p.getQue().equals(checkout4)) { 
                 isInCheck = true;
             }
-        }
+        } */
         return isInCheck;
     }    
         
@@ -512,7 +482,7 @@ public class Simulation extends JPanel {
             }  
         }
         
-        if(rest6 != null) {
+       /* if(rest6 != null) {
             
             r = 57;
             y = 32;
@@ -648,7 +618,7 @@ public class Simulation extends JPanel {
                     y = y - 2;
                 }             
             } 
-        }
+        } */
         repaint();
     }
     
@@ -672,7 +642,7 @@ public class Simulation extends JPanel {
         if(rest5 != null) {
             allQueLengths.add(rest5.size());
         }
-        if(rest6 != null) {
+       /* if(rest6 != null) {
             allQueLengths.add(rest6.size());
         }
         if(rest7 != null) {
@@ -702,7 +672,7 @@ public class Simulation extends JPanel {
                 maxCheckLength = allCheckQueLengths.get(y);
             }
         }
-        
+        */
     }
     
     /**
@@ -733,7 +703,7 @@ public class Simulation extends JPanel {
             
             Vehicle p = allVehicles.get(u);
             
-            if(p.getCreateTime() - currTime < p.getLeaveTime()) {
+         /*   if(p.getCreateTime() - currTime < p.getLeaveTime()) {
                 if(isInCheckout(p) == false) {
                     eatHolder = p.getQue();
             
@@ -767,7 +737,7 @@ public class Simulation extends JPanel {
             }        
             else {
                 removeVehicle(p);  
-            } 
+            } */
             ++VehicleNum;
         }  
         checkLengths();
@@ -822,7 +792,7 @@ public class Simulation extends JPanel {
         if(rest5 != null) {
             perLeft = perLeft + rest5.size();
         }
-        if(rest6 != null) {
+       /* if(rest6 != null) {
             perLeft = perLeft + rest6.size();
         }
         if(rest7 != null) {
@@ -839,7 +809,7 @@ public class Simulation extends JPanel {
         }
         if(checkout4 != null) {
             perLeft = perLeft + checkout4.size();
-        }
+        } */
         return perLeft;
     }
     
@@ -852,19 +822,19 @@ public class Simulation extends JPanel {
     } //Do we need more than one variation of this?
 
     public double calculateAvgVehicleThruTime(ArrayList<Double> allTimes) {
-        double avgTime;
+        double avgTime = 0;
 
         return avgTime;
     }
 
     public double calculateUserThruTime(Double endTime) {
-        double thruTime;
+        double thruTime = 0;
 
         return thruTime;
     }
 
     public double calculateAvgTimeStopped(ArrayList<Double> allTimes) {
-        double avgTime;
+        double avgTime = 0;
 
         return avgTime;
     }
@@ -920,14 +890,14 @@ public class Simulation extends JPanel {
                 g.fillRect(col*SIZE, row*SIZE, SIZE, SIZE);
             }
         }
-        if(numOfIntersections == 1) {
+      /*  if(numOfIntersections == 1) {
             
             g.setColor(Color.RED);
             g.fillRect(350, 40, 65, 65);
             g.setColor(Color.BLACK);
             g.drawString("Rest1", 365, 75);
             
-            if(numOfCheckouts == 1) {
+            if(numOfIntersections == 2) {
                 g.setColor(Color.LIGHT_GRAY);
                 g.fillOval(915, 180, 85, 65);
                 g.setColor(Color.BLACK);
@@ -1035,7 +1005,7 @@ public class Simulation extends JPanel {
                 g.setColor(Color.BLACK);
                 g.drawString("Check4", 936, 515);
             }
-        }
+        } */
     }
 }
     

@@ -30,12 +30,11 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private double avgEatSec;
     private int numOfIntersections;
     public Timer simTimer;
-    //private Location startLoc;
+    private Location startLoc;
     private Random r = new Random();
     DecimalFormat df = new DecimalFormat("#.00");
     private JPanel input;
-    //Simulation trafficMap;
-    JPanel trafficMap;
+    Simulation trafficMap;
     private JPanel simPanel;
     private JPanel statsArea;
     JPanel buttons;
@@ -87,8 +86,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         try{
             TrafficSimulationGUI gui = new TrafficSimulationGUI();
             gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            gui.setTitle("Food Court Simulation");
-            gui.setSize(1200,1200);
+            gui.setTitle("Traffic Simulation");
+            gui.setPreferredSize(new Dimension(1800,1000));
             gui.pack();
             gui.setVisible(true);
             gui.addWindowListener(new WindowAdapter() {
@@ -124,14 +123,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
         //Adding all panels to JFrame
         input = new JPanel(new GridBagLayout());
-        input.setBorder(new EmptyBorder(30, 0, 30, 0));
+        input.setBorder(new EmptyBorder(30, 0, 30, 120));
         position = makeConstraints(10,0,1,1,GridBagConstraints.LINE_END);
         add(input,position);
 
         buttons = new JPanel(new GridBagLayout());
         buttons.setBorder(new EmptyBorder(10, 70, 30, 40));
         position = makeConstraints(10,4,1,1,GridBagConstraints.LINE_END);
-        position.anchor = GridBagConstraints.LINE_END;
         add(buttons,position);
 
         statsArea = new JPanel(new GridBagLayout());
@@ -139,8 +137,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
         add(statsArea,position);
 
-        // trafficMap = new Simulation(secsTillNextVehicle, avgIntersectionWaitTime,totalTime,avgEatSec, 4); //TODO ADD TO THIS
-        trafficMap = new JPanel();
+        trafficMap = new Simulation(secsTillNextVehicle, avgIntersectionWaitTime,totalTime,avgEatSec, 4);//TODO ADD TO THIS
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
         position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
@@ -149,8 +146,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         inputLabel = new JLabel("Input Information");
         inputLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
         inputLabel.setFont(font);
-        position = makeConstraints(4,1,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-35,0,20);
+        position = makeConstraints(2,1,1,1,GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0,120,0,20);
         input.add(inputLabel, position);
 
         font = new Font("SansSerif Bold", Font.BOLD, 13);
@@ -223,7 +220,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         font = new Font("SansSerif Bold", Font.BOLD, 14);
         outputLabel.setFont(font);
         position = makeConstraints(1,0,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-165,0,0);
+        position.insets =  new Insets(0,-185,0,0);
         outputLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
         statsArea.add(outputLabel, position);
 
