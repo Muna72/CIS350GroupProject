@@ -1,3 +1,5 @@
+package srcCode;
+
 import java.awt.Color;
 import java.util.LinkedList;
 

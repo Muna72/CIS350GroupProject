@@ -1,4 +1,4 @@
-//Created by Brianne Kerr, 9/26/18
+package srcCode;//Created by Brianne Kerr, 9/26/18
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -7,7 +7,7 @@ public class Intersection
     //Holds list of vehicles going in a specified direction
     //entryPoint[0] = NORTH, entryPoint[1] = EAST,
     //entryPoint[2] = SOUTH, entryPoint[3] = WEST
-    private LinkedList<Vehicle>[] entryPoint = new LinkedList[4];
+    public LinkedList<Vehicle>[] entryPoint = new LinkedList[4];
 
     //Holds the number of vehicles that have passed through
     //a lane in a specified direction; corresponds to entryPoint[]
@@ -28,7 +28,7 @@ public class Intersection
     //Holds the number of cars that pass through lanes NORTH and SOUTH, per cycle
     private int vertCycleCars;
 
-
+    private String type;
 
     //Used to generate pseudo-random numbers
     private Random rand = new Random();
@@ -56,7 +56,7 @@ public class Intersection
      */
     public Intersection(int westStart, int northStart, int eastStart,
                         int southStart, int horizCycleTime, int horizCycleCars, int vertCycleTime,
-                        int vertCycleCars)
+                        int vertCycleCars, String type)
     {
         entryPoint[0] = new LinkedList<Vehicle>();
         entryPoint[1] = new LinkedList<Vehicle>();
@@ -78,6 +78,7 @@ public class Intersection
         this.horizCycleCars = horizCycleCars;
         this.vertCycleTime = vertCycleTime;
         this.vertCycleCars = vertCycleCars;
+        this.type = type;
     }
 
     /*
@@ -220,5 +221,12 @@ public class Intersection
 
     public void setLocation(LinkedList<Vehicle> list, Location loc) {
 
+    }
+
+    public void setType(String t) {
+        type = t;
+    }
+    public String getType() {
+        return type;
     }
 }

@@ -1,3 +1,5 @@
+package srcCode;
+
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.Timer;
@@ -85,7 +87,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     public static void main(String[] args) {
         try{
             TrafficSimulationGUI gui = new TrafficSimulationGUI();
-            gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            gui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             gui.setTitle("Traffic Simulation");
             gui.setPreferredSize(new Dimension(1800,1000));
             gui.pack();
@@ -94,11 +96,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    if(JOptionPane.showConfirmDialog(gui,
+
+                    int dialogResult = JOptionPane.showConfirmDialog(gui,
                             "Closing window while simulation is running" +
                                     " will cause you to lose all simulation data. Proceed in closing?", "Close Window?",
                             JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+                            JOptionPane.QUESTION_MESSAGE);
+                    if(dialogResult == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
                 }
@@ -309,13 +313,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         start = new JButton( "Start" );
         start.setForeground(Color.GREEN);
         position = makeConstraints(3,7,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(40,-20,0,20);
+        position.insets =  new Insets(40,-170,0,20);
         input.add(start, position);
 
         stop = new JButton( "Stop" );
         stop.setForeground(Color.RED);
-        position = makeConstraints(5,8,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(-26,-180,0,20);
+        position = makeConstraints(4,8,1,1,GridBagConstraints.LINE_START);
+        position.insets =  new Insets(-26,-120,0,20);
         input.add(stop, position);
 
         //create and add menu items
@@ -395,13 +399,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
             if (e.getSource() == leaveTime) {
                 isRunning = false;
                 if (leaveTime.getSelectedItem() == "Left Early") {
-                    //  trafficMap.placeUserCar("front");
+                    trafficMap.placeUserCar("front");
                 }
                 if (leaveTime.getSelectedItem() == "On Time") {
-                    //trafficMap.placeUserCar("middle");
+                    trafficMap.placeUserCar("middle");
                 }
                 if (leaveTime.getSelectedItem() == "Left Late") {
-                    //trafficMap.placeUserCar("back");
+                    trafficMap.placeUserCar("back");
                 }
             }
 

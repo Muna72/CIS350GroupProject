@@ -1,9 +1,9 @@
+package srcCode;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 import javax.swing.*;
@@ -40,7 +40,7 @@ public class Simulation extends JPanel {
     private double simTimeLeft;
     private double timeVehicleAdded;
     private int numOfVehicles;
-    private int numOfIntersections;
+    private int numOfIntersections = 1;
     private int maxLaneLength;
     private int finished;
     private double totalAvgVehicleTime;
@@ -144,8 +144,7 @@ public class Simulation extends JPanel {
      */
     private void placeVehicle(Vehicle p){   
         
-        //int gen = rand.nextInt(numOfEateries - 1 + 1) + 1;
-        int gen = 1;
+        int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO will need ot change if more than one intersection
 
         switch(gen) {
             case 1:  gen = 1;
@@ -253,7 +252,6 @@ public class Simulation extends JPanel {
         if(numOfVehicles <= MAX_VEHICLES) {
             if(gen == 1) {
                p = new Car();
-                // p = new Car(avgCashSec,avgEatSec, secBeforeVehicleLeaves, getSimTimeLeft());
             }
             if(gen == 2) {
                 p = new UtilityVehicle();
@@ -274,45 +272,31 @@ public class Simulation extends JPanel {
      */
     public void selectIntersection(Vehicle p) {
         
-    /*    if(numOfIntersections == 1) {
+        if(numOfIntersections == 1) {
             if(vHolder.getQue() == null) {
-                checkout1.add(p);
-                p.setQue(checkout1); 
-                vHolder.setQue(checkout1);
+                intersection1.entryPoint[0].add(p);
+                p.setQue(intersection1.entryPoint[0]);
+                vHolder.setQue(intersection1.entryPoint[0]);
             } 
-            else if(vHolder.getQue() == intersection1){
-                checkout2.add(p);
-                p.setQue(checkout2);
-                vHolder.setQue(checkout2);
+            else if(vHolder.getQue() == intersection1.entryPoint[0]){
+                intersection1.entryPoint[1].add(p);
+                p.setQue(intersection1.entryPoint[1]);
+                vHolder.setQue(intersection1.entryPoint[1]);
             }
-            else if(vHolder.getQue() == intersection2) {
-                checkout1.add(p);
-                p.setQue(checkout1); 
-                vHolder.setQue(checkout1);    
+            else if(vHolder.getQue() == intersection1.entryPoint[1]) {
+                intersection1.entryPoint[2].add(p);
+                p.setQue(intersection1.entryPoint[2]);
+                vHolder.setQue(intersection1.entryPoint[2]);
+            }
+            else if (vHolder.getQue() == intersection1.entryPoint[2]) {
+                intersection1.entryPoint[3].add(p);
+                p.setQue(intersection1.entryPoint[3]);
+                vHolder.setQue(intersection1.entryPoint[3]);
             }
         }
         if(numOfIntersections == 2) {
-            if(vHolder.getQue() == null) {
-                checkout1.add(p);
-                p.setQue(checkout1); 
-                vHolder.setQue(checkout1);
-            } 
-            else if(vHolder.getQue() == checkout1){
-                checkout2.add(p);
-                p.setQue(checkout2);
-                vHolder.setQue(checkout2);
-            }
-            else if(vHolder.getQue() == checkout2) {
-                checkout3.add(p);
-                p.setQue(checkout3); 
-                vHolder.setQue(checkout3);    
-            } 
-            else if(vHolder.getQue() == checkout3) {
-                checkout1.add(p);
-                p.setQue(checkout1); 
-                vHolder.setQue(checkout1);   
-            }
-        } */
+            // TODO logic here
+        }
     }
 
     /**
@@ -322,10 +306,46 @@ public class Simulation extends JPanel {
      */
      public void placeUserCar(String place) {
 
+         int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO will need ot change if more than one intersection
+         LinkedList<Vehicle> userLane;
+         Vehicle userCar = new Car(); //TODO setIsUserCar to true
 
-
+         switch (gen) {
+             case 1:
+                 gen = 1;
+                 userLane = intersection1.entryPoint[0];
+                 userCar.setQue(intersection1.entryPoint[0]);
+                 break;
+             case 2:
+                 gen = 2;
+                 userLane = intersection1.entryPoint[1];
+                 userCar.setQue(intersection1.entryPoint[1]);
+                 break;
+             case 3:
+                 gen = 3;
+                 userLane = intersection1.entryPoint[2];
+                 userCar.setQue(intersection1.entryPoint[2]);
+                 break;
+             case 4:
+                 gen = 4;
+                 userLane = intersection1.entryPoint[3];
+                 userCar.setQue(intersection1.entryPoint[3]);
+                 break;
+             default:
+                 userLane = intersection1.entryPoint[0];
+                 userCar.setQue(intersection1.entryPoint[0]);
+                 break;
+         }
+             if (place == "front") {
+                 userCar.getQue().add(0, userCar);
+             }
+             if (place == "middle") {
+                 userCar.getQue().add((userCar.getQue().size()) / 2, userCar);
+             }
+             if (place == "back") {
+                 userCar.getQue().add(userCar.getQue().size() - 1, userCar);
+             }
      }
-
     /**
      * Method to see of a Vehicle is in any of the checkout lines
      * @param p
@@ -765,7 +785,7 @@ public class Simulation extends JPanel {
      * Method to get number of people
      * @return 
      */
-    public int getNumOfPeople() {
+    public int getNumOfVehicles() {
         return numOfVehicles;
     }
     
@@ -773,24 +793,24 @@ public class Simulation extends JPanel {
      * Method to get number of people that walked out
      * @return 
      */
-    public int getPeopleLeft() {
+    public int getVehiclesLeft() {
         
-        int perLeft = 0;
+        int vLeft = 0;
         
         if(rest1 != null) {
-            perLeft = perLeft + rest1.size();
+            vLeft = vLeft + rest1.size();
         }
         if(rest2 != null) {
-            perLeft = perLeft + rest2.size();
+            vLeft = vLeft + rest2.size();
         }
         if(rest3 != null) {
-            perLeft = perLeft + rest3.size();
+            vLeft = vLeft + rest3.size();
         }
         if(rest4 != null) {
-            perLeft = perLeft + rest4.size();
+            vLeft = vLeft + rest4.size();
         }
         if(rest5 != null) {
-            perLeft = perLeft + rest5.size();
+            vLeft = vLeft + rest5.size();
         }
        /* if(rest6 != null) {
             perLeft = perLeft + rest6.size();
@@ -810,7 +830,7 @@ public class Simulation extends JPanel {
         if(checkout4 != null) {
             perLeft = perLeft + checkout4.size();
         } */
-        return perLeft;
+        return vLeft;
     }
     
     /**
@@ -890,122 +910,29 @@ public class Simulation extends JPanel {
                 g.fillRect(col*SIZE, row*SIZE, SIZE, SIZE);
             }
         }
-      /*  if(numOfIntersections == 1) {
-            
-            g.setColor(Color.RED);
-            g.fillRect(350, 40, 65, 65);
+        if(numOfIntersections == 1) {
+
             g.setColor(Color.BLACK);
-            g.drawString("Rest1", 365, 75);
-            
-            if(numOfIntersections == 2) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.fillRect(350, 40, 35, 105);
+            g.setColor(Color.BLACK);
+
+            if(intersection1.getType() == "Two Way") {
+                g.drawString("Intersection (Two - Way", 365, 75);
             }
-            if(numOfCheckouts == 2) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-            }
-            if(numOfCheckouts == 3) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-            }
-            if(numOfCheckouts == 4) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 480, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check4", 936, 515);
+            if(intersection1.getType() == "Four Way") {
+                g.drawString("Intersection (Two - Way", 365, 75);
             }
         }
         if(numOfIntersections == 2) {
-            
-            g.setColor(Color.RED);
-            g.fillRect(350, 40, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest1", 365, 75);
-            g.setColor(Color.CYAN);
-            g.fillRect(350, 140, 65, 65);
-            g.setColor(Color.BLACK);
-            g.drawString("Rest2", 365, 175);
-            
-            if(numOfCheckouts == 1) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-            }
-            if(numOfCheckouts == 2) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-            }
-            if(numOfCheckouts == 3) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-            }
-            if(numOfCheckouts == 4) {
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 180, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check1", 936, 215);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 280, 85, 65); 
-                g.setColor(Color.BLACK);
-                g.drawString("Check2", 936, 315);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 380, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check3", 936, 415);
-                g.setColor(Color.LIGHT_GRAY);
-                g.fillOval(915, 480, 85, 65);
-                g.setColor(Color.BLACK);
-                g.drawString("Check4", 936, 515);
-            }
-        } */
+
+        }
     }
 }
     
