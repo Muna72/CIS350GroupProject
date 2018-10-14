@@ -20,11 +20,6 @@ public class Simulation extends JPanel {
     public ArrayList<Integer> allQueLengths;
     public Intersection intersection1;
     public Intersection intersection2;
-    public LinkedList<Vehicle> rest1;
-    public LinkedList<Vehicle> rest2;
-    public LinkedList<Vehicle> rest3;
-    public LinkedList<Vehicle> rest4;
-    public LinkedList<Vehicle> rest5;
 
     private final int ROWS=80, COLUMNS=120, SIZE=10;
     private final int MAX_VEHICLES = 500;
@@ -60,12 +55,6 @@ public class Simulation extends JPanel {
         allAvgTimes = new ArrayList<Double>();
         allAvgTimeStopped = new ArrayList<Double>();
         allQueLengths = new ArrayList<Integer>();
-        //allCheckQueLengths = new ArrayList<Integer>();
-        rest1 = new LinkedList<Vehicle>();
-        rest2 = new LinkedList<Vehicle>();
-        rest3 = new LinkedList<Vehicle>();
-        rest4 = new LinkedList<Vehicle>();
-        rest5 = new LinkedList<Vehicle>();
         intersection1 = new Intersection();
         intersection2 = new Intersection();
 
@@ -96,14 +85,6 @@ public class Simulation extends JPanel {
      */
     public void setVehicleSpeed(double speed) { //TODO MAY NOT NEED THIS AT ALL, JUST CHANGE DELAY
         vehicleSpeed = 1000 * speed;
-    }
-
-    /**
-     * Method to set average cashier seconds 
-     * @param avgStop
-     */
-    public void setAvgCashSec(double avgStop) {
-        avgStoppedSec = avgStop;
     }
     
     /**
@@ -141,36 +122,32 @@ public class Simulation extends JPanel {
 
         switch(gen) {
             case 1:  gen = 1;
-                     rest1.add(p);
-                     p.setQue(rest1);
+                     intersection1.entryPoint[0].add(p);
+                     p.setQue(intersection1.entryPoint[0]);
                      break;
             case 2:  gen = 2;
-                     rest2.add(p);
-                     p.setQue(rest2);
+                    intersection1.entryPoint[1].add(p);
+                     p.setQue(intersection1.entryPoint[1]);
                      break;
             case 3:  gen = 3;
-                     rest3.add(p);
-                     p.setQue(rest3);
+                    intersection1.entryPoint[2].add(p);
+                     p.setQue(intersection1.entryPoint[2]);
                      break;
             case 4:  gen = 4;
-                     rest4.add(p);
-                     p.setQue(rest4);
+                     intersection1.entryPoint[3].add(p);
+                     p.setQue(intersection1.entryPoint[3]);
                      break;
-            case 5:  gen = 5;
-                     rest5.add(p);
-                     p.setQue(rest5);
-                     break;
-            default: 
-                     rest1.add(p);
-                     p.setQue(rest1);
+            default:
+                    intersection1.entryPoint[0].add(p);
+                     p.setQue(intersection1.entryPoint[0]);
                      break;         
         } 
         
         if(firstPer == true) {
-           // p.setBeginEatTime(getSimTimeLeft());
+            p.setCreateTime(getSimTimeLeft()); //TODO do we need this?
             firstPer = false;
         }
-        createLines();
+        createLanes();
         repaint();
     }
     
@@ -188,11 +165,7 @@ public class Simulation extends JPanel {
         allVehicles.clear();
         allAvgTimes.clear();
         allQueLengths.clear();
-        rest1.clear();
-        rest2.clear();
-        rest3.clear();
-        rest4.clear();
-        intersection1.clear();
+        intersection1.clear(); //TODO make sure this happens
         intersection2.clear();
         
         for(int i = 0; i < ROWS; ++i) {
@@ -355,263 +328,102 @@ public class Simulation extends JPanel {
      * Method to create visual lines of people in the ques for the GUI, shows
      * up to fifteen people in each que
      */
-    public void createLines() {
+    public void createLanes() { //TODO Logic for this function is not fulling working yet
         
         int r;
         int y;
         
-        if(rest1 != null) {
+        if(intersection1.entryPoint[0] != null) {
             
             r = 7;
             y = 32;
             
-            if(rest1.size() < 16) {  
-                for(int p = 0; p < rest1.size(); ++p) {
+            if(intersection1.entryPoint[0].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[0].size(); ++p) {
                     Location loc = new Location(r,y);
-                    rest1.get(p).setLocation(loc);
-                    route[rest1.get(p).getLocation().getRow()][rest1.get(p).getLocation().getCol()] = rest1.get(p);
+                    intersection1.entryPoint[0].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[0].get(p).getLocation().getRow()][intersection1.entryPoint[0].get(p).getLocation().getCol()] = intersection1.entryPoint[0].get(p);
                     y = y - 2;
                 }  
             }
-            if(rest1.size() >= 16) { 
+            if(intersection1.entryPoint[0].size() >= 16) {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,0);
-                    rest1.get(p).setLocation(loc);
-                    route[rest1.get(p).getLocation().getRow()][rest1.get(p).getLocation().getCol()] = rest1.get(p);
+                    intersection1.entryPoint[0].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[0].get(p).getLocation().getRow()][intersection1.entryPoint[0].get(p).getLocation().getCol()] = intersection1.entryPoint[0].get(p);
                     y = y - 2;
                 }            
             }    
         }
 
-        if(rest2 != null){
+        if(intersection1.entryPoint[1] != null){
             
             r = 17;
             y = 32;
             
-            if(rest2.size() < 16) {
-                for(int p = 0; p < rest2.size(); ++p) {
+            if(intersection1.entryPoint[1].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[1].size(); ++p) {
                     Location loc = new Location(r,y);
-                    rest2.get(p).setLocation(loc);
-                    route[rest2.get(p).getLocation().getRow()][rest2.get(p).getLocation().getCol()] = rest2.get(p);
+                    intersection1.entryPoint[1].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[1].get(p).getLocation().getRow()][intersection1.entryPoint[1].get(p).getLocation().getCol()] = intersection1.entryPoint[1].get(p);
                     y = y - 2;
                 }  
             }
-            if(rest2.size() >= 16) { 
+            if(intersection1.entryPoint[1].size() >= 16) {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
-                    rest2.get(p).setLocation(loc);
-                    route[rest2.get(p).getLocation().getRow()][rest2.get(p).getLocation().getCol()] = rest2.get(p);
+                    intersection1.entryPoint[1].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[1].get(p).getLocation().getRow()][intersection1.entryPoint[1].get(p).getLocation().getCol()] = intersection1.entryPoint[1].get(p);
                     y = y - 2;
                 }             
             } 
         }
         
-        if(rest3 != null) {
+        if(intersection1.entryPoint[2] != null) {
             
             r = 27;
             y = 32;
             
-            if(rest3.size() < 16) {
-                for(int p = 0; p < rest3.size(); ++p) {
+            if(intersection1.entryPoint[2].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[2].size(); ++p) {
                     Location loc = new Location(r,y);
-                    rest3.get(p).setLocation(loc);
-                    route[rest3.get(p).getLocation().getRow()][rest3.get(p).getLocation().getCol()] = rest3.get(p);
+                    intersection1.entryPoint[2].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[2].get(p).getLocation().getRow()][intersection1.entryPoint[2].get(p).getLocation().getCol()] = intersection1.entryPoint[2].get(p);
                     y = y - 2;
                 }  
             }
-            if(rest3.size() >= 16) { 
+            if(intersection1.entryPoint[2].size() >= 16) {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
-                    rest3.get(p).setLocation(loc);
-                    route[rest3.get(p).getLocation().getRow()][rest3.get(p).getLocation().getCol()] = rest3.get(p);
+                    intersection1.entryPoint[2].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[2].get(p).getLocation().getRow()][intersection1.entryPoint[2].get(p).getLocation().getCol()] = intersection1.entryPoint[2].get(p);
                     y = y - 2;
                 }             
             }   
         }
         
-        if(rest4 != null) {
+        if(intersection1.entryPoint[3] != null) {
             
             r = 37;
             y = 32;
             
-            if(rest4.size() < 16) {
-                for(int p = 0; p < rest4.size(); ++p) {
+            if(intersection1.entryPoint[3].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[3].size(); ++p) {
                     Location loc = new Location(r,y);
-                    rest4.get(p).setLocation(loc);
-                    route[rest4.get(p).getLocation().getRow()][rest4.get(p).getLocation().getCol()] = rest4.get(p);
+                    intersection1.entryPoint[3].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[3].get(p).getLocation().getCol()] = intersection1.entryPoint[3].get(p);
                     y = y - 2;
                 }  
             }
-            if(rest4.size() >= 16) { 
+            if(intersection1.entryPoint[3].size() >= 16) {
                 for(int p = 0; p < 16; ++p) {
                     Location loc = new Location(r,y);
-                    rest4.get(p).setLocation(loc);
-                    route[rest4.get(p).getLocation().getRow()][rest4.get(p).getLocation().getCol()] = rest4.get(p);
+                    intersection1.entryPoint[3].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[3].get(p).getLocation().getCol()] = intersection1.entryPoint[3].get(p);
                     y = y - 2;
                 }             
             } 
         }
-        
-        if(rest5 != null) {
-            
-            r = 47;
-            y = 32;
-            
-            if(rest5.size() < 16) {
-                for(int p = 0; p < rest5.size(); ++p) {
-                    Location loc = new Location(r,y);
-                    rest5.get(p).setLocation(loc);
-                    route[rest5.get(p).getLocation().getRow()][rest5.get(p).getLocation().getCol()] = rest5.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(rest5.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    rest5.get(p).setLocation(loc);
-                    route[rest5.get(p).getLocation().getRow()][rest5.get(p).getLocation().getCol()] = rest5.get(p);
-                    y = y - 2;
-                }             
-            }  
-        }
-        
-       /* if(rest6 != null) {
-            
-            r = 57;
-            y = 32;
-            
-            if(rest6.size() < 16) {
-                for(int p = 0; p < rest6.size(); ++p) {
-                            Location loc = new Location(r,y);
-                            rest6.get(p).setLocation(loc);
-                            route[rest6.get(p).getLocation().getRow()][rest6.get(p).getLocation().getCol()] = rest6.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(rest6.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    rest6.get(p).setLocation(loc);
-                    route[rest6.get(p).getLocation().getRow()][rest6.get(p).getLocation().getCol()] = rest6.get(p);
-                    y = y - 2;
-                }             
-            }  
-        }
-        
-        if(rest7 != null) {
-            
-            r = 67;
-            y = 32;
-            
-            if(rest7.size() < 16) {
-                for(int p = 0; p < rest7.size(); ++p) {
-                    Location loc = new Location(r,y);
-                    rest7.get(p).setLocation(loc);
-                    route[rest7.get(p).getLocation().getRow()][rest7.get(p).getLocation().getCol()] = rest7.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(rest7.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    rest7.get(p).setLocation(loc);
-                    route[rest7.get(p).getLocation().getRow()][rest7.get(p).getLocation().getCol()] = rest7.get(p);
-                    y = y - 2;
-                }              
-            }  
-        }
-        
-        if(checkout1 != null) {
-            
-            r = 21;
-            y = 88;
-            
-            if(checkout1.size() < 16) {
-                for(int p = 0; p < checkout1.size(); ++p) {
-                    Location loc = new Location(r,y);
-                    checkout1.get(p).setLocation(loc);
-                    route[checkout1.get(p).getLocation().getRow()][checkout1.get(p).getLocation().getCol()] = checkout1.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(checkout1.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    checkout1.get(p).setLocation(loc);
-                    route[checkout1.get(p).getLocation().getRow()][checkout1.get(p).getLocation().getCol()] = checkout1.get(p);
-                    y = y - 2;
-                }             
-            }
-        }
-        
-        if(checkout2 != null) {
-             
-            r = 31;
-            y = 88;
-            
-            if(checkout2.size() < 16) {
-                for(int p = 0; p < checkout2.size(); ++p) {
-                    Location loc = new Location(r,y);
-                    checkout2.get(p).setLocation(loc);
-                    route[checkout2.get(p).getLocation().getRow()][checkout2.get(p).getLocation().getCol()] = checkout2.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(checkout2.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    checkout2.get(p).setLocation(loc);
-                    route[checkout2.get(p).getLocation().getRow()][checkout2.get(p).getLocation().getCol()] = checkout2.get(p);
-                    y = y - 2;
-                }            
-            }
-        }
-        
-        if(checkout3 != null) {
-             
-            r = 41;
-            y = 88;
-            
-            if(checkout3.size() < 16) {
-                for(int p = 0; p < checkout3.size(); ++p) {
-                    Location loc = new Location(r,y);
-                    checkout3.get(p).setLocation(loc);
-                    route[checkout3.get(p).getLocation().getRow()][checkout3.get(p).getLocation().getCol()] = checkout3.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(checkout3.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    checkout3.get(p).setLocation(loc);
-                    route[checkout3.get(p).getLocation().getRow()][checkout3.get(p).getLocation().getCol()] = checkout3.get(p);
-                    y = y - 2;
-                }              
-            } 
-        } 
-        
-        if(checkout4 != null) {
-             
-            r = 51;
-            y = 88;
-            
-            if(checkout4.size() < 16) {
-                for(int p = 0; p < checkout4.size(); ++p) {
-                    Location loc = new Location(r,y);
-                    checkout4.get(p).setLocation(loc);
-                    route[checkout4.get(p).getLocation().getRow()][checkout4.get(p).getLocation().getCol()] = checkout4.get(p);
-                    y = y - 2;
-                }  
-            }
-            if(checkout4.size() >= 16) { 
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    checkout4.get(p).setLocation(loc);
-                    route[checkout4.get(p).getLocation().getRow()][checkout4.get(p).getLocation().getCol()] = checkout4.get(p);
-                    y = y - 2;
-                }             
-            } 
-        } */
         repaint();
     }
     
@@ -620,52 +432,23 @@ public class Simulation extends JPanel {
      */
     public void checkLengths() {
          
-        if (rest1 != null) {
-            allQueLengths.add(rest1.size());
+        if (intersection1.entryPoint[0] != null) {
+            allQueLengths.add(intersection1.entryPoint[0].size());
         }    
-        if(rest2 != null) {
-            allQueLengths.add(rest2.size());
+        if(intersection1.entryPoint[1] != null) {
+            allQueLengths.add(intersection1.entryPoint[1].size());
         }
-        if(rest3 != null) {
-            allQueLengths.add(rest3.size());    
+        if(intersection1.entryPoint[2] != null) {
+            allQueLengths.add(intersection1.entryPoint[2].size());
         }
-        if(rest4 != null) {
-            allQueLengths.add(rest4.size());
+        if(intersection1.entryPoint[3] != null) {
+            allQueLengths.add(intersection1.entryPoint[3].size());
         }
-        if(rest5 != null) {
-            allQueLengths.add(rest5.size());
-        }
-       /* if(rest6 != null) {
-            allQueLengths.add(rest6.size());
-        }
-        if(rest7 != null) {
-            allQueLengths.add(rest7.size());
-        }
-        
-        if(checkout1 != null) {
-            allCheckQueLengths.add(checkout1.size());
-        }
-        if(checkout2 != null) {
-            allCheckQueLengths.add(checkout2.size());
-        }
-        if(checkout3 != null) {
-            allCheckQueLengths.add(checkout3.size());
-        }
-        if(checkout4 != null) {
-            allCheckQueLengths.add(checkout4.size());
-        }
-        
         for(int i = 0; i < allQueLengths.size(); ++i) {
             if(allQueLengths.get(i) > maxLaneLength) {
                 maxLaneLength = allQueLengths.get(i);
             }
         }
-        for(int y = 0; y < allCheckQueLengths.size(); ++y) {
-            if(allCheckQueLengths.get(y) > maxCheckLength) {
-                maxCheckLength = allCheckQueLengths.get(y);
-            }
-        }
-        */
     }
     
     /**
@@ -704,7 +487,7 @@ public class Simulation extends JPanel {
                 //removeVehicle(p);
         }  
         checkLengths();
-        createLines();
+        createLanes();
         repaint();
     }
     
@@ -740,28 +523,18 @@ public class Simulation extends JPanel {
         
         int vLeft = 0;
         
-        if(rest1 != null) {
-            vLeft = vLeft + rest1.size();
+        if(intersection1.entryPoint[0] != null) {
+            vLeft = vLeft + intersection1.entryPoint[0].size();
         }
-        if(rest2 != null) {
-            vLeft = vLeft + rest2.size();
+        if(intersection1.entryPoint[1] != null) {
+            vLeft = vLeft + intersection1.entryPoint[1].size();
         }
-        if(rest3 != null) {
-            vLeft = vLeft + rest3.size();
+        if(intersection1.entryPoint[2] != null) {
+            vLeft = vLeft + intersection1.entryPoint[2].size();
         }
-        if(rest4 != null) {
-            vLeft = vLeft + rest4.size();
+        if(intersection1.entryPoint[3] != null) {
+            vLeft = vLeft + intersection1.entryPoint[3].size();
         }
-        if(rest5 != null) {
-            vLeft = vLeft + rest5.size();
-        }
-       /* if(rest6 != null) {
-            perLeft = perLeft + rest6.size();
-        }
-        if(rest7 != null) {
-            perLeft = perLeft + rest7.size();
-        }
- */
         return vLeft;
     }
     
@@ -857,6 +630,25 @@ public class Simulation extends JPanel {
             //bottom two horizontal
             g.fillRect(115, 490, 290, 35);
             g.fillRect(680, 490, 290, 35);
+            //Horizontal lane dashes
+            g.fillRect(115, 395, 35, 10);
+            g.fillRect(195, 395, 35, 10);
+            g.fillRect(275, 395, 35, 10);
+            g.fillRect(355, 395, 35, 10);
+            g.fillRect(680, 395, 35, 10);
+            g.fillRect(760, 395, 35, 10);
+            g.fillRect(840, 395, 35, 10);
+            g.fillRect(920, 395, 35, 10);
+            //Vertical lane dashes
+            g.fillRect(540, 20, 10, 35);
+            g.fillRect(540, 100, 10, 35);
+            g.fillRect(540, 180, 10, 35);
+            g.fillRect(540, 260, 10, 35);
+            g.fillRect(540, 520, 10, 35);
+            g.fillRect(540, 600, 10, 35);
+            g.fillRect(540, 680, 10, 35);
+            g.fillRect(540, 760, 10, 35);
+
 
             if(intersection1.getType() == "Two Way") {
                 g.drawString("Intersection (Two - Way", 365, 75);
