@@ -1,5 +1,3 @@
-package srcCode;
-
 /**
  *
  * @author Muna

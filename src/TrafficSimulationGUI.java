@@ -1,5 +1,3 @@
-package srcCode;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.Timer;
@@ -26,7 +24,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private double avgIntersectionWaitTime;
     private double totalTime;
     private double timeLeft;
-    private double pTime;
+    private double vTime;
     private double cTime;
     private double eTime;
     private double avgEatSec;
@@ -141,7 +139,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
         add(statsArea,position);
 
-        trafficMap = new Simulation(secsTillNextVehicle, avgIntersectionWaitTime,totalTime,avgEatSec, 4);//TODO ADD TO THIS
+        trafficMap = new Simulation(secsTillNextVehicle, totalTime, 1);
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
         position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
@@ -195,28 +193,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(2,5,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
         input.add(in3Lab, position);
-
-        /* in4 = new JTextField(8);
-        in4.setMinimumSize(in4.getPreferredSize());
-        position = makeConstraints(5,3,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(-5,-20,0,20);
-        input.add(in4, position);
-        in4Lab = new JLabel("Average Seconds Per Eatery: ");
-        in4Lab.setFont(font);
-        position = makeConstraints(4,3,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(-5,-5,0,20);
-        input.add(in4Lab, position);
-
-        in5 = new JTextField(8);
-        in5.setMinimumSize(in5.getPreferredSize());
-        position = makeConstraints(5,4,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(5,-20,0,20);
-        input.add(in5, position);
-        in5Lab = new JLabel("Average Seconds Before Person Leaves: ");
-        in5Lab.setFont(font);
-        position = makeConstraints(4,4,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(7,-5,0,20);
-        input.add(in5Lab, position); */
 
 
         //Adding stats to statsArea JPanel
@@ -353,16 +329,16 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         if (e.getSource() == congestionLevel) {
             isRunning = false;
             if (congestionLevel.getSelectedItem() == "Low") {
-                secsTillNextVehicle = 5;
+                secsTillNextVehicle = 1000 * 5;
             }
             if (congestionLevel.getSelectedItem() == "Medium") {
-                secsTillNextVehicle = 3;
+                secsTillNextVehicle = 1000 * 3;
             }
             if (congestionLevel.getSelectedItem() == "High") {
-                secsTillNextVehicle = 2;
+                secsTillNextVehicle = 1000 * 2;
             }
             if (congestionLevel.getSelectedItem() == "Rush Hour") {
-                secsTillNextVehicle = 1;
+                secsTillNextVehicle = 1000 * 1;
             }
         }
 
@@ -434,7 +410,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
             //reset simulation if RESET menu item
             if (e.getSource() == reset) {
-                // trafficMap.reset();
+                trafficMap.reset();
                 firstTimeStartPressed = true;
             }
 
@@ -462,27 +438,25 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     public void run(){
         try {
 
-            // secsTillNextVehicle = 1000 * Double.parseDouble(in1.getText());
-            //avgIntersectionWaitTime = 1000 * Double.parseDouble(in2.getText());
-            //totalTime = 1000 * Double.parseDouble(in3.getText());
-            //avgEatSec = 1000 * Double.parseDouble(in4.getText());
-            //numOfIntersections = Integer.parseInt(in6.getText());
+             // dont need ?: secsTillNextVehicle = 1000 * Double.parseDouble(in1.getText());
+             totalTime = 1000 * 30; //set 30 seconds simulation run time (for now)
+             // may use later: numOfIntersections = Integer.parseInt(in6.getText());
 
-            // trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
-            //trafficMap.calculateAvgTimeStopped();
-            //trafficMap.calculateAvgVehicleThruTime();
-            //trafficMap.calculateUserVehicleThurTime();
-            //trafficMap.setTotalTime(totalTime);
-            //trafficMap.setNumOfIntersections(numOfIntersections);
-            //trafficMap.setPTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
+             trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
+             //trafficMap.calculateAvgTimeStopped();
+             //trafficMap.calculateAvgVehicleThruTime();
+             //trafficMap.calculateUserThruTime();
+             trafficMap.setTotalTime(totalTime);
+            // may use later: trafficMap.setNumOfIntersections(numOfIntersections);
+            trafficMap.setVTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
 
             timeLeft = totalTime;
 
             simTimer = new Timer(DELAY,new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
 
-                    //  trafficMap.setSimTimeLeft(timeLeft);
-                    // trafficMap.takeAction();
+                    trafficMap.setSimTimeLeft(timeLeft);
+                    trafficMap.takeAction();
 
                     timeLeft = timeLeft - DELAY;
 

@@ -1,4 +1,3 @@
-package srcCode;//Created by Brianne Kerr, 9/26/18
 import java.util.LinkedList;
 import java.util.Random;
 

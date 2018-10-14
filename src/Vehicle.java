@@ -1,5 +1,3 @@
-package srcCode;
-
 import java.awt.Color;
 import java.util.LinkedList;
 
@@ -68,6 +66,8 @@ public abstract class Vehicle {
     public Color getColor() {
         return color;
     }
+
+    //public abstract Direction getMoveDirection();
 
     public LinkedList<Vehicle> getQue() {
         return que;

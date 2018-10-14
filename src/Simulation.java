@@ -1,5 +1,3 @@
-package srcCode;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -33,14 +31,14 @@ public class Simulation extends JPanel {
 
     //Instance variable declarations
     private double secsTillNextVehicle;
-    private double pTime;
+    private double vTime;
     private double avgStoppedSec;
     private double totalTime;
     private double vehicleSpeed;
     private double simTimeLeft;
     private double timeVehicleAdded;
     private int numOfVehicles;
-    private int numOfIntersections = 1;
+    private int numOfIntersections;
     private int maxLaneLength;
     private int finished;
     private double totalAvgVehicleTime;
@@ -53,12 +51,9 @@ public class Simulation extends JPanel {
 /**
  * Class Constructor initializes instance variables
  * @param secNext
- * @param vSpeed
  * @param totTime
- * @param avgStopTime
- * @param numOfInts
  */
-    public Simulation(double secNext, double vSpeed, double totTime, double avgStopTime, int numOfInts){
+    public Simulation(double secNext, double totTime, int numOfInts){
         
         route = new Vehicle[ROWS][COLUMNS];
         allVehicles = new ArrayList<Vehicle>();
@@ -75,7 +70,6 @@ public class Simulation extends JPanel {
         intersection2 = new Intersection();
 
         secsTillNextVehicle = secNext;
-        avgStoppedSec = avgStopTime;
         totalTime = totTime;
         if(numOfInts > 1) {
             numOfIntersections = numOfInts;
@@ -85,7 +79,6 @@ public class Simulation extends JPanel {
         numOfVehicles = 0;
         timeVehicleAdded = 0;
         maxLaneLength = 0;
-        vehicleSpeed = vSpeed;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
     
@@ -134,8 +127,8 @@ public class Simulation extends JPanel {
      * Method to set
      * @param pt 
      */
-    public void setPTime(double pt) {
-        pTime = pt;
+    public void setVTime(double pt) {
+        vTime = pt;
     }
     
     /**
@@ -351,31 +344,11 @@ public class Simulation extends JPanel {
      * @param p
      * @return 
      */
-    public boolean isInLane(Vehicle p) {
+    public void switchLanes(Vehicle p) {
         
         boolean isInCheck = false;
         
-      /*  if(checkout1 != null) {
-            if(p.getQue().equals(checkout1)) { 
-                isInCheck = true;
-            }
-        }
-        if(checkout2 != null) {
-            if(p.getQue().equals(checkout2)) { 
-                isInCheck = true;
-            }
-        }
-        if(checkout3 != null) {
-            if(p.getQue().equals(checkout3)) { 
-                isInCheck = true;
-            }
-        }
-        if(checkout4 != null) {
-            if(p.getQue().equals(checkout4)) { 
-                isInCheck = true;
-            }
-        } */
-        return isInCheck;
+
     }    
         
     /**
@@ -701,7 +674,7 @@ public class Simulation extends JPanel {
     public void takeAction(){
         
         double currTime = getSimTimeLeft();
-        LinkedList<Vehicle> eatHolder = null;
+        LinkedList<Vehicle> laneHolder = null;
         LinkedList<Vehicle> checkHolder= null;
          
         
@@ -712,8 +685,8 @@ public class Simulation extends JPanel {
             timeVehicleAdded = currTime;
         }
         
-        //generate another Vehicle at ever pTime seconds (or asap after if delay causes simulation to pass pTime)
-        if((timeVehicleAdded - currTime) >= pTime) {
+        //generate another Vehicle at ever vTime seconds (or asap after if delay causes simulation to pass vTime)
+        if((timeVehicleAdded - currTime) >= vTime) {
             addVehicle();
             timeVehicleAdded = currTime;
         }
@@ -723,42 +696,12 @@ public class Simulation extends JPanel {
             
             Vehicle p = allVehicles.get(u);
             
-         /*   if(p.getCreateTime() - currTime < p.getLeaveTime()) {
-                if(isInCheckout(p) == false) {
-                    eatHolder = p.getQue();
-            
-                    if(p.equals(eatHolder.get(0))) {
-                        if(p.getBeginEatTime() == 0) {
-                            p.setBeginEatTime(currTime);
-                        }
-                        if((p.getBeginEatTime() - currTime) >= p.getEateryTime()) {
-                            route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
-                            eatHolder.remove(p);
-                            selectCheckout(p);
-                        }    
-                    }   
-                }    
-                if(isInCheckout(p)) {
-                    
-                    checkHolder = p.getQue();
-                    
-                    if(p.equals(checkHolder.get(0))) {
-                        if(p.getBeginCheckoutTime() == 0) {  
-                            p.setBeginCheckoutTime(currTime);
-                        }    
-                        if((p.getBeginCheckoutTime() - currTime) >= p.getCashiersTime()) {
-                            allAvgTimes.add(p.getCreateTime() - currTime);
-                            allAvgCheckTimes.add(p.getBeginCheckoutTime() - currTime);
-                            removeVehicle(p); 
-                            ++finished;
-                        }
-                    }
-                }    
-            }        
-            else {
-                removeVehicle(p);  
-            } */
-            ++VehicleNum;
+
+//TODO determine whether vehicle should stya, switch lanes, or leave the map
+                //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
+                //   eatHolder.remove(p);
+                //  selectCheckout(p);
+                //removeVehicle(p);
         }  
         checkLengths();
         createLines();
@@ -818,18 +761,7 @@ public class Simulation extends JPanel {
         if(rest7 != null) {
             perLeft = perLeft + rest7.size();
         }
-        if(checkout1 != null) {
-            perLeft = perLeft + checkout1.size();
-        }
-        if(checkout2 != null) {
-            perLeft = perLeft + checkout2.size();
-        }
-        if(checkout3 != null) {
-            perLeft = perLeft + checkout3.size();
-        }
-        if(checkout4 != null) {
-            perLeft = perLeft + checkout4.size();
-        } */
+ */
         return vLeft;
     }
     
@@ -913,15 +845,18 @@ public class Simulation extends JPanel {
         if(numOfIntersections == 1) {
 
             g.setColor(Color.BLACK);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.fillRect(350, 40, 35, 105);
-            g.setColor(Color.BLACK);
+            //top two veritcal
+            g.fillRect(370, 20, 35, 270);
+            g.fillRect(680, 20, 35, 270);
+            //bottom two vertical
+            g.fillRect(370, 520, 35, 270);
+            g.fillRect(680, 520, 35, 270);
+            //top two horizontal
+            g.fillRect(115, 280, 290, 35);
+            g.fillRect(680, 280, 290, 35);
+            //bottom two horizontal
+            g.fillRect(115, 490, 290, 35);
+            g.fillRect(680, 490, 290, 35);
 
             if(intersection1.getType() == "Two Way") {
                 g.drawString("Intersection (Two - Way", 365, 75);

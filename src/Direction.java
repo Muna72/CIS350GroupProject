@@ -1,5 +1,3 @@
-package srcCode;
-
 //Created by Brianne Kerr, 9/28/18
 public enum Direction
 {
