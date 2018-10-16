@@ -42,7 +42,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     //define buttons
     JButton start;
     JButton stop;
-    JButton pause;
 
     //define JComboBoxes
     JComboBox<String> congestionLevel;
@@ -118,6 +117,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
         isRunning = false;
         firstTimeStartPressed = true;
+        secsTillNextVehicle = 1000 * 5;
 
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
@@ -128,11 +128,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         input.setBorder(new EmptyBorder(30, 0, 30, 120));
         position = makeConstraints(10,0,1,1,GridBagConstraints.LINE_END);
         add(input,position);
-
-        buttons = new JPanel(new GridBagLayout());
-        buttons.setBorder(new EmptyBorder(10, 70, 30, 40));
-        position = makeConstraints(10,4,1,1,GridBagConstraints.LINE_END);
-        add(buttons,position);
 
         statsArea = new JPanel(new GridBagLayout());
         statsArea.setBorder(new EmptyBorder(30, 200, 0, 120));
@@ -325,6 +320,36 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
      */
     public void actionPerformed(ActionEvent e) {
 
+
+        //exit application if QUIT menu item
+        if (e.getSource() == quit) {
+            System.exit(1);
+        }
+
+        //set running variable to true if START button
+        if (e.getSource() == start) {
+            if (firstTimeStartPressed) {
+                isRunning = true;
+                new Thread(this).start();
+                firstTimeStartPressed = false;
+            } else {
+                simTimer.start();
+            }
+        }
+
+
+        //set running variable to false if STOP button
+        if (e.getSource() == stop) {
+            isRunning = false;
+            simTimer.stop();
+        }
+
+        //reset simulation if RESET menu item
+        if (e.getSource() == reset) {
+            trafficMap.reset();
+            firstTimeStartPressed = true;
+        }
+
         //set route congestion level based on user input
         if (e.getSource() == congestionLevel) {
             isRunning = false;
@@ -352,7 +377,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                     break;
                 case "Light Rain":
                     DELAY = 18;
-                    System.out.print(DELAY);
                     break;
                 case "Light Snow":
                     DELAY = 18;
@@ -385,35 +409,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                 }
             }
 
-            //exit application if QUIT menu item
-            if (e.getSource() == quit) {
-                System.exit(1);
-            }
-
-            //set running variable to true if START button
-            if (e.getSource() == start) {
-                if (firstTimeStartPressed) {
-                    isRunning = true;
-                    new Thread(this).start();
-                    firstTimeStartPressed = false;
-                } else {
-                    simTimer.start();
-                }
-            }
-
-
-            //set running variable to false if STOP button
-            if (e.getSource() == stop) {
-                isRunning = false;
-                simTimer.stop();
-            }
-
-            //reset simulation if RESET menu item
-            if (e.getSource() == reset) {
-                trafficMap.reset();
-                firstTimeStartPressed = true;
-            }
-
             //update GUI
             trafficMap.repaint();
         }
@@ -443,6 +438,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
              // may use later: numOfIntersections = Integer.parseInt(in6.getText());
 
              trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
+             System.out.println("secs till next v: " + secsTillNextVehicle);
              //trafficMap.calculateAvgTimeStopped();
              //trafficMap.calculateAvgVehicleThruTime();
              //trafficMap.calculateUserThruTime();

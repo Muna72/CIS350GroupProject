@@ -13,7 +13,7 @@ public class Car extends Vehicle {
         isUserCar = false;
     }
 
-    public Car(int size, int mph, Direction[] path, double createTime,
+    public Car(Direction[] path, double createTime,
                LinkedList<Vehicle> currentList, boolean isUserCar){
         this.size = size;
         this.mph = mph;

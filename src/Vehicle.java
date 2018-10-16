@@ -28,7 +28,7 @@ public abstract class Vehicle {
         timeCreated = 0;
     }
 
-    public Vehicle(int size, int mph, Direction[] path, Color color){
+    public Vehicle(Direction[] path, Color color){
         this.size = size;
         this.mph = mph;
         this.path = path;

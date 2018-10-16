@@ -39,6 +39,7 @@ public class Simulation extends JPanel {
     private double totalAvgVehicleTime;
     private double totalAvgStoppedTime;
     private boolean firstPer = false;
+    private boolean isLanesOneAndThree = false;
     private Random rand = new Random();
     Vehicle vHolder = new Car(); //need to give parameters
     
@@ -49,7 +50,7 @@ public class Simulation extends JPanel {
  * @param totTime
  */
     public Simulation(double secNext, double totTime, int numOfInts){
-        
+
         route = new Vehicle[ROWS][COLUMNS];
         allVehicles = new ArrayList<Vehicle>();
         allAvgTimes = new ArrayList<Double>();
@@ -147,6 +148,8 @@ public class Simulation extends JPanel {
             p.setCreateTime(getSimTimeLeft()); //TODO do we need this?
             firstPer = false;
         }
+        System.out.println("vehicle is in que: " + p.getQue());
+
         createLanes();
         repaint();
     }
@@ -212,7 +215,7 @@ public class Simulation extends JPanel {
         
         Vehicle p = null;
 
-        int gen = rand.nextInt(3 - 1 + 1) + 1;
+        int gen = rand.nextInt(4 - 1 + 1) + 1;
             
             
         if(numOfVehicles <= MAX_VEHICLES) {
@@ -224,6 +227,9 @@ public class Simulation extends JPanel {
             }
             if(gen == 3) {
                 p = new SemiTruck();
+            }
+            if(gen == 4) {
+                p = new Car();
             }
             p.setCreateTime(getSimTimeLeft());
             placeVehicle(p);
@@ -322,7 +328,14 @@ public class Simulation extends JPanel {
         boolean isInCheck = false;
         
 
-    }    
+    }
+
+    public void setGreenLanes() { //TODO if this is true, then move cars through one and three, or vice versa
+        if(!isLanesOneAndThree) {
+            isLanesOneAndThree = true;
+        }
+    }
+
         
     /**
      * Method to create visual lines of people in the ques for the GUI, shows
@@ -458,13 +471,13 @@ public class Simulation extends JPanel {
         
         double currTime = getSimTimeLeft();
         LinkedList<Vehicle> laneHolder = null;
-        LinkedList<Vehicle> checkHolder= null;
-         
-        
+
         //generate first Vehicle shortly into simulation
         if(currTime == totalTime - 500) {
+            System.out.println("hit takenAction() loop hit");
             firstPer = true;
             addVehicle();
+            System.out.println("First vehicle added at time: " + currTime);
             timeVehicleAdded = currTime;
         }
         
@@ -478,13 +491,27 @@ public class Simulation extends JPanel {
         for(int u = 0; u < allVehicles.size(); ++u) {
             
             Vehicle p = allVehicles.get(u);
-            
+            laneHolder = p.getQue();
 
-//TODO determine whether vehicle should stya, switch lanes, or leave the map
-                //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
-                //   eatHolder.remove(p);
-                //  selectCheckout(p);
-                //removeVehicle(p);
+                if(laneHolder == intersection1.entryPoint[1] || laneHolder == intersection1.entryPoint[3]) {
+                    if (isLanesOneAndThree) {
+                        if(p.getQue() == intersection1.entryPoint[1] && p.getLocation() == new Location(3,4)) {
+
+                        }
+                        //figure out which direction they are moving, and if they should cross or leave map
+                    }
+                } else {
+                    if(!isLanesOneAndThree) {
+                      //figure ot which direction they are moving, and if they should cross or leave map
+                    }
+                }
+                //TODO check if car is on first or end side of intersection, and
+                //TODO remove car if their location is specified as the "end of the road"
+                    laneHolder.remove(p);
+                    allAvgTimes.add(p.getCreateTime() - currTime);
+                    //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
+                    removeVehicle(p);
+                    ++finished;
         }  
         checkLengths();
         createLanes();
