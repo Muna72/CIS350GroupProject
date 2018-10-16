@@ -6,11 +6,11 @@ public class Intersection
     //Holds list of vehicles going in a specified direction
     //entryPoint[0] = NORTH, entryPoint[1] = EAST,
     //entryPoint[2] = SOUTH, entryPoint[3] = WEST
-    public LinkedList<Vehicle>[] entryPoint = new LinkedList[4];
+    public LinkedList<Vehicle>[] entryPoint = new LinkedList[8];
 
     //Holds the number of vehicles that have passed through
     //a lane in a specified direction; corresponds to entryPoint[]
-    private int[] entryPointCounter = new int[4];
+    private int[] entryPointCounter = new int[8];
 
     //Holds the number of cars that have passed through the intersection
     private int interCounter = 0;
@@ -41,11 +41,19 @@ public class Intersection
         entryPoint[1] = new LinkedList<Vehicle>();
         entryPoint[2] = new LinkedList<Vehicle>();
         entryPoint[3] = new LinkedList<Vehicle>();
+        entryPoint[4] = new LinkedList<Vehicle>();
+        entryPoint[5] = new LinkedList<Vehicle>();
+        entryPoint[6] = new LinkedList<Vehicle>();
+        entryPoint[7] = new LinkedList<Vehicle>();
 
         entryPointCounter[0] = 0;
         entryPointCounter[1] = 0;
         entryPointCounter[2] = 0;
         entryPointCounter[3] = 0;
+        entryPointCounter[4] = 0;
+        entryPointCounter[5] = 0;
+        entryPointCounter[6] = 0;
+        entryPointCounter[7] = 0;
 
     }
 
@@ -197,13 +205,13 @@ public class Intersection
         switch (dir)
         {
             case NORTH:
-                return entryPoint[0];
-            case EAST:
                 return entryPoint[1];
-            case SOUTH:
+            case EAST:
                 return entryPoint[2];
-            case WEST:
+            case SOUTH:
                 return entryPoint[3];
+            case WEST:
+                return entryPoint[0];
             default:
                 return null;
         }
@@ -215,6 +223,10 @@ public class Intersection
         entryPoint[1].clear();
         entryPoint[2].clear();
         entryPoint[3].clear();
+        entryPoint[4].clear();
+        entryPoint[5].clear();
+        entryPoint[6].clear();
+        entryPoint[7].clear();
     }
 
 

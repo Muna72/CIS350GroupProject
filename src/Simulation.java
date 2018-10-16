@@ -375,23 +375,23 @@ public class Simulation extends JPanel {
 
         switch (dir) {
             case NORTH:
-                intersection1.entryPoint[1].add(v);
                 holder.remove(v);
+                intersection1.entryPoint[1].add(v); //TODO does this add in right place?
                 v.setQue(intersection1.entryPoint[1]);
                 break;
             case EAST:
-                intersection1.entryPoint[2].add(v);
                 holder.remove(v);
+                intersection1.entryPoint[2].add(v);
                 v.setQue(intersection1.entryPoint[2]);
                 break;
             case SOUTH:
-                intersection1.entryPoint[3].add(v);
                 holder.remove(v);
+                intersection1.entryPoint[3].add(v);
                 v.setQue(intersection1.entryPoint[3]);
                 break;
             case WEST:
-                intersection1.entryPoint[0].add(v);
                 holder.remove(v);
+                intersection1.entryPoint[0].add(v);
                 v.setQue(intersection1.entryPoint[0]);
                 break;
         }
@@ -548,7 +548,7 @@ public class Simulation extends JPanel {
             timeVehicleAdded = currTime;
         }
 
-        //Every ten seconds switch which lanes have green light
+        //TODO Every ten seconds switch which lanes have green light
         if(currTime % 10 == 0) {
            if(isLanesOneAndThree) {
                isLanesOneAndThree = false;
