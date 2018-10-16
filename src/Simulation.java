@@ -365,16 +365,36 @@ public class Simulation extends JPanel {
      }
     /**
      * Method to see of a Vehicle is in any of the checkout lines
-     * @param p
+     * @param v
      * @return 
      */
     public void switchLanes(Vehicle v) {
         
-        LinkedList<Vehicle> temp = v.getQue();
+        LinkedList<Vehicle> holder = v.getQue();
+        Direction dir = v.getPath();
 
-        if()
-        
-
+        switch (dir) {
+            case NORTH:
+                intersection1.entryPoint[1].add(v);
+                holder.remove(v);
+                v.setQue(intersection1.entryPoint[1]);
+                break;
+            case EAST:
+                intersection1.entryPoint[2].add(v);
+                holder.remove(v);
+                v.setQue(intersection1.entryPoint[2]);
+                break;
+            case SOUTH:
+                intersection1.entryPoint[3].add(v);
+                holder.remove(v);
+                v.setQue(intersection1.entryPoint[3]);
+                break;
+            case WEST:
+                intersection1.entryPoint[0].add(v);
+                holder.remove(v);
+                v.setQue(intersection1.entryPoint[0]);
+                break;
+        }
     }
 
     public void setGreenLanes() { //TODO if this is true, then move cars through one and three, or vice versa
@@ -533,31 +553,47 @@ public class Simulation extends JPanel {
             addVehicle();
             timeVehicleAdded = currTime;
         }
+
+        //Every ten seconds switch which lanes have green light
+        if(currTime % 10 == 0) {
+           if(isLanesOneAndThree) {
+               isLanesOneAndThree = false;
+           } else {
+               isLanesOneAndThree = true;
+           }
+        }
         
-        int VehicleNum = 1;
+        //loop through all vehicles
         for(int u = 0; u < allVehicles.size(); ++u) {
             
-            Vehicle p = allVehicles.get(u);
-            laneHolder = p.getQue();
+            Vehicle v = allVehicles.get(u);
+            laneHolder = v.getQue();
 
                 if(laneHolder == intersection1.entryPoint[1] || laneHolder == intersection1.entryPoint[3]) {
                     if (isLanesOneAndThree) {
-                        if(p.getQue() == intersection1.entryPoint[1] && p.getLocation() == new Location(3,4)) {
-
+                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
+                            switchLanes(v);
                         }
-                        //figure out which direction they are moving, and if they should cross or leave map
+                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
+                            removeVehicle(v);
+                        }
                     }
                 } else {
                     if(!isLanesOneAndThree) {
-                      //figure ot which direction they are moving, and if they should cross or leave map
+                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
+                            switchLanes(v);
+                        }
+                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
+                            removeVehicle(v);
+                        }
                     }
                 }
                 //TODO check if car is on first or end side of intersection, and
                 //TODO remove car if their location is specified as the "end of the road"
-                    laneHolder.remove(p);
-                    allAvgTimes.add(p.getCreateTime() - currTime);
+                    laneHolder.remove(v);
+                    allAvgTimes.add(v.getCreateTime() - currTime);
                     //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
-                    removeVehicle(p);
+                    removeVehicle(v);
                     ++finished;
         }  
         checkLengths();
