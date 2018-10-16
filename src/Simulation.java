@@ -117,7 +117,7 @@ public class Simulation extends JPanel {
     
     /**
      * Method to place Vehicle in a restaurant que
-     * @param p 
+     * @param v
      */
     private void placeVehicle(Vehicle v){
         
@@ -368,9 +368,9 @@ public class Simulation extends JPanel {
      * @param p
      * @return 
      */
-    public void switchLanes(Vehicle p) {
+    public void switchLanes(Vehicle v) {
         
-        LinkedList<Vehicle> temp = p.getQue();
+        LinkedList<Vehicle> temp = v.getQue();
 
         if()
         
