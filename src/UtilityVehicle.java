@@ -3,7 +3,7 @@ import java.util.LinkedList;
 
 
 public class UtilityVehicle extends Vehicle {
-    
+
     private boolean isUserCar;
 
     public UtilityVehicle(){

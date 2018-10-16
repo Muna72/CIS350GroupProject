@@ -716,13 +716,13 @@ public class Simulation extends JPanel {
                 }
 
                 // paint the location
-                if(p.getSize() == 1) {
+              //  if(p.getSize() == 1) {
                     g.fillRect(col * SIZE, row * SIZE, SIZE, SIZE);
-                } else if (p.getSize() == 2) {
-                    g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
-                } else {
-                    g.fillRect(col * SIZE, row * SIZE, SIZE + 4, SIZE + 4);
-                }
+             //   } else if (p.getSize() == 2) {
+               //     g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
+               // } else {
+                 //   g.fillRect(col * SIZE, row * SIZE, SIZE + 4, SIZE + 4);
+               // }
             }
         }
         if(numOfIntersections == 1) {
