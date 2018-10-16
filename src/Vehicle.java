@@ -5,7 +5,7 @@ public abstract class Vehicle {
 
     protected int size;
 
-    protected Direction[] path;
+    protected Direction path;
 
     protected Location location;
 
@@ -33,11 +33,11 @@ public abstract class Vehicle {
         this.size = size;
     }
 
-    public Direction[] getPath() {
+    public Direction getPath() {
         return path;
     }
 
-    public void setPath(Direction[] path) {
+    public void setPath(Direction path) {
         this.path = path;
     }
 

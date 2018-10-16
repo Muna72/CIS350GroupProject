@@ -1,3 +1,5 @@
+import sun.awt.image.ImageWatched;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -117,41 +119,117 @@ public class Simulation extends JPanel {
      * Method to place Vehicle in a restaurant que
      * @param p 
      */
-    private void placeVehicle(Vehicle p){   
+    private void placeVehicle(Vehicle v){
         
         int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO change for two intersections
 
         switch(gen) {
             case 1:  gen = 1;
-                     intersection1.entryPoint[0].add(p);
-                     p.setQue(intersection1.entryPoint[0]);
+                     intersection1.entryPoint[0].add(v);
+                     v.setQue(intersection1.entryPoint[0]);
+                     setPath(v);
                      break;
             case 2:  gen = 2;
-                    intersection1.entryPoint[1].add(p);
-                     p.setQue(intersection1.entryPoint[1]);
+                    intersection1.entryPoint[1].add(v);
+                     v.setQue(intersection1.entryPoint[1]);
+                     setPath(v);
                      break;
             case 3:  gen = 3;
-                    intersection1.entryPoint[2].add(p);
-                     p.setQue(intersection1.entryPoint[2]);
+                    intersection1.entryPoint[2].add(v);
+                     v.setQue(intersection1.entryPoint[2]);
+                     setPath(v);
                      break;
             case 4:  gen = 4;
-                     intersection1.entryPoint[3].add(p);
-                     p.setQue(intersection1.entryPoint[3]);
+                     intersection1.entryPoint[3].add(v);
+                     v.setQue(intersection1.entryPoint[3]);
+                     setPath(v);
                      break;
             default:
-                    intersection1.entryPoint[0].add(p);
-                     p.setQue(intersection1.entryPoint[0]);
+                    intersection1.entryPoint[0].add(v);
+                     v.setQue(intersection1.entryPoint[0]);
+                     setPath(v);
                      break;         
         } 
         
         if(firstPer == true) {
-            p.setCreateTime(getSimTimeLeft()); //TODO do we need this?
+            v.setCreateTime(getSimTimeLeft()); //TODO do we need this?
             firstPer = false;
         }
-        System.out.println("vehicle is in que: " + p.getQue());
+        System.out.println("vehicle is in que: " + v.getQue());
 
         createLanes();
         repaint();
+    }
+
+    public void setPath(Vehicle v) {
+
+        LinkedList<Vehicle> laneHolder = v.getQue();
+        int dirGen = rand.nextInt(3 - 1 + 1) + 1;
+
+        if(laneHolder == intersection1.entryPoint[0]) {
+            switch (dirGen) {
+                case 1:
+                    v.setPath(Direction.NORTH);
+                    break;
+                case 2:
+                    v.setPath(Direction.EAST);
+                    break;
+                case 3:
+                    v.setPath(Direction.SOUTH);
+                    break;
+                default:
+                    v.setPath(Direction.NORTH);
+                    break;
+            }
+        }
+        if(laneHolder == intersection1.entryPoint[1]) {
+            switch (dirGen) {
+                case 1:
+                    v.setPath(Direction.WEST);
+                    break;
+                case 2:
+                    v.setPath(Direction.EAST);
+                    break;
+                case 3:
+                    v.setPath(Direction.SOUTH);
+                    break;
+                default:
+                    v.setPath(Direction.WEST);
+                    break;
+            }
+        }
+        if(laneHolder == intersection1.entryPoint[2]) {
+            switch (dirGen) {
+                case 1:
+                    v.setPath(Direction.NORTH);
+                    break;
+                case 2:
+                    v.setPath(Direction.WEST);
+                    break;
+                case 3:
+                    v.setPath(Direction.SOUTH);
+                    break;
+                default:
+                    v.setPath(Direction.WEST);
+                    break;
+            }
+        }
+        if(laneHolder == intersection1.entryPoint[3]) {
+            switch (dirGen) {
+                case 1:
+                    v.setPath(Direction.NORTH);
+                    break;
+                case 2:
+                    v.setPath(Direction.EAST);
+                    break;
+                case 3:
+                    v.setPath(Direction.WEST);
+                    break;
+                default:
+                    v.setPath(Direction.NORTH);
+                    break;
+            }
+        }
     }
     
     /**Method to reset the simulation *************************
@@ -213,27 +291,27 @@ public class Simulation extends JPanel {
      */
     public void addVehicle(){
         
-        Vehicle p = null;
+        Vehicle v = null;
 
-        int gen = rand.nextInt(4 - 1 + 1) + 1;
-            
+        int typeGen = rand.nextInt(4 - 1 + 1) + 1;
             
         if(numOfVehicles <= MAX_VEHICLES) {
-            if(gen == 1) {
-               p = new Car();
+            if(typeGen == 1) {
+               v = new Car();
             }
-            if(gen == 2) {
-                p = new UtilityVehicle();
+            if(typeGen == 2) {
+                v = new UtilityVehicle();
             }
-            if(gen == 3) {
-                p = new SemiTruck();
+            if(typeGen == 3) {
+                v = new SemiTruck();
             }
-            if(gen == 4) {
-                p = new Car();
+            if(typeGen == 4) {
+                v = new Car();
             }
-            p.setCreateTime(getSimTimeLeft());
-            placeVehicle(p);
-            allVehicles.add(p);
+
+            v.setCreateTime(getSimTimeLeft());
+            placeVehicle(v);
+            allVehicles.add(v);
             ++numOfVehicles;
         }    
     }
@@ -247,7 +325,7 @@ public class Simulation extends JPanel {
 
          int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO will need ot change if more than one intersection
          LinkedList<Vehicle> userLane;
-         Vehicle userCar = new Car(true); //TODO setIsUserCar to true
+         Vehicle userCar = new Car(true);
 
          switch (gen) {
              case 1:
@@ -292,7 +370,9 @@ public class Simulation extends JPanel {
      */
     public void switchLanes(Vehicle p) {
         
-        boolean isInCheck = false;
+        LinkedList<Vehicle> temp = p.getQue();
+
+        if()
         
 
     }
