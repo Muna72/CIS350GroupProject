@@ -397,12 +397,6 @@ public class Simulation extends JPanel {
         }
     }
 
-    public void setGreenLanes() { //TODO if this is true, then move cars through one and three, or vice versa
-        if(!isLanesOneAndThree) {
-            isLanesOneAndThree = true;
-        }
-    }
-
         
     /**
      * Method to create visual lines of people in the ques for the GUI, shows
