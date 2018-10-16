@@ -15,18 +15,6 @@ public class Intersection
     //Holds the number of cars that have passed through the intersection
     private int interCounter = 0;
 
-    //Holds the time that EAST and WEST lanes are green, per cycle
-    private int horizCycleTime;
-
-    //Holds the number of cars that pass through lanes EAST and WEST, per cycle
-    private int horizCycleCars;
-
-    //Holds the time that NORTH and SOUTH lanes are green, per cycle
-    private int vertCycleTime;
-
-    //Holds the number of cars that pass through lanes NORTH and SOUTH, per cycle
-    private int vertCycleCars;
-
     private String type;
 
     //Used to generate pseudo-random numbers
@@ -61,8 +49,7 @@ public class Intersection
      * Initialize each entry point with a linked list with a specified
      * number of random vehicles
      */
-    public Intersection(int westStart, int northStart, int eastStart,
-                        int southStart, int horizCycleTime, int horizCycleCars, int vertCycleTime,
+    public Intersection(int horizCycleTime, int horizCycleCars, int vertCycleTime,
                         int vertCycleCars, String type)
     {
         entryPoint[0] = new LinkedList<Vehicle>();
@@ -70,153 +57,15 @@ public class Intersection
         entryPoint[2] = new LinkedList<Vehicle>();
         entryPoint[3] = new LinkedList<Vehicle>();
 
-        initializeRandom(Direction.NORTH, northStart);
-        initializeRandom(Direction.EAST, eastStart);
-        initializeRandom(Direction.SOUTH, southStart);
-        initializeRandom(Direction.WEST, westStart);
-
 
         entryPointCounter[0] = 0;
         entryPointCounter[1] = 0;
         entryPointCounter[2] = 0;
         entryPointCounter[3] = 0;
 
-        this.horizCycleTime = horizCycleTime;
-        this.horizCycleCars = horizCycleCars;
-        this.vertCycleTime = vertCycleTime;
-        this.vertCycleCars = vertCycleCars;
         this.type = type;
     }
 
-    /*
-     * creates the specified number of vehicles of a random type
-     * to the specified entryPoint linkedList
-     */
-    private void initializeRandom(Direction dir, int numVehicles)
-    {
-        for(int x = 0; x < numVehicles; x++)
-        {
-            int type = rand.nextInt(2);
-            Vehicle veh;
-
-            switch(type)
-            {
-                case 0:
-                    veh = new Car();
-                    break;
-                case 1:
-                    veh = new SemiTruck();
-                    break;
-                default:
-                    veh = new Car();
-                    break;
-            }
-
-            this.addVehicle(veh, dir);
-        }
-    }
-
-    /*
-     * Takes in a Vehicle and adds it to the specified
-     * Direction (NORTH, SOUTH, EAST, WEST)
-     */
-    public void addVehicle(Vehicle veh, Direction directTo)
-    {
-        switch (directTo)
-        {
-            case NORTH:
-                entryPoint[0].push(veh);
-                break;
-            case EAST:
-                entryPoint[1].push(veh);
-                break;
-            case SOUTH:
-                entryPoint[2].push(veh);
-                break;
-            case WEST:
-                entryPoint[3].push(veh);
-                break;
-        }
-    }
-
-    /*
-     *Pops the front vehicle from the linked list of the specified
-     *Direction (NORTH, SOUTH, EAST, WEST) and returns the vehicle.
-     *Also adds to the interCounter (number of vehicles that have passed
-     *through the intersection)
-     */
-    public Vehicle sendVehicle(Direction directFrom)
-    {
-        interCounter++;
-
-        switch (directFrom) {
-            case NORTH:
-                entryPointCounter[0]++;
-                return entryPoint[0].pop();
-            case EAST:
-                entryPointCounter[0]++;
-                return entryPoint[1].pop();
-            case SOUTH:
-                entryPointCounter[0]++;
-                return entryPoint[2].pop();
-            case WEST:
-                entryPointCounter[0]++;
-                return entryPoint[3].pop();
-            default:
-                return null;
-        }
-
-    }
-
-    /*
-     * returns the number of cars that go through each horizontal cycle
-     */
-    public int getHorizCycleCars()
-    {
-        return horizCycleCars;
-    }
-
-    /*
-     * returns the length of time of each horizontal cycle
-     */
-    public int getHorizCycleTime()
-    {
-        return horizCycleTime;
-    }
-
-    /*
-     * returns the number of cars that go through each vertical cycle
-     */
-    public int getVertCycleCars()
-    {
-        return vertCycleCars;
-    }
-
-    /*
-     * returns the length of time of each vertical cycle
-     */
-    public int getVertCycleTime()
-    {
-        return vertCycleTime;
-    }
-
-    public LinkedList<Vehicle> getLane(Direction dir)
-    {
-        switch (dir)
-        {
-            case NORTH:
-                return entryPoint[1];
-            case EAST:
-                return entryPoint[2];
-            case SOUTH:
-                return entryPoint[3];
-            case WEST:
-                return entryPoint[0];
-            default:
-                return null;
-        }
-
-    }
 
     public void clear() {
         entryPoint[0].clear();
