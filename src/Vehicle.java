@@ -49,8 +49,6 @@ public abstract class Vehicle {
         return color;
     }
 
-    //public abstract Direction getMoveDirection();
-
     public LinkedList<Vehicle> getQue() {
         return que;
     }

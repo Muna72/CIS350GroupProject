@@ -3,9 +3,6 @@ import java.util.LinkedList;
 
 public class Car extends Vehicle {
 
-    public String type() {
-        return "Car";
-    }
     private boolean isUserCar;
 
     public Car(){
