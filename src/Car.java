@@ -9,17 +9,13 @@ public class Car extends Vehicle {
     private boolean isUserCar;
 
     public Car(){
-        super();
-        isUserCar = false;
+        this.size = 1;
+        this.color = Color.blue;
     }
 
-    public Car(Direction[] path, double createTime,
-               LinkedList<Vehicle> currentList, boolean isUserCar){
-        this.size = size;
-        this.mph = mph;
-        this.path = path;
+    public Car(boolean isUserCar){
+        this.size = 1;
         this.isUserCar = isUserCar;
-        this.color = null;
         if(isUserCar == true){
             this.setColor(Color.red);
         }
@@ -29,11 +25,4 @@ public class Car extends Vehicle {
 
     }
 
-    void setUserCar(boolean isUserCar){
-        this.isUserCar = isUserCar;
-    }
-
-    boolean getUserCar(){
-        return isUserCar;
-    }
 }

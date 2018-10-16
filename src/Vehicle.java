@@ -5,34 +5,24 @@ public abstract class Vehicle {
 
     protected int size;
 
-    protected int mph;
-
     protected Direction[] path;
+
     protected Location location;
 
     protected Color color;
 
     protected LinkedList<Vehicle> que;
+
     protected double timeCreated;
 
-    /*******************************************************************
-     * The default constructor
-     ******************************************************************/
-    public Vehicle(){
-        size = 0;
-        mph = 0;
-        path = null;
-        color = null;
-        que = null;
-        location = null;
-        timeCreated = 0;
+    protected boolean isUserCar;
+
+    public void setUserCar(boolean isUserCar){
+        this.isUserCar = isUserCar;
     }
 
-    public Vehicle(Direction[] path, Color color){
-        this.size = size;
-        this.mph = mph;
-        this.path = path;
-        this.color = color;
+    public boolean getUserCar(){
+        return isUserCar;
     }
 
     public int getSize() {
@@ -41,14 +31,6 @@ public abstract class Vehicle {
 
     public void setSize(int size) {
         this.size = size;
-    }
-
-    public int getMph() {
-        return mph;
-    }
-
-    public void setMph(int mph) {
-        this.mph = mph;
     }
 
     public Direction[] getPath() {

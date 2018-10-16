@@ -10,18 +10,15 @@ public class UtilityVehicle extends Vehicle {
 
     private boolean isUserCar;
 
-    public UtilityVehicle() {
-        super();
-        isUserCar = false;
+    public UtilityVehicle(){
+        this.size = 2;
+        this.color = Color.orange;
     }
 
-    public UtilityVehicle(int size, int mph, Direction[] path, double createTime,
-                          LinkedList<Vehicle> currentList, boolean isUserCar) {
-        this.size = size;
-        this.mph = mph;
-        this.path = path;
+
+    public UtilityVehicle(boolean isUserCar) {
+        this.size = 2;
         this.isUserCar = isUserCar;
-        this.color = null;
         if (isUserCar == true) {
             this.setColor(Color.red);
         } else {
@@ -30,11 +27,4 @@ public class UtilityVehicle extends Vehicle {
 
     }
 
-    void setUserCar(boolean isUserCar) {
-        this.isUserCar = isUserCar;
-    }
-
-    boolean getUserCar() {
-        return isUserCar;
-    }
 }

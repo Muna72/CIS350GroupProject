@@ -119,7 +119,7 @@ public class Simulation extends JPanel {
      */
     private void placeVehicle(Vehicle p){   
         
-        int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO will need ot change if more than one intersection
+        int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO change for two intersections
 
         switch(gen) {
             case 1:  gen = 1;
@@ -162,7 +162,7 @@ public class Simulation extends JPanel {
         secsTillNextVehicle = 0;
         totalTime = 0;
         avgStoppedSec = 0;
-        numOfIntersections = 1; //base case until user input allowed
+        numOfIntersections = 1;
         timeVehicleAdded = 0;
         finished = 0;
         allVehicles.clear();
@@ -237,39 +237,6 @@ public class Simulation extends JPanel {
             ++numOfVehicles;
         }    
     }
-    
-    /**
-     * Method to select checkout for a Vehicle (splits them up evenly)
-     * @param p 
-     */
-    public void selectIntersection(Vehicle p) {
-        
-        if(numOfIntersections == 1) {
-            if(vHolder.getQue() == null) {
-                intersection1.entryPoint[0].add(p);
-                p.setQue(intersection1.entryPoint[0]);
-                vHolder.setQue(intersection1.entryPoint[0]);
-            } 
-            else if(vHolder.getQue() == intersection1.entryPoint[0]){
-                intersection1.entryPoint[1].add(p);
-                p.setQue(intersection1.entryPoint[1]);
-                vHolder.setQue(intersection1.entryPoint[1]);
-            }
-            else if(vHolder.getQue() == intersection1.entryPoint[1]) {
-                intersection1.entryPoint[2].add(p);
-                p.setQue(intersection1.entryPoint[2]);
-                vHolder.setQue(intersection1.entryPoint[2]);
-            }
-            else if (vHolder.getQue() == intersection1.entryPoint[2]) {
-                intersection1.entryPoint[3].add(p);
-                p.setQue(intersection1.entryPoint[3]);
-                vHolder.setQue(intersection1.entryPoint[3]);
-            }
-        }
-        if(numOfIntersections == 2) {
-            // TODO logic here
-        }
-    }
 
     /**
      * Method to place user's car in the appropriate place
@@ -280,32 +247,32 @@ public class Simulation extends JPanel {
 
          int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO will need ot change if more than one intersection
          LinkedList<Vehicle> userLane;
-         Vehicle userCar = new Car(); //TODO setIsUserCar to true
+         Vehicle userCar = new Car(true); //TODO setIsUserCar to true
 
          switch (gen) {
              case 1:
                  gen = 1;
                  userLane = intersection1.entryPoint[0];
-                 userCar.setQue(intersection1.entryPoint[0]);
+                 userCar.setQue(userLane);
                  break;
              case 2:
                  gen = 2;
                  userLane = intersection1.entryPoint[1];
-                 userCar.setQue(intersection1.entryPoint[1]);
+                 userCar.setQue(userLane);
                  break;
              case 3:
                  gen = 3;
                  userLane = intersection1.entryPoint[2];
-                 userCar.setQue(intersection1.entryPoint[2]);
+                 userCar.setQue(userLane);
                  break;
              case 4:
                  gen = 4;
                  userLane = intersection1.entryPoint[3];
-                 userCar.setQue(intersection1.entryPoint[3]);
+                 userCar.setQue(userLane);
                  break;
              default:
                  userLane = intersection1.entryPoint[0];
-                 userCar.setQue(intersection1.entryPoint[0]);
+                 userCar.setQue(userLane);
                  break;
          }
              if (place == "front") {
@@ -639,7 +606,13 @@ public class Simulation extends JPanel {
                 }
 
                 // paint the location
-                g.fillRect(col*SIZE, row*SIZE, SIZE, SIZE);
+                if(p.getSize() == 1) {
+                    g.fillRect(col * SIZE, row * SIZE, SIZE, SIZE);
+                } else if (p.getSize() == 2) {
+                    g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
+                } else {
+                    g.fillRect(col * SIZE, row * SIZE, SIZE + 4, SIZE + 4);
+                }
             }
         }
         if(numOfIntersections == 1) {
