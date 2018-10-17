@@ -88,7 +88,7 @@ public class Intersection
 	{	
 		for(int x = 0; x < numVehicles; x++)
 		{
-			int type = rand.nextInt(2);
+			int type = rand.nextInt(3);
 			Vehicle veh;
 			
 			switch(type)
@@ -98,6 +98,9 @@ public class Intersection
 				break;
 			case 1:
 				veh = new SemiTruck();
+				break;
+			case 2:
+				veh = new UtilityVehicle();
 				break;
 			default:
 				veh = new Car();
