@@ -704,25 +704,27 @@ public class Simulation extends JPanel {
      */ 
     public void paintComponent(Graphics g){
         for(int row=0; row<ROWS; row++){
-            for(int col=0; col<COLUMNS; col++){
-                Vehicle p = route[row][col];
-                
-                // set color to white if no critter here
-                if(p == null){
+            for(int col=0; col<COLUMNS; col++) {
+                Vehicle v = route[row][col];
+
+                // set color to white if no vehicle here
+                if (v == null) {
                     g.setColor(Color.WHITE);
-                    // set color to critter color   
-                }else{    
-                    g.setColor(p.getColor());
+                    // set color to vehicle color
+                } else {
+                    g.setColor(v.getColor());
                 }
 
-                // paint the location
-              //  if(p.getSize() == 1) {
-                    g.fillRect(col * SIZE, row * SIZE, SIZE, SIZE);
-             //   } else if (p.getSize() == 2) {
-               //     g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
-               // } else {
-                 //   g.fillRect(col * SIZE, row * SIZE, SIZE + 4, SIZE + 4);
-               // }
+                // paint the location of the vehicle
+                if (v != null) {
+                    if (v.getSize() == 1) {
+                        g.fillRect(col * SIZE, row * SIZE, SIZE, SIZE);
+                    } else if (v.getSize() == 2) {
+                        g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
+                    } else {
+                        g.fillRect(col * SIZE, row * SIZE, SIZE + 4, SIZE + 4);
+                    }
+                }
             }
         }
         if(numOfIntersections == 1) {

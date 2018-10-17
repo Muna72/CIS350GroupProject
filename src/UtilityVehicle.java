@@ -7,8 +7,8 @@ public class UtilityVehicle extends Vehicle {
     private boolean isUserCar;
 
     public UtilityVehicle(){
-        this.size = 2;
-        this.color = Color.orange;
+        size = 2;
+        color = Color.orange;
     }
 
 

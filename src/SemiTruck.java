@@ -6,7 +6,7 @@ public class SemiTruck extends Vehicle {
     private boolean isUserCar;
 
     public SemiTruck(){
-        this.size = 3;
+        size = 3;
         color = Color.green;
     }
 
