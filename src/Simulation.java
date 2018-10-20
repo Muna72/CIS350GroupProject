@@ -1,5 +1,3 @@
-import sun.awt.image.ImageWatched;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -124,22 +122,22 @@ public class Simulation extends JPanel {
         int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO change for two intersections
 
         switch(gen) {
-            case 1:  gen = 1;
+            case 1:
                      intersection1.entryPoint[0].add(v);
                      v.setQue(intersection1.entryPoint[0]);
                      setPath(v);
                      break;
-            case 2:  gen = 2;
+            case 2:
                     intersection1.entryPoint[1].add(v);
                      v.setQue(intersection1.entryPoint[1]);
                      setPath(v);
                      break;
-            case 3:  gen = 3;
+            case 3:
                     intersection1.entryPoint[2].add(v);
                      v.setQue(intersection1.entryPoint[2]);
                      setPath(v);
                      break;
-            case 4:  gen = 4;
+            case 4:
                      intersection1.entryPoint[3].add(v);
                      v.setQue(intersection1.entryPoint[3]);
                      setPath(v);
@@ -323,28 +321,24 @@ public class Simulation extends JPanel {
      */
      public void placeUserCar(String place) {
 
-         int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO will need ot change if more than one intersection
+         int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO is this right??
          LinkedList<Vehicle> userLane;
          Vehicle userCar = new Car(true);
 
          switch (gen) {
              case 1:
-                 gen = 1;
                  userLane = intersection1.entryPoint[0];
                  userCar.setQue(userLane);
                  break;
              case 2:
-                 gen = 2;
                  userLane = intersection1.entryPoint[1];
                  userCar.setQue(userLane);
                  break;
              case 3:
-                 gen = 3;
                  userLane = intersection1.entryPoint[2];
                  userCar.setQue(userLane);
                  break;
              case 4:
-                 gen = 4;
                  userLane = intersection1.entryPoint[3];
                  userCar.setQue(userLane);
                  break;
@@ -376,25 +370,58 @@ public class Simulation extends JPanel {
         switch (dir) {
             case NORTH:
                 holder.remove(v);
-                intersection1.entryPoint[1].add(v); //TODO does this add in right place?
-                v.setQue(intersection1.entryPoint[1]);
+                intersection1.entryPoint[5].add(v); //TODO does this add in right place?
+                v.setQue(intersection1.entryPoint[5]);
                 break;
             case EAST:
                 holder.remove(v);
-                intersection1.entryPoint[2].add(v);
-                v.setQue(intersection1.entryPoint[2]);
+                intersection1.entryPoint[6].add(v);
+                v.setQue(intersection1.entryPoint[6]);
                 break;
             case SOUTH:
                 holder.remove(v);
-                intersection1.entryPoint[3].add(v);
-                v.setQue(intersection1.entryPoint[3]);
+                intersection1.entryPoint[7].add(v);
+                v.setQue(intersection1.entryPoint[7]);
                 break;
             case WEST:
                 holder.remove(v);
-                intersection1.entryPoint[0].add(v);
-                v.setQue(intersection1.entryPoint[0]);
+                intersection1.entryPoint[4].add(v);
+                v.setQue(intersection1.entryPoint[4]);
                 break;
         }
+    }
+
+
+    public void moveForward(Vehicle v) {
+        Location temp = v.getLocation();
+
+        if(v.getQue() == intersection1.entryPoint[0] || v.getQue() == intersection1.entryPoint[6]) {
+            //set location to location plus 20 x
+            temp.setRow(temp.getRow() + 20);
+            v.setLocation(temp);
+        }
+        if(v.getQue() == intersection1.entryPoint[1] || v.getQue() == intersection1.entryPoint[7]) {
+            //set location to location plus 20 y
+            temp.setCol(temp.getCol() + 20);
+            v.setLocation(temp);
+        }
+        if(v.getQue() == intersection1.entryPoint[4] || v.getQue() == intersection1.entryPoint[2]) {
+            //set location to location minus 20 x
+            temp.setRow(temp.getRow() - 20);
+            v.setLocation(temp);
+        }
+        if(v.getQue() == intersection1.entryPoint[3] || v.getQue() == intersection1.entryPoint[5]) {
+            //set location to location minus 20 y
+            temp.setCol(temp.getCol() - 20);
+            v.setLocation(temp);
+        }
+                        /*TODO check if car is on first or end side of intersection, and
+                TODO remove car if their location is specified as the "end of the road"
+                    laneHolder.remove(v);
+                    allAvgTimes.add(v.getCreateTime() - currTime);
+                    //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
+                    removeVehicle(v);
+                    ++finished; */
     }
 
         
@@ -498,6 +525,98 @@ public class Simulation extends JPanel {
                 }             
             } 
         }
+
+        if(intersection1.entryPoint[4] != null) {
+
+            r = 47;
+            y = 32;
+
+            if(intersection1.entryPoint[4].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[4].size(); ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[4].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[4].get(p).getLocation().getRow()][intersection1.entryPoint[4].get(p).getLocation().getCol()] = intersection1.entryPoint[4].get(p);
+                    y = y - 2;
+                }
+            }
+            if(intersection1.entryPoint[4].size() >= 16) {
+                for(int p = 0; p < 16; ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[4].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[4].get(p).getLocation().getRow()][intersection1.entryPoint[4].get(p).getLocation().getCol()] = intersection1.entryPoint[4].get(p);
+                    y = y - 2;
+                }
+            }
+        }
+
+        if(intersection1.entryPoint[5] != null) {
+
+            r = 57;
+            y = 32;
+
+            if(intersection1.entryPoint[5].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[5].size(); ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[5].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[5].get(p).getLocation().getRow()][intersection1.entryPoint[5].get(p).getLocation().getCol()] = intersection1.entryPoint[5].get(p);
+                    y = y - 2;
+                }
+            }
+            if(intersection1.entryPoint[3].size() >= 16) {
+                for(int p = 0; p < 16; ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[3].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[5].get(p).getLocation().getCol()] = intersection1.entryPoint[5].get(p);
+                    y = y - 2;
+                }
+            }
+        }
+
+        if(intersection1.entryPoint[6] != null) {
+
+            r = 67;
+            y = 32;
+
+            if(intersection1.entryPoint[6].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[6].size(); ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[6].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[6].get(p).getLocation().getRow()][intersection1.entryPoint[6].get(p).getLocation().getCol()] = intersection1.entryPoint[6].get(p);
+                    y = y - 2;
+                }
+            }
+            if(intersection1.entryPoint[3].size() >= 16) {
+                for(int p = 0; p < 16; ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[3].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[3].get(p).getLocation().getCol()] = intersection1.entryPoint[3].get(p);
+                    y = y - 2;
+                }
+            }
+        }
+
+        if(intersection1.entryPoint[7] != null) {
+
+            r = 77;
+            y = 32;
+
+            if(intersection1.entryPoint[7].size() < 16) {
+                for(int p = 0; p < intersection1.entryPoint[7].size(); ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[7].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[7].get(p).getLocation().getRow()][intersection1.entryPoint[7].get(p).getLocation().getCol()] = intersection1.entryPoint[7].get(p);
+                    y = y - 2;
+                }
+            }
+            if(intersection1.entryPoint[7].size() >= 16) {
+                for(int p = 0; p < 16; ++p) {
+                    Location loc = new Location(r,y);
+                    intersection1.entryPoint[7].get(p).setLocation(loc);
+                    route[intersection1.entryPoint[7].get(p).getLocation().getRow()][intersection1.entryPoint[7].get(p).getLocation().getCol()] = intersection1.entryPoint[7].get(p);
+                    y = y - 2;
+                }
+            }
+        }
         repaint();
     }
     
@@ -535,15 +654,14 @@ public class Simulation extends JPanel {
 
         //generate first Vehicle shortly into simulation
         if(currTime == totalTime - 500) {
-            System.out.println("hit takenAction() loop hit");
             firstPer = true;
             addVehicle();
-            System.out.println("First vehicle added at time: " + currTime);
             timeVehicleAdded = currTime;
         }
         
         //generate another Vehicle at ever vTime seconds (or asap after if delay causes simulation to pass vTime)
         if((timeVehicleAdded - currTime) >= vTime) {
+            System.out.println("second vehicle added at time: " + currTime);
             addVehicle();
             timeVehicleAdded = currTime;
         }
@@ -563,32 +681,16 @@ public class Simulation extends JPanel {
             Vehicle v = allVehicles.get(u);
             laneHolder = v.getQue();
 
-                if(laneHolder == intersection1.entryPoint[1] || laneHolder == intersection1.entryPoint[3]) {
+                if(laneHolder == intersection1.entryPoint[1] || laneHolder == intersection1.entryPoint[3] ||
+                laneHolder == intersection1.entryPoint[5] || laneHolder == intersection1.entryPoint[7]) {
                     if (isLanesOneAndThree) {
-                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
-                            switchLanes(v);
-                        }
-                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
-                            removeVehicle(v);
-                        }
+                        moveForward(v);
                     }
                 } else {
                     if(!isLanesOneAndThree) {
-                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
-                            switchLanes(v);
-                        }
-                        if(v.getLocation() == new Location(3,4) || v.getLocation() == new Location(3,4)) {
-                            removeVehicle(v);
-                        }
+                        moveForward(v);
                     }
                 }
-                //TODO check if car is on first or end side of intersection, and
-                //TODO remove car if their location is specified as the "end of the road"
-                    laneHolder.remove(v);
-                    allAvgTimes.add(v.getCreateTime() - currTime);
-                    //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
-                    removeVehicle(v);
-                    ++finished;
         }  
         checkLengths();
         createLanes();
@@ -712,12 +814,14 @@ public class Simulation extends JPanel {
                     g.setColor(Color.WHITE);
                     // set color to vehicle color
                 } else {
+                    System.out.println("hit set color");
                     g.setColor(v.getColor());
                 }
 
                 // paint the location of the vehicle
                 if (v != null) {
                     if (v.getSize() == 1) {
+                        System.out.println("hit paint car");
                         g.fillRect(col * SIZE, row * SIZE, SIZE, SIZE);
                     } else if (v.getSize() == 2) {
                         g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
@@ -760,14 +864,6 @@ public class Simulation extends JPanel {
             g.fillRect(540, 600, 10, 35);
             g.fillRect(540, 680, 10, 35);
             g.fillRect(540, 760, 10, 35);
-
-
-            if(intersection1.getType() == "Two Way") {
-                g.drawString("Intersection (Two - Way", 365, 75);
-            }
-            if(intersection1.getType() == "Four Way") {
-                g.drawString("Intersection (Two - Way", 365, 75);
-            }
         }
         if(numOfIntersections == 2) {
 

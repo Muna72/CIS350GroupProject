@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.util.LinkedList;
 
 public class SemiTruck extends Vehicle {
 
