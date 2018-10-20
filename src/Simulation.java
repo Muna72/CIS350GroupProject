@@ -81,14 +81,6 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to set average cashier seconds
-     * @param speed
-     */
-    public void setVehicleSpeed(double speed) { //TODO MAY NOT NEED THIS AT ALL, JUST CHANGE DELAY
-        vehicleSpeed = 1000 * speed;
-    }
-    
-    /**
      * Method to set total simulation time
      * @param totTime 
      */
@@ -98,7 +90,7 @@ public class Simulation extends JPanel {
 
     
     /**
-     * Method to set number of eateries at beginning of simulation
+     * Method to set number of intersections at beginning of simulation
      * @param numInts
      */
     public void setNumOfIntersections(int numInts) {
@@ -106,7 +98,7 @@ public class Simulation extends JPanel {
     }
     
     /**
-     * Method to set
+     * Method to set the time between when vehicles are generated
      * @param pt 
      */
     public void setVTime(double pt) {
@@ -114,7 +106,7 @@ public class Simulation extends JPanel {
     }
     
     /**
-     * Method to place Vehicle in a restaurant que
+     * Method to place Vehicle in a lane que
      * @param v
      */
     private void placeVehicle(Vehicle v){
@@ -159,6 +151,10 @@ public class Simulation extends JPanel {
         repaint();
     }
 
+    /**
+     * Method to randomly set the direction of the path the vehicle will take
+     * @param v for input vehicle
+     */
     public void setPath(Vehicle v) {
 
         LinkedList<Vehicle> laneHolder = v.getQue();
@@ -230,7 +226,8 @@ public class Simulation extends JPanel {
         }
     }
     
-    /**Method to reset the simulation *************************
+    /**
+     * Method to reset the simulation
      * 
      */
     public void reset() {
@@ -271,7 +268,7 @@ public class Simulation extends JPanel {
     }
     
    /**
-    * Method to remove Vehicle from simulation **************
+    * Method to remove Vehicle from simulation
     * @param p 
     */ 
     public void removeVehicle(Vehicle p) {
@@ -392,36 +389,58 @@ public class Simulation extends JPanel {
     }
 
 
-    public void moveForward(Vehicle v) {
+    public void moveForward(Vehicle v, double currTime) {
         Location temp = v.getLocation();
+        LinkedList<Vehicle> holder = v.getQue();
 
         if(v.getQue() == intersection1.entryPoint[0] || v.getQue() == intersection1.entryPoint[6]) {
             //set location to location plus 20 x
             temp.setRow(temp.getRow() + 20);
             v.setLocation(temp);
+            if(v.getLocation() == new Location(20,260)) {
+                allAvgTimes.add(v.getCreateTime() - currTime);
+                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
+                holder.remove(v);
+                removeVehicle(v);
+                ++finished;
+            }
         }
         if(v.getQue() == intersection1.entryPoint[1] || v.getQue() == intersection1.entryPoint[7]) {
             //set location to location plus 20 y
             temp.setCol(temp.getCol() + 20);
             v.setLocation(temp);
+            if(v.getLocation() == new Location(520,260)) {
+                allAvgTimes.add(v.getCreateTime() - currTime);
+                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
+                holder.remove(v);
+                removeVehicle(v);
+                ++finished;
+            }
         }
         if(v.getQue() == intersection1.entryPoint[4] || v.getQue() == intersection1.entryPoint[2]) {
             //set location to location minus 20 x
             temp.setRow(temp.getRow() - 20);
             v.setLocation(temp);
+            if(v.getLocation() == new Location(20,260)) {
+                allAvgTimes.add(v.getCreateTime() - currTime);
+                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
+                holder.remove(v);
+                removeVehicle(v);
+                ++finished;
+            }
         }
         if(v.getQue() == intersection1.entryPoint[3] || v.getQue() == intersection1.entryPoint[5]) {
             //set location to location minus 20 y
             temp.setCol(temp.getCol() - 20);
             v.setLocation(temp);
+            if(v.getLocation() == new Location(20,260)) {
+                allAvgTimes.add(v.getCreateTime() - currTime);
+                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
+                holder.remove(v);
+                removeVehicle(v);
+                ++finished;
+            }
         }
-                        /*TODO check if car is on first or end side of intersection, and
-                TODO remove car if their location is specified as the "end of the road"
-                    laneHolder.remove(v);
-                    allAvgTimes.add(v.getCreateTime() - currTime);
-                    //  route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
-                    removeVehicle(v);
-                    ++finished; */
     }
 
         
@@ -666,7 +685,7 @@ public class Simulation extends JPanel {
             timeVehicleAdded = currTime;
         }
 
-        //TODO Every ten seconds switch which lanes have green light
+        //TODO Every ten seconds switch which lanes have green light - pretty sure this is wrong
         if(currTime % 10 == 0) {
            if(isLanesOneAndThree) {
                isLanesOneAndThree = false;
@@ -675,21 +694,21 @@ public class Simulation extends JPanel {
            }
         }
         
-        //loop through all vehicles
+        //loop through all vehicles and move them if they have the right-of-way
         for(int u = 0; u < allVehicles.size(); ++u) {
             
             Vehicle v = allVehicles.get(u);
             laneHolder = v.getQue();
 
-                if(laneHolder == intersection1.entryPoint[1] || laneHolder == intersection1.entryPoint[3] ||
-                laneHolder == intersection1.entryPoint[5] || laneHolder == intersection1.entryPoint[7]) {
                     if (isLanesOneAndThree) {
-                        moveForward(v);
+                        if(laneHolder != intersection1.entryPoint[0] || laneHolder != intersection1.entryPoint[2]) {
+                            moveForward(v, currTime);
+                        }
                     }
-                } else {
-                    if(!isLanesOneAndThree) {
-                        moveForward(v);
-                    }
+                    else {
+                        if(laneHolder != intersection1.entryPoint[1] || laneHolder != intersection1.entryPoint[3]) {
+                            moveForward(v, currTime);
+                        }
                 }
         }  
         checkLengths();
@@ -698,72 +717,53 @@ public class Simulation extends JPanel {
     }
     
    /**
-    * Get the number of people who finished the simulation
-    * @return 
+    * Get the number of vehicles that finished the simulation
+    * @return finished
     */ 
     public int getFinished() {
         return finished;
     }
     
     /**
-     * Method to get number of eateries
-     * @return 
+     * Method to get number of intersections
+     * @return numOfIntersections
      */
     public int getNumOfIntersections() {
         return numOfIntersections;
     }
     
     /**
-     * Method to get number of people
-     * @return 
+     * Method to get number of vehicles
+     * @return numOfVehicles
      */
     public int getNumOfVehicles() {
         return numOfVehicles;
     }
     
     /**
-     * Method to get number of people that walked out
-     * @return 
-     */
-    public int getVehiclesLeft() {
-        
-        int vLeft = 0;
-        
-        if(intersection1.entryPoint[0] != null) {
-            vLeft = vLeft + intersection1.entryPoint[0].size();
-        }
-        if(intersection1.entryPoint[1] != null) {
-            vLeft = vLeft + intersection1.entryPoint[1].size();
-        }
-        if(intersection1.entryPoint[2] != null) {
-            vLeft = vLeft + intersection1.entryPoint[2].size();
-        }
-        if(intersection1.entryPoint[3] != null) {
-            vLeft = vLeft + intersection1.entryPoint[3].size();
-        }
-        return vLeft;
-    }
-    
-    /**
-     * Metho to get max lane que length
-     * @return 
+     * Method to get max lane que length
+     * @return maxLaneLength
      */
     public int getMaxLaneLength() {
         return maxLaneLength;
-    } //Do we need more than one variation of this?
-
-    public double calculateAvgVehicleThruTime(ArrayList<Double> allTimes) {
-        double avgTime = 0;
-
-        return avgTime;
     }
 
+    /**
+     * Method to calculate the time for the user's car to get through the simulation
+     * @param endTime
+     * @return
+     */
     public double calculateUserThruTime(Double endTime) {
         double thruTime = 0;
 
         return thruTime;
     }
 
+    /**
+     * Method to calcaulte the average time vehicles were stopped
+     * @param allTimes
+     * @return
+     */
     public double calculateAvgTimeStopped(ArrayList<Double> allTimes) {
         double avgTime = 0;
 
@@ -771,10 +771,10 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Get the total average time for a Vehicle from start to finish
+     * Get the total average time for a Vehicle from start to finish //TODO this is not done yet
      * @return 
      */
-    public double getTotalAvgVehicleTime(){
+    public double getTotalAvgVehicleTime(ArrayList<Double> allTimes){
         
         double sum = 0;
         
@@ -786,7 +786,7 @@ public class Simulation extends JPanel {
     }
     
     /**
-     * Method to get average checkout time
+     * Method to get average time stopped //TODO this is not done yet
      * @return 
      */
     public double getAvgStoppedTime() {
@@ -814,19 +814,17 @@ public class Simulation extends JPanel {
                     g.setColor(Color.WHITE);
                     // set color to vehicle color
                 } else {
-                    System.out.println("hit set color");
                     g.setColor(v.getColor());
                 }
 
                 // paint the location of the vehicle
                 if (v != null) {
                     if (v.getSize() == 1) {
-                        System.out.println("hit paint car");
-                        g.fillRect(col * SIZE, row * SIZE, SIZE, SIZE);
+                        g.fillRect(col * SIZE, row * SIZE, SIZE + 9, SIZE + 9);
                     } else if (v.getSize() == 2) {
-                        g.fillRect(col * SIZE, row * SIZE, SIZE + 2, SIZE + 2);
+                        g.fillRect(col * SIZE, row * SIZE, SIZE + 12, SIZE + 10);
                     } else {
-                        g.fillRect(col * SIZE, row * SIZE, SIZE + 4, SIZE + 4);
+                        g.fillRect(col * SIZE, row * SIZE, SIZE + 16, SIZE + 11);
                     }
                 }
             }
