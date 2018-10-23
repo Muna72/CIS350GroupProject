@@ -17,6 +17,16 @@ public abstract class Vehicle {
 
     protected boolean isUserCar;
 
+    protected int numSteps;
+
+    public void setNumSteps(int step) {
+        numSteps = step;
+    }
+
+    public int getNumSteps() {
+        return numSteps;
+    }
+
     public void setUserCar(boolean isUserCar){
         this.isUserCar = isUserCar;
     }

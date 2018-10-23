@@ -1,3 +1,5 @@
+import sun.awt.image.ImageWatched;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -39,9 +41,11 @@ public class Simulation extends JPanel {
     private double totalAvgVehicleTime;
     private double totalAvgStoppedTime;
     private boolean firstPer = false;
+    private int timesMoved;
     private boolean isLanesOneAndThree = false;
     private Random rand = new Random();
-    Vehicle vHolder = new Car(); //need to give parameters
+    double timeLastCalled = 0;
+    double lTime = 2000;
     
 
 /**
@@ -69,6 +73,7 @@ public class Simulation extends JPanel {
         numOfVehicles = 0;
         timeVehicleAdded = 0;
         maxLaneLength = 0;
+        timesMoved = 0;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
     
@@ -111,28 +116,32 @@ public class Simulation extends JPanel {
      */
     private void placeVehicle(Vehicle v){
         
-        int gen = rand.nextInt(4 - 1 + 1) + 1; //TODO change for two intersections
+        int gen = rand.nextInt(4) + 1; //TODO change for two intersections
 
         switch(gen) {
             case 1:
                      intersection1.entryPoint[0].add(v);
                      v.setQue(intersection1.entryPoint[0]);
+                     System.out.print("Car in lane 0: ");
                      setPath(v);
                      break;
             case 2:
                     intersection1.entryPoint[1].add(v);
                      v.setQue(intersection1.entryPoint[1]);
-                     setPath(v);
+                System.out.print("Car in lane 1: ");
+                setPath(v);
                      break;
             case 3:
                     intersection1.entryPoint[2].add(v);
                      v.setQue(intersection1.entryPoint[2]);
-                     setPath(v);
+                System.out.print("Car in lane 2: ");
+                setPath(v);
                      break;
             case 4:
                      intersection1.entryPoint[3].add(v);
                      v.setQue(intersection1.entryPoint[3]);
-                     setPath(v);
+                System.out.print("Car in lane 3: ");
+                setPath(v);
                      break;
             default:
                     intersection1.entryPoint[0].add(v);
@@ -147,7 +156,7 @@ public class Simulation extends JPanel {
         }
         System.out.println("vehicle is in que: " + v.getQue());
 
-        createLanes();
+        setStartingPosition(v);
         repaint();
     }
 
@@ -278,6 +287,7 @@ public class Simulation extends JPanel {
         route[p.getLocation().getRow()][p.getLocation().getCol()] = null;
         holder.remove(p);
         allVehicles.remove(p);
+        ++finished;
         repaint();
     }
 
@@ -344,13 +354,13 @@ public class Simulation extends JPanel {
                  userCar.setQue(userLane);
                  break;
          }
-             if (place == "front") {
+             if (place.equals("front")) {
                  userCar.getQue().add(0, userCar);
              }
-             if (place == "middle") {
+             if (place.equals("middle")) {
                  userCar.getQue().add((userCar.getQue().size()) / 2, userCar);
              }
-             if (place == "back") {
+             if (place.equals("back")) {
                  userCar.getQue().add(userCar.getQue().size() - 1, userCar);
              }
      }
@@ -389,58 +399,100 @@ public class Simulation extends JPanel {
     }
 
 
-    public void moveForward(Vehicle v, double currTime) {
-        Location temp = v.getLocation();
-        LinkedList<Vehicle> holder = v.getQue();
+    public void moveForward(LinkedList<Vehicle> lane, double currTime) {
 
-        if(v.getQue() == intersection1.entryPoint[0] || v.getQue() == intersection1.entryPoint[6]) {
-            //set location to location plus 20 x
-            temp.setRow(temp.getRow() + 20);
-            v.setLocation(temp);
-            if(v.getLocation() == new Location(20,260)) {
-                allAvgTimes.add(v.getCreateTime() - currTime);
-                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
-                holder.remove(v);
-                removeVehicle(v);
-                ++finished;
+            if(lane == intersection1.entryPoint[0] || lane == intersection1.entryPoint[6]) {
+                for(int v = 0; v < lane.size(); ++v ) {
+
+                    Vehicle current = lane.get(v);
+                    Location temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() + 3));
+
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                    //set location to current location plus [] columns to the right
+                    current.setLocation(temp);
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    //move to next linkedList
+                    if (current.getNumSteps() == 10) {
+                        switchLanes(current);
+                    }
+                    //remove from simulation
+                    if (current.getNumSteps() == 20) {
+                        allAvgTimes.add(current.getCreateTime() - currTime);
+                        System.out.println("Removed in moveForward with step count: " + current.getNumSteps());
+                        removeVehicle(current);
+                    }
+                    current.setNumSteps(current.getNumSteps() + 1); //TODO confirm placement
+                }
             }
-        }
-        if(v.getQue() == intersection1.entryPoint[1] || v.getQue() == intersection1.entryPoint[7]) {
-            //set location to location plus 20 y
-            temp.setCol(temp.getCol() + 20);
-            v.setLocation(temp);
-            if(v.getLocation() == new Location(520,260)) {
-                allAvgTimes.add(v.getCreateTime() - currTime);
-                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
-                holder.remove(v);
-                removeVehicle(v);
-                ++finished;
+            if(lane == intersection1.entryPoint[1] || lane == intersection1.entryPoint[7]) {
+                for(int v = 0; v < lane.size(); ++v ) {
+
+                    Vehicle current = lane.get(v);
+                    Location temp = new Location((current.getLocation().getRow() + 3), (current.getLocation().getCol()));
+
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                    //set location to current location plus [] rows down
+                    temp.setRow(temp.getRow() + 3);
+                    current.setLocation(temp);
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    //move to next linkedList
+                    if (current.getNumSteps() == 10) {
+                        switchLanes(current);
+                    }
+                    //remove from simulation
+                    if (current.getNumSteps() == 20) {
+                        allAvgTimes.add(current.getCreateTime() - currTime);
+                        removeVehicle(current);
+                    }
+                    current.setNumSteps(current.getNumSteps() + 1); //TODO confirm placement
+                }
             }
-        }
-        if(v.getQue() == intersection1.entryPoint[4] || v.getQue() == intersection1.entryPoint[2]) {
-            //set location to location minus 20 x
-            temp.setRow(temp.getRow() - 20);
-            v.setLocation(temp);
-            if(v.getLocation() == new Location(20,260)) {
-                allAvgTimes.add(v.getCreateTime() - currTime);
-                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
-                holder.remove(v);
-                removeVehicle(v);
-                ++finished;
+            if(lane == intersection1.entryPoint[4] || lane == intersection1.entryPoint[2]) {
+                for(int v = 0; v < lane.size(); ++v ) {
+
+                    Vehicle current = lane.get(v);
+                    Location temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() - 3));
+
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                    //set location to current location minus [] columns (to the left)
+                    temp.setCol(temp.getCol() - 3);
+                    current.setLocation(temp);
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    //move to next linkedList
+                    if (current.getNumSteps() == 10) {
+                        switchLanes(current);
+                    }
+                    //remove from simulation
+                    if (current.getNumSteps() == 20) {
+                        allAvgTimes.add(current.getCreateTime() - currTime);
+                        removeVehicle(current);
+                    }
+                    current.setNumSteps(current.getNumSteps() + 1); //TODO confirm placement
+                }
             }
-        }
-        if(v.getQue() == intersection1.entryPoint[3] || v.getQue() == intersection1.entryPoint[5]) {
-            //set location to location minus 20 y
-            temp.setCol(temp.getCol() - 20);
-            v.setLocation(temp);
-            if(v.getLocation() == new Location(20,260)) {
-                allAvgTimes.add(v.getCreateTime() - currTime);
-                route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
-                holder.remove(v);
-                removeVehicle(v);
-                ++finished;
+            if(lane == intersection1.entryPoint[3] || lane == intersection1.entryPoint[5]) {
+                for(int v = 0; v < lane.size(); ++v ) {
+
+                    Vehicle current = lane.get(v);
+                    Location temp = new Location((current.getLocation().getRow() - 3), (current.getLocation().getCol()));
+
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                    //set location to current location minus [] rows up
+                    temp.setRow(temp.getRow() - 3);
+                    current.setLocation(temp);
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    //move to next linkedList
+                    if (current.getNumSteps() == 10) {
+                        switchLanes(current);
+                    }
+                    //remove from simulation
+                    if (current.getNumSteps() == 20) {
+                        allAvgTimes.add(current.getCreateTime() - currTime);
+                        removeVehicle(current);
+                    }
+                    current.setNumSteps(current.getNumSteps() + 1); //TODO confirm placement
+                }
             }
-        }
     }
 
         
@@ -448,194 +500,54 @@ public class Simulation extends JPanel {
      * Method to create visual lines of people in the ques for the GUI, shows
      * up to fifteen people in each que
      */
-    public void createLanes() { //TODO Logic for this function is not fulling working yet
+    public void setStartingPosition(Vehicle v) { //TODO Logic for this function is not fulling working yet
         
-        int r;
-        int y;
+        int r = 0;
+        int y = 0;
         
-        if(intersection1.entryPoint[0] != null) {
-            
-            r = 7;
-            y = 32;
-            
-            if(intersection1.entryPoint[0].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[0].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[0].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[0].get(p).getLocation().getRow()][intersection1.entryPoint[0].get(p).getLocation().getCol()] = intersection1.entryPoint[0].get(p);
-                    y = y - 2;
-                }  
-            }
-            if(intersection1.entryPoint[0].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,0);
-                    intersection1.entryPoint[0].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[0].get(p).getLocation().getRow()][intersection1.entryPoint[0].get(p).getLocation().getCol()] = intersection1.entryPoint[0].get(p);
-                    y = y - 2;
-                }            
-            }    
+        if(v.getQue() == intersection1.entryPoint[0]) {
+            r = 45;
+            y = 11;
         }
 
-        if(intersection1.entryPoint[1] != null){
-            
-            r = 17;
-            y = 32;
-            
-            if(intersection1.entryPoint[1].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[1].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[1].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[1].get(p).getLocation().getRow()][intersection1.entryPoint[1].get(p).getLocation().getCol()] = intersection1.entryPoint[1].get(p);
-                    y = y - 2;
-                }  
-            }
-            if(intersection1.entryPoint[1].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[1].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[1].get(p).getLocation().getRow()][intersection1.entryPoint[1].get(p).getLocation().getCol()] = intersection1.entryPoint[1].get(p);
-                    y = y - 2;
-                }             
-            } 
+        if(v.getQue() == intersection1.entryPoint[1]){
+            r = 2;
+            y = 45;
         }
         
-        if(intersection1.entryPoint[2] != null) {
-            
-            r = 27;
-            y = 32;
-            
-            if(intersection1.entryPoint[2].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[2].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[2].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[2].get(p).getLocation().getRow()][intersection1.entryPoint[2].get(p).getLocation().getCol()] = intersection1.entryPoint[2].get(p);
-                    y = y - 2;
-                }  
-            }
-            if(intersection1.entryPoint[2].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[2].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[2].get(p).getLocation().getRow()][intersection1.entryPoint[2].get(p).getLocation().getCol()] = intersection1.entryPoint[2].get(p);
-                    y = y - 2;
-                }             
-            }   
+        if(v.getQue() == intersection1.entryPoint[2]) {
+            r = 35;
+            y = 94;
         }
         
-        if(intersection1.entryPoint[3] != null) {
-            
-            r = 37;
-            y = 32;
-            
-            if(intersection1.entryPoint[3].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[3].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[3].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[3].get(p).getLocation().getCol()] = intersection1.entryPoint[3].get(p);
-                    y = y - 2;
-                }  
-            }
-            if(intersection1.entryPoint[3].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[3].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[3].get(p).getLocation().getCol()] = intersection1.entryPoint[3].get(p);
-                    y = y - 2;
-                }             
-            } 
-        }
-
-        if(intersection1.entryPoint[4] != null) {
-
-            r = 47;
-            y = 32;
-
-            if(intersection1.entryPoint[4].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[4].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[4].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[4].get(p).getLocation().getRow()][intersection1.entryPoint[4].get(p).getLocation().getCol()] = intersection1.entryPoint[4].get(p);
-                    y = y - 2;
-                }
-            }
-            if(intersection1.entryPoint[4].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[4].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[4].get(p).getLocation().getRow()][intersection1.entryPoint[4].get(p).getLocation().getCol()] = intersection1.entryPoint[4].get(p);
-                    y = y - 2;
-                }
-            }
-        }
-
-        if(intersection1.entryPoint[5] != null) {
-
-            r = 57;
-            y = 32;
-
-            if(intersection1.entryPoint[5].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[5].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[5].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[5].get(p).getLocation().getRow()][intersection1.entryPoint[5].get(p).getLocation().getCol()] = intersection1.entryPoint[5].get(p);
-                    y = y - 2;
-                }
-            }
-            if(intersection1.entryPoint[3].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[3].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[5].get(p).getLocation().getCol()] = intersection1.entryPoint[5].get(p);
-                    y = y - 2;
-                }
-            }
-        }
-
-        if(intersection1.entryPoint[6] != null) {
-
-            r = 67;
-            y = 32;
-
-            if(intersection1.entryPoint[6].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[6].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[6].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[6].get(p).getLocation().getRow()][intersection1.entryPoint[6].get(p).getLocation().getCol()] = intersection1.entryPoint[6].get(p);
-                    y = y - 2;
-                }
-            }
-            if(intersection1.entryPoint[3].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[3].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[3].get(p).getLocation().getRow()][intersection1.entryPoint[3].get(p).getLocation().getCol()] = intersection1.entryPoint[3].get(p);
-                    y = y - 2;
-                }
-            }
-        }
-
-        if(intersection1.entryPoint[7] != null) {
-
+        if(v.getQue() == intersection1.entryPoint[3]) {
             r = 77;
-            y = 32;
-
-            if(intersection1.entryPoint[7].size() < 16) {
-                for(int p = 0; p < intersection1.entryPoint[7].size(); ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[7].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[7].get(p).getLocation().getRow()][intersection1.entryPoint[7].get(p).getLocation().getCol()] = intersection1.entryPoint[7].get(p);
-                    y = y - 2;
-                }
-            }
-            if(intersection1.entryPoint[7].size() >= 16) {
-                for(int p = 0; p < 16; ++p) {
-                    Location loc = new Location(r,y);
-                    intersection1.entryPoint[7].get(p).setLocation(loc);
-                    route[intersection1.entryPoint[7].get(p).getLocation().getRow()][intersection1.entryPoint[7].get(p).getLocation().getCol()] = intersection1.entryPoint[7].get(p);
-                    y = y - 2;
-                }
-            }
+            y = 60;
         }
+
+        if(v.getQue() == intersection1.entryPoint[4]) {
+            r = 35;
+            y = 11;
+        }
+
+        if(v.getQue() == intersection1.entryPoint[5]) {
+            r = 2;
+            y = 60;
+        }
+
+        if(v.getQue() == intersection1.entryPoint[6]) {
+            r = 45;
+            y = 94;
+        }
+
+        if(v.getQue() == intersection1.entryPoint[7]) {
+            r = 77;
+            y = 45;
+        }
+
+        Location loc = new Location(r,y);
+        v.setLocation(loc);
+        route[v.getLocation().getRow()][v.getLocation().getCol()] = v;
         repaint();
     }
     
@@ -666,7 +578,7 @@ public class Simulation extends JPanel {
     /**
      * Method that progresses the simulation
      */
-    public void takeAction(){
+    public void takeAction(){ //TODO have a variable set to determine after how many seconds user enters simulation
         
         double currTime = getSimTimeLeft();
         LinkedList<Vehicle> laneHolder = null;
@@ -678,15 +590,14 @@ public class Simulation extends JPanel {
             timeVehicleAdded = currTime;
         }
         
-        //generate another Vehicle at ever vTime seconds (or asap after if delay causes simulation to pass vTime)
+        //generate another Vehicle at every vTime seconds (or asap after if delay causes simulation to pass vTime)
         if((timeVehicleAdded - currTime) >= vTime) {
-            System.out.println("second vehicle added at time: " + currTime);
             addVehicle();
             timeVehicleAdded = currTime;
         }
 
-        //TODO Every ten seconds switch which lanes have green light - pretty sure this is wrong
-        if(currTime % 10 == 0) {
+        //TODO Every five seconds switch which lanes have green light - make sure this works
+        if(currTime % 5000 == 0) {
            if(isLanesOneAndThree) {
                isLanesOneAndThree = false;
            } else {
@@ -694,25 +605,25 @@ public class Simulation extends JPanel {
            }
         }
         
-        //loop through all vehicles and move them if they have the right-of-way
-        for(int u = 0; u < allVehicles.size(); ++u) {
-            
-            Vehicle v = allVehicles.get(u);
-            laneHolder = v.getQue();
+        //loop through all lanes and move them if they have the right-of-way
+        if((timeVehicleAdded - currTime) >= lTime) {
+            for (int u = 0; u < 8; ++u) {
 
-                    if (isLanesOneAndThree) {
-                        if(laneHolder != intersection1.entryPoint[0] || laneHolder != intersection1.entryPoint[2]) {
-                            moveForward(v, currTime);
-                        }
+                laneHolder = intersection1.entryPoint[u];
+
+                if (isLanesOneAndThree) {
+                    if (laneHolder != intersection1.entryPoint[0] || laneHolder != intersection1.entryPoint[2]) {
+                        moveForward(laneHolder, currTime);
                     }
-                    else {
-                        if(laneHolder != intersection1.entryPoint[1] || laneHolder != intersection1.entryPoint[3]) {
-                            moveForward(v, currTime);
-                        }
+                } else {
+                    if (laneHolder != intersection1.entryPoint[1] || laneHolder != intersection1.entryPoint[3]) {
+                        moveForward(laneHolder, currTime);
+                    }
                 }
-        }  
+            }
+            timeLastCalled = currTime;
+        }
         checkLengths();
-        createLanes();
         repaint();
     }
     
@@ -805,6 +716,7 @@ public class Simulation extends JPanel {
      * @param g 
      */ 
     public void paintComponent(Graphics g){
+        super.paintComponent(g);
         for(int row=0; row<ROWS; row++){
             for(int col=0; col<COLUMNS; col++) {
                 Vehicle v = route[row][col];
@@ -862,9 +774,6 @@ public class Simulation extends JPanel {
             g.fillRect(540, 600, 10, 35);
             g.fillRect(540, 680, 10, 35);
             g.fillRect(540, 760, 10, 35);
-        }
-        if(numOfIntersections == 2) {
-
         }
     }
 }
