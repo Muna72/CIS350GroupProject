@@ -24,11 +24,14 @@ public class Simulation extends JPanel {
     public Intersection intersection2;
 
     private final int ROWS=80, COLUMNS=120, SIZE=10;
-    private final int MAX_VEHICLES = 500;
+    private final int MAX_VEHICLES = 80;
 
     //Instance variable declarations
+    private double DELAY;
     private double secsTillNextVehicle;
     private double vTime;
+    private double lTime;
+    private double timeLastCalled;
     private double avgStoppedSec;
     private double totalTime;
     private double vehicleSpeed;
@@ -38,14 +41,11 @@ public class Simulation extends JPanel {
     private int numOfIntersections;
     private int maxLaneLength;
     private int finished;
-    private double totalAvgVehicleTime;
-    private double totalAvgStoppedTime;
     private boolean firstPer = false;
     private int timesMoved;
     private boolean isLanesOneAndThree = false;
     private Random rand = new Random();
-    double timeLastCalled = 0;
-    double lTime = 2000;
+    private boolean started = false;
     
 
 /**
@@ -53,7 +53,7 @@ public class Simulation extends JPanel {
  * @param secNext
  * @param totTime
  */
-    public Simulation(double secNext, double totTime, int numOfInts){
+    public Simulation(double secNext, double totTime, int numOfInts, int laneTime){
 
         route = new Vehicle[ROWS][COLUMNS];
         allVehicles = new ArrayList<Vehicle>();
@@ -70,10 +70,12 @@ public class Simulation extends JPanel {
         } else {
             numOfIntersections = 1;
         }
+        lTime = laneTime;
         numOfVehicles = 0;
         timeVehicleAdded = 0;
         maxLaneLength = 0;
         timesMoved = 0;
+        DELAY = 20;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
     
@@ -403,48 +405,60 @@ public class Simulation extends JPanel {
 
             if(lane == intersection1.entryPoint[0] || lane == intersection1.entryPoint[6]) {
                 for(int v = 0; v < lane.size(); ++v ) {
-
                     Vehicle current = lane.get(v);
-                    Location temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() + 3));
+                    if(current.getNumSteps() < 10) {
+                        Location temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() + 3));
 
-                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
-                    //set location to current location plus [] columns to the right
-                    current.setLocation(temp);
-                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
-                    //move to next linkedList
-                    if (current.getNumSteps() == 10) {
-                        switchLanes(current);
+                        route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                        //set location to current location plus [] columns to the right
+                        current.setLocation(temp);
+                        route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    } else {
+                        //move to next linkedList if ten steps in and have right of way, else go to next vehicle (this car waits)
+                        if (current.getNumSteps() == 10) {
+                            if (!isLanesOneAndThree) {
+                                switchLanes(current);
+                            } else {
+                                continue;
+                            }
+                        }
+                        //remove from simulation
+                        if (current.getNumSteps() == 20) {
+                            allAvgTimes.add(current.getCreateTime() - currTime);
+                            removeVehicle(current);
+                        }
                     }
-                    //remove from simulation
-                    if (current.getNumSteps() == 20) {
-                        allAvgTimes.add(current.getCreateTime() - currTime);
-                        System.out.println("Removed in moveForward with step count: " + current.getNumSteps());
-                        removeVehicle(current);
-                    }
-                    current.setNumSteps(current.getNumSteps() + 1); //TODO confirm placement
+                    current.setNumSteps(current.getNumSteps() + 1);
                 }
             }
             if(lane == intersection1.entryPoint[1] || lane == intersection1.entryPoint[7]) {
                 for(int v = 0; v < lane.size(); ++v ) {
 
                     Vehicle current = lane.get(v);
-                    Location temp = new Location((current.getLocation().getRow() + 3), (current.getLocation().getCol()));
+                    if (current.getNumSteps() < 10) {
+                        Location temp = new Location((current.getLocation().getRow() + 3), (current.getLocation().getCol()));
 
-                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
-                    //set location to current location plus [] rows down
-                    temp.setRow(temp.getRow() + 3);
-                    current.setLocation(temp);
-                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
-                    //move to next linkedList
-                    if (current.getNumSteps() == 10) {
-                        switchLanes(current);
+                        route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                        //set location to current location plus [] rows down
+                        temp.setRow(temp.getRow() + 3);
+                        current.setLocation(temp);
+                        route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    } else {
+                        //move to next linkedList
+                        if (current.getNumSteps() == 10) {
+                            if (isLanesOneAndThree) {
+                                switchLanes(current);
+                            } else {
+                                continue;
+                            }
+                        }
+                        //remove from simulation
+                        if (current.getNumSteps() == 20) {
+                            allAvgTimes.add(current.getCreateTime() - currTime);
+                            removeVehicle(current);
+                        }
                     }
-                    //remove from simulation
-                    if (current.getNumSteps() == 20) {
-                        allAvgTimes.add(current.getCreateTime() - currTime);
-                        removeVehicle(current);
-                    }
-                    current.setNumSteps(current.getNumSteps() + 1); //TODO confirm placement
+                    current.setNumSteps(current.getNumSteps() + 1);
                 }
             }
             if(lane == intersection1.entryPoint[4] || lane == intersection1.entryPoint[2]) {
@@ -582,6 +596,7 @@ public class Simulation extends JPanel {
         
         double currTime = getSimTimeLeft();
         LinkedList<Vehicle> laneHolder = null;
+        started = true;
 
         //generate first Vehicle shortly into simulation
         if(currTime == totalTime - 500) {
@@ -606,17 +621,19 @@ public class Simulation extends JPanel {
         }
         
         //loop through all lanes and move them if they have the right-of-way
-        if((timeVehicleAdded - currTime) >= lTime) {
+        if((totalTime - currTime) % lTime == 0) {
             for (int u = 0; u < 8; ++u) {
 
                 laneHolder = intersection1.entryPoint[u];
 
                 if (isLanesOneAndThree) {
-                    if (laneHolder != intersection1.entryPoint[0] || laneHolder != intersection1.entryPoint[2]) {
+                    if (laneHolder != intersection1.entryPoint[0] && laneHolder != intersection1.entryPoint[2]) {
+                        System.out.print("3-1 RIGHT OF WAY : " );
                         moveForward(laneHolder, currTime);
                     }
                 } else {
-                    if (laneHolder != intersection1.entryPoint[1] || laneHolder != intersection1.entryPoint[3]) {
+                    if (laneHolder != intersection1.entryPoint[1] && laneHolder != intersection1.entryPoint[3]) {
+                        System.out.print("0-2 RIGHT OF WAY : ");
                         moveForward(laneHolder, currTime);
                     }
                 }
@@ -671,23 +688,13 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to calcaulte the average time vehicles were stopped
-     * @param allTimes
-     * @return
-     */
-    public double calculateAvgTimeStopped(ArrayList<Double> allTimes) {
-        double avgTime = 0;
-
-        return avgTime;
-    }
-
-    /**
      * Get the total average time for a Vehicle from start to finish //TODO this is not done yet
      * @return 
      */
-    public double getTotalAvgVehicleTime(ArrayList<Double> allTimes){
+    public double getTotalAvgVehicleTime(){
         
         double sum = 0;
+        double totalAvgVehicleTime;
         
         for(int i = 0; i < allAvgTimes.size(); ++i) {
             sum = sum + allAvgTimes.get(i);  
@@ -703,6 +710,7 @@ public class Simulation extends JPanel {
     public double getAvgStoppedTime() {
         
         double sum = 0;
+        double totalAvgStoppedTime;
         
         for(int i = 0; i < allAvgTimeStopped.size(); ++i) {
             sum = sum + allAvgTimeStopped.get(i);
@@ -741,7 +749,7 @@ public class Simulation extends JPanel {
                 }
             }
         }
-        if(numOfIntersections == 1) {
+        if(started == false) {
 
             g.setColor(Color.BLACK);
             //top two veritcal
@@ -774,6 +782,76 @@ public class Simulation extends JPanel {
             g.fillRect(540, 600, 10, 35);
             g.fillRect(540, 680, 10, 35);
             g.fillRect(540, 760, 10, 35);
+        } else {
+            if(isLanesOneAndThree) {
+                g.setColor(Color.GREEN);
+                //top two veritcal
+                g.fillRect(370, 20, 35, 270);
+                g.fillRect(680, 20, 35, 270);
+                //bottom two vertical
+                g.fillRect(370, 520, 35, 270);
+                g.fillRect(680, 520, 35, 270);
+                g.setColor(Color.RED);
+                //top two horizontal
+                g.fillRect(115, 280, 290, 35);
+                g.fillRect(680, 280, 290, 35);
+                //bottom two horizontal
+                g.fillRect(115, 490, 290, 35);
+                g.fillRect(680, 490, 290, 35);
+                g.setColor(Color.BLACK);
+                //Horizontal lane dashes
+                g.fillRect(115, 395, 35, 10);
+                g.fillRect(195, 395, 35, 10);
+                g.fillRect(275, 395, 35, 10);
+                g.fillRect(355, 395, 35, 10);
+                g.fillRect(680, 395, 35, 10);
+                g.fillRect(760, 395, 35, 10);
+                g.fillRect(840, 395, 35, 10);
+                g.fillRect(920, 395, 35, 10);
+                //Vertical lane dashes
+                g.fillRect(540, 20, 10, 35);
+                g.fillRect(540, 100, 10, 35);
+                g.fillRect(540, 180, 10, 35);
+                g.fillRect(540, 260, 10, 35);
+                g.fillRect(540, 520, 10, 35);
+                g.fillRect(540, 600, 10, 35);
+                g.fillRect(540, 680, 10, 35);
+                g.fillRect(540, 760, 10, 35);
+            } else {
+                g.setColor(Color.RED);
+                //top two veritcal
+                g.fillRect(370, 20, 35, 270);
+                g.fillRect(680, 20, 35, 270);
+                //bottom two vertical
+                g.fillRect(370, 520, 35, 270);
+                g.fillRect(680, 520, 35, 270);
+                g.setColor(Color.GREEN);
+                //top two horizontal
+                g.fillRect(115, 280, 290, 35);
+                g.fillRect(680, 280, 290, 35);
+                //bottom two horizontal
+                g.fillRect(115, 490, 290, 35);
+                g.fillRect(680, 490, 290, 35);
+                g.setColor(Color.BLACK);
+                //Horizontal lane dashes
+                g.fillRect(115, 395, 35, 10);
+                g.fillRect(195, 395, 35, 10);
+                g.fillRect(275, 395, 35, 10);
+                g.fillRect(355, 395, 35, 10);
+                g.fillRect(680, 395, 35, 10);
+                g.fillRect(760, 395, 35, 10);
+                g.fillRect(840, 395, 35, 10);
+                g.fillRect(920, 395, 35, 10);
+                //Vertical lane dashes
+                g.fillRect(540, 20, 10, 35);
+                g.fillRect(540, 100, 10, 35);
+                g.fillRect(540, 180, 10, 35);
+                g.fillRect(540, 260, 10, 35);
+                g.fillRect(540, 520, 10, 35);
+                g.fillRect(540, 600, 10, 35);
+                g.fillRect(540, 680, 10, 35);
+                g.fillRect(540, 760, 10, 35);
+            }
         }
     }
 }

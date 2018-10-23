@@ -134,7 +134,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
         add(statsArea,position);
 
-        trafficMap = new Simulation(secsTillNextVehicle, totalTime, 1);
+        trafficMap = new Simulation(secsTillNextVehicle, totalTime, 1, 500); //TODO make lTime variable
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
         position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
@@ -207,7 +207,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position.insets =  new Insets(0,-110,0,20);
         statsArea.add(thru, position);
         out1 = new JLabel("TBD");
-        //out1 = new JLabel(trafficMap.getFinished() + " with max = 500");
+        out1 = new JLabel(trafficMap.getFinished() + " with max = 80");
         out1.setFont(font);
         position = makeConstraints(2,1,1,1,GridBagConstraints.LINE_START);
         position.insets =  new Insets(10,0,0,20);
@@ -373,7 +373,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
             switch (weatherConditions.getSelectedItem().toString()) {
                 case "Clear Day":
-                    DELAY = 20;
+                    //trafficMap.setLTime();
                     break;
                 case "Light Rain":
                     DELAY = 18;
@@ -418,13 +418,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
      */
     public void updateGUI() {
 
-        // out1.setText(trafficMap.getFinished() + " with max = 500");
-        //out3.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds"); //ONLY ONES THAT ARE CALCULATED HERE?
-        //out4.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
-        // out5.setText(trafficMap.getMaxCheckLength() + " people");
-        //out6.setText(trafficMap.getMaxLaneLength() + " people");
+        //Will up actively as simulation runs
+        out1.setText(trafficMap.getFinished() + " with max = 80");
+        out4.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds");
+        out7.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
 
-        //WILL NEED TO UPDATE LIGHTS RUN AND ACCIDENTS HERE ONLY
+
+        //WILL NEED TO UPDATE LIGHTS RUN AND ACCIDENTS HERE ONLY (out2 nad out3)
     }
 
     /**
@@ -434,11 +434,10 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         try {
 
              // dont need ?: secsTillNextVehicle = 1000 * Double.parseDouble(in1.getText());
-             totalTime = 1000 * 50; //set 30 seconds simulation run time (for now)
+             totalTime = 1000 * 50; //set 50 seconds simulation run time (for now)
              // may use later: numOfIntersections = Integer.parseInt(in6.getText());
 
              trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
-             System.out.println("secs till next v: " + secsTillNextVehicle);
              //trafficMap.calculateAvgTimeStopped();
              //trafficMap.calculateAvgVehicleThruTime();
              //trafficMap.calculateUserThruTime();
@@ -461,6 +460,9 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                         updateGUI();
                         isRunning = false;
                         JOptionPane.showMessageDialog(null, "Simulation Over");
+                    }
+                     else {
+                         updateGUI();
                     }
                 }
             });
