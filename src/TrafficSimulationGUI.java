@@ -25,9 +25,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private double totalTime;
     private double timeLeft;
     private double vTime;
-    private double cTime;
-    private double eTime;
-    private double avgEatSec;
+    private double moveForwardTime;
+    private double uCarTime;
     private int numOfIntersections;
     public Timer simTimer;
     private Location startLoc;
@@ -118,6 +117,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         isRunning = false;
         firstTimeStartPressed = true;
         secsTillNextVehicle = 1000 * 5;
+        uCarTime = 0;
 
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
@@ -353,16 +353,16 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         //set route congestion level based on user input
         if (e.getSource() == congestionLevel) {
             isRunning = false;
-            if (congestionLevel.getSelectedItem() == "Low") {
+            if (congestionLevel.getSelectedItem().toString() == "Low") {
                 secsTillNextVehicle = 1000 * 5;
             }
-            if (congestionLevel.getSelectedItem() == "Medium") {
+            if (congestionLevel.getSelectedItem().toString() == "Medium") {
                 secsTillNextVehicle = 1000 * 3;
             }
-            if (congestionLevel.getSelectedItem() == "High") {
+            if (congestionLevel.getSelectedItem().toString() == "High") {
                 secsTillNextVehicle = 1000 * 2;
             }
-            if (congestionLevel.getSelectedItem() == "Rush Hour") {
+            if (congestionLevel.getSelectedItem().toString() == "Rush Hour") {
                 secsTillNextVehicle = 1000 * 1;
             }
         }
@@ -370,48 +370,47 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         //set weather condition variables based on user input
         if (e.getSource() == weatherConditions) {
             isRunning = false;
-
             switch (weatherConditions.getSelectedItem().toString()) {
                 case "Clear Day":
-                    //trafficMap.setLTime();
+                    moveForwardTime = 500;
                     break;
                 case "Light Rain":
-                    DELAY = 18;
+                    moveForwardTime = 700;
                     break;
                 case "Light Snow":
-                    DELAY = 18;
+                    moveForwardTime = 700;
                     break;
                 case "Heavy Rain":
-                    DELAY = 17;
+                    moveForwardTime = 800;
                     break;
                 case "Heavy Snow":
-                    DELAY = 15;
+                    moveForwardTime = 1000;
                     break;
                 case "Fog":
-                    DELAY = 18;
+                    moveForwardTime = 700;
                     break;
                 default:
-                    DELAY = 20;
+                    moveForwardTime = 500;
                     break;
             }
+        }
 
             //set where user's car generates based on input
             if (e.getSource() == leaveTime) {
                 isRunning = false;
-                if (leaveTime.getSelectedItem() == "Left Early") {
-                    trafficMap.placeUserCar("front");
+                if (leaveTime.getSelectedItem().toString() == "Left Early") {
+                    uCarTime = 900;
                 }
-                if (leaveTime.getSelectedItem() == "On Time") {
-                    trafficMap.placeUserCar("middle");
+                if (leaveTime.getSelectedItem().toString() == "On Time") {
+                    uCarTime = 10200;
                 }
-                if (leaveTime.getSelectedItem() == "Left Late") {
-                    trafficMap.placeUserCar("back");
+                if (leaveTime.getSelectedItem().toString() == "Left Late") {
+                    uCarTime = 25200;
                 }
             }
 
             //update GUI
             trafficMap.repaint();
-        }
     }
     /**
      * Method to update stats in the GUI
@@ -433,15 +432,12 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     public void run(){
         try {
 
-             // dont need ?: secsTillNextVehicle = 1000 * Double.parseDouble(in1.getText());
              totalTime = 1000 * 50; //set 50 seconds simulation run time (for now)
-             // may use later: numOfIntersections = Integer.parseInt(in6.getText());
-
              trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
-             //trafficMap.calculateAvgTimeStopped();
-             //trafficMap.calculateAvgVehicleThruTime();
-             //trafficMap.calculateUserThruTime();
              trafficMap.setTotalTime(totalTime);
+             trafficMap.setTimeForUserCar(uCarTime);
+             trafficMap.setLTime(moveForwardTime);
+             System.out.println("moveTIme is: " + moveForwardTime);
             // may use later: trafficMap.setNumOfIntersections(numOfIntersections);
             trafficMap.setVTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
 
