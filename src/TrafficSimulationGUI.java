@@ -117,7 +117,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         isRunning = false;
         firstTimeStartPressed = true;
         secsTillNextVehicle = 1000 * 5;
-        uCarTime = 0;
+        uCarTime = 10200;
+        moveForwardTime = 500;
 
         setLayout(new GridBagLayout());
         GridBagConstraints position = new GridBagConstraints();
@@ -420,6 +421,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         //Will up actively as simulation runs
         out1.setText(trafficMap.getFinished() + " with max = 80");
         out4.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds");
+        out6.setText(df.format(trafficMap.getUserThruTime()) + " seconds");
         out7.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
 
 
@@ -437,7 +439,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
              trafficMap.setTotalTime(totalTime);
              trafficMap.setTimeForUserCar(uCarTime);
              trafficMap.setLTime(moveForwardTime);
-             System.out.println("moveTIme is: " + moveForwardTime);
             // may use later: trafficMap.setNumOfIntersections(numOfIntersections);
             trafficMap.setVTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
 
