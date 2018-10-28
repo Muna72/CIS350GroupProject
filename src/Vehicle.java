@@ -19,6 +19,15 @@ public abstract class Vehicle {
 
     protected int numSteps;
 
+    protected int maxSteps;
+
+    public int getMaxSteps() {
+        return maxSteps;
+    }
+    public void setMaxSteps(int steps) {
+        maxSteps = steps;
+    }
+
     public void setNumSteps(int step) {
         numSteps = step;
     }
