@@ -36,7 +36,6 @@ public class Simulation extends JPanel {
     private double timeVehicleAdded;
     private double userThruTime;
     private int numOfVehicles;
-    private int numOfIntersections;
     private int maxLaneLength;
     private int finished;
     private boolean firstPer = false;
@@ -58,10 +57,9 @@ public class Simulation extends JPanel {
      *  Class Constructor initializes instance variables
      * @param secNext seconds until the next vehicle will be generated
      * @param totTime total simulation run time
-     * @param numOfInts //TODO remove this
-     * @param laneTime time when each lane will "move forward" 
+     * @param laneTime time when each lane will "move forward"
      */
-    public Simulation(double secNext, double totTime, int numOfInts, int laneTime){
+    public Simulation(double secNext, double totTime, int laneTime){
 
         route = new Vehicle[ROWS][COLUMNS];
         allVehicles = new ArrayList<Vehicle>();
@@ -72,11 +70,6 @@ public class Simulation extends JPanel {
 
         secsTillNextVehicle = secNext;
         totalTime = totTime;
-        if(numOfInts > 1) {
-            numOfIntersections = numOfInts;
-        } else {
-            numOfIntersections = 1;
-        }
         lTime = laneTime;
         numOfVehicles = 0;
         timeVehicleAdded = 0;
@@ -101,15 +94,6 @@ public class Simulation extends JPanel {
     public void setTotalTime(double totTime) {
         totalTime = totTime;
     }
-
-    
-    /**
-     * Method to set number of intersections at beginning of simulation
-     * @param numInts
-     */
-    public void setNumOfIntersections(int numInts) {
-        numOfIntersections = numInts;
-    } //TODO remove this and everything assiciated with it
     
     /**
      * Method to set the time between when vehicles are generated
@@ -295,7 +279,6 @@ public class Simulation extends JPanel {
         secsTillNextVehicle = 0;
         totalTime = 0;
         avgStoppedSec = 0;
-        numOfIntersections = 1;
         timeVehicleAdded = 0;
         finished = 0;
         userThruTime = 0;
@@ -413,7 +396,11 @@ public class Simulation extends JPanel {
         }
     }
 
-
+    /**
+     * Method to move entire lane of cars forward one step
+     * @param lane lane to be moved forward
+     * @param currTime current simulation time
+     */
     public void moveForward(LinkedList<Vehicle> lane, double currTime) {
 
         Vehicle last = null;
@@ -589,7 +576,10 @@ public class Simulation extends JPanel {
             }
     }
 
-
+    /**
+     * Method to determine whether or not a vehicle is safe to cross the intersection, then allow or halt it accordingly
+     * @param v vehicle to be moved/halted
+     */
     public void crossIntersection(Vehicle v) {
 
         LinkedList<Vehicle> lane = v.getQue();
@@ -665,9 +655,10 @@ public class Simulation extends JPanel {
             }
         }
     }
+
     /**
-     * Method to create visual lines of people in the ques for the GUI, shows
-     * up to fifteen people in each que
+     * Method to initially place vehicle visually in the GUI in a location depending on their queue
+     * @param v vehicle to be visually represented
      */
     public void setStartingPosition(Vehicle v) {
         
@@ -719,31 +710,10 @@ public class Simulation extends JPanel {
         route[v.getLocation().getRow()][v.getLocation().getCol()] = v;
         repaint();
     }
-    
-    /**
-     * Method to check for longest que length
-     */
-    public void checkLengths() {
-         
-        if (intersection1.entryPoint[0] != null) {
-            allQueLengths.add(intersection1.entryPoint[0].size());
-        }    
-        if(intersection1.entryPoint[1] != null) {
-            allQueLengths.add(intersection1.entryPoint[1].size());
-        }
-        if(intersection1.entryPoint[2] != null) {
-            allQueLengths.add(intersection1.entryPoint[2].size());
-        }
-        if(intersection1.entryPoint[3] != null) {
-            allQueLengths.add(intersection1.entryPoint[3].size());
-        }
-        for(int i = 0; i < allQueLengths.size(); ++i) {
-            if(allQueLengths.get(i) > maxLaneLength) {
-                maxLaneLength = allQueLengths.get(i);
-            }
-        }
-    }
 
+    /**
+     * Method to randomly choose which lanes will be first to have a green light in the simulation
+     */
     public void generateFirstGreen() {
 
         int gen = rand.nextInt(2 - 1 + 1) + 1;
@@ -840,27 +810,26 @@ public class Simulation extends JPanel {
         return finished;
     }
 
+    /**
+     * Method to get the amount of time it took the user's car to finish the simulation
+     * @return
+     */
     public double getUserThruTime() {
         return userThruTime;
     }
-    
+
     /**
-     * Method to get number of intersections
-     * @return numOfIntersections
-     */
-    public int getNumOfIntersections() {
-        return numOfIntersections;
-    }
-    
-    /**
-     * Method to get number of vehicles
-     * @return numOfVehicles
+     * Method to get the time that the user's car will enter the simulation
+     * @param time
      */
     public void setTimeForUserCar(double time) {
         timeForUserCar = time;
     }
 
-
+    /**
+     * Method to set the time increment by which lanes to be updated
+     * @param time
+     */
     public void setLTime(double time) {
         lTime = time;
     }

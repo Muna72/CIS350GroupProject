@@ -135,7 +135,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
         add(statsArea,position);
 
-        trafficMap = new Simulation(secsTillNextVehicle, totalTime, 1, 500); //TODO make lTime variable
+        trafficMap = new Simulation(secsTillNextVehicle, totalTime, 500); //TODO make lTime variable
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
         position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
