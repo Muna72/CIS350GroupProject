@@ -21,6 +21,16 @@ public abstract class Vehicle {
 
     protected int maxSteps;
 
+    protected int stepsToTurn = 12;
+
+    public int getStepsToTurn() {
+        return stepsToTurn;
+    }
+
+    public void setStepsToTurn(int steps) {
+        stepsToTurn = steps;
+    }
+
     public int getMaxSteps() {
         return maxSteps;
     }
