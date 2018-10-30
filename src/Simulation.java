@@ -26,7 +26,6 @@ public class Simulation extends JPanel {
     private final int MAX_VEHICLES = 80;
 
     //Instance variable declarations
-    private double DELAY;
     private double secsTillNextVehicle;
     private double vTime;
     private double lTime;
@@ -36,18 +35,15 @@ public class Simulation extends JPanel {
     private double timeVehicleAdded;
     private double userThruTime;
     private int numOfVehicles;
-    private int maxLaneLength;
     private int finished;
     private boolean firstPer = false;
-    private int timesMoved;
+    private boolean enableYellow = false;
     private boolean isLanesOneAndThree = false;
     private boolean isLanesZeroAndTwo = false;
     private boolean isYellowOneAndThree = false;
     private boolean isYellowLight = false;
     private double greenLightTimer = 0;
     private double yellowLightTimer = 0;
-    private double yellowTimer = 0;
-    private double lastTimeCalled = 0;
     private Random rand = new Random();
     private boolean started = false;
     private double timeForUserCar;
@@ -73,9 +69,6 @@ public class Simulation extends JPanel {
         lTime = laneTime;
         numOfVehicles = 0;
         timeVehicleAdded = 0;
-        maxLaneLength = 0;
-        timesMoved = 0;
-        DELAY = 20;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
     
@@ -107,7 +100,7 @@ public class Simulation extends JPanel {
      * Method to place Vehicle in a lane que
      * @param v vehicle to be placed
      */
-    private void placeVehicle(Vehicle v){
+    private void placeVehicle(Vehicle v){ //TODO each queue can have 10 vehicles in it max, gotta check for that
         
         int gen = rand.nextInt(4) + 1;
 
@@ -238,34 +231,34 @@ public class Simulation extends JPanel {
 
         if(laneHolder == intersection1.entryPoint[0]) {
             if(v.getPath() == Direction.NORTH) {
-                v.setMaxSteps(28);
+                v.setMaxSteps(31);
                 v.setStepsToTurn(17);
             } else {
-                v.setMaxSteps(22);
+                v.setMaxSteps(23);
             }
         }
         if(laneHolder == intersection1.entryPoint[1]) {
             if(v.getPath() == Direction.EAST) {
-                v.setMaxSteps(28);
+                v.setMaxSteps(32);
                 v.setStepsToTurn(17);
             } else {
-                v.setMaxSteps(22);
+                v.setMaxSteps(23);
             }
         }
         if(laneHolder == intersection1.entryPoint[2]) {
             if(v.getPath() == Direction.SOUTH) {
-                v.setMaxSteps(28);
+                v.setMaxSteps(32);
                 v.setStepsToTurn(17);
             } else {
-                v.setMaxSteps(22);
+                v.setMaxSteps(23);
             }
         }
         if(laneHolder == intersection1.entryPoint[3]) {
             if(v.getPath() == Direction.WEST) {
-                v.setMaxSteps(28);
+                v.setMaxSteps(32);
                 v.setStepsToTurn(17);
             } else {
-                v.setMaxSteps(22);
+                v.setMaxSteps(23);
             }
         }
     }
@@ -285,7 +278,10 @@ public class Simulation extends JPanel {
         allVehicles.clear();
         allAvgTimes.clear();
         allAvgTimeStopped.clear();
-        intersection1.clear(); //TODO make sure this happens
+        intersection1.clear();
+        enableYellow = false;
+        isYellowLight = false;
+        isYellowOneAndThree = false;
 
         for(int i = 0; i < ROWS; ++i) {
             for(int y = 0; y < COLUMNS; ++y) {
@@ -717,6 +713,7 @@ public class Simulation extends JPanel {
     public void generateFirstGreen() {
 
         int gen = rand.nextInt(2 - 1 + 1) + 1;
+        System.out.println("gen is: " + gen);
 
         switch(gen) {
             case 1:
@@ -758,18 +755,19 @@ public class Simulation extends JPanel {
             addVehicle(true);
         }
 
-        //Generate first green/red light
+        //Generate first green/red light soon after simulation starts
         if(currTime == totalTime - 100) {
             generateFirstGreen();
             greenLightTimer = currTime;
+            enableYellow = true;
         }
 
         //Every eight seconds switch which lanes have green light
-        if(!isYellowLight && (currTime - greenLightTimer) >= 8000) {
+        if(!isYellowLight && (greenLightTimer - currTime) >= 10000) {
             //Turn whichever lane had green light previously to yellow, stopping the flow of traffic from that lane
            if(isLanesOneAndThree) {
                isLanesOneAndThree = false;
-               isYellowOneAndThree = true;
+               isYellowOneAndThree = true; //TODO make sure all these values are set to zero when simulation clears!!
            } else {
                isLanesZeroAndTwo = false;
                isYellowOneAndThree = false;
@@ -777,9 +775,9 @@ public class Simulation extends JPanel {
             isYellowLight = true;
             yellowLightTimer = currTime;
         }
-
+         //System.out.println("current time minus yellow ligh timer: " + (currTime - yellowLightTimer));
         //Every eight seconds switch which lanes have green light
-        if(isYellowLight && (currTime - yellowLightTimer) >= 2000) {
+        if(isYellowLight && (yellowLightTimer - currTime) >= 3000) {
             if(isYellowOneAndThree) {
                 isLanesZeroAndTwo = true;
             } else {
@@ -788,6 +786,7 @@ public class Simulation extends JPanel {
             //isYellowOneAndThree = false;
             isYellowLight = false;
             greenLightTimer = currTime;
+            System.out.println("yellow light ending with islane3: " + isLanesOneAndThree + " and islane0: " + isLanesZeroAndTwo);
         }
         
         //loop through all lanes and move them if they have the right-of-way
@@ -798,7 +797,6 @@ public class Simulation extends JPanel {
                 moveForward(laneHolder, currTime);
             }
         }
-        lastTimeCalled = currTime;
         repaint();
     }
     
@@ -964,7 +962,7 @@ public class Simulation extends JPanel {
                 g.fillRect(540, 600, 10, 35);
                 g.fillRect(540, 680, 10, 35);
                 g.fillRect(540, 760, 10, 35);
-            } else {
+            } else if (isLanesZeroAndTwo) {
                 g.setColor(Color.RED);
                 //top two veritcal
                 g.fillRect(370, 20, 35, 270);
@@ -973,6 +971,76 @@ public class Simulation extends JPanel {
                 g.fillRect(370, 520, 35, 270);
                 g.fillRect(680, 520, 35, 270);
                 g.setColor(Color.GREEN);
+                //top two horizontal
+                g.fillRect(115, 280, 290, 35);
+                g.fillRect(680, 280, 290, 35);
+                //bottom two horizontal
+                g.fillRect(115, 490, 290, 35);
+                g.fillRect(680, 490, 290, 35);
+                g.setColor(Color.BLACK);
+                //Horizontal lane dashes
+                g.fillRect(115, 395, 35, 10);
+                g.fillRect(195, 395, 35, 10);
+                g.fillRect(275, 395, 35, 10);
+                g.fillRect(355, 395, 35, 10);
+                g.fillRect(680, 395, 35, 10);
+                g.fillRect(760, 395, 35, 10);
+                g.fillRect(840, 395, 35, 10);
+                g.fillRect(920, 395, 35, 10);
+                //Vertical lane dashes
+                g.fillRect(540, 20, 10, 35);
+                g.fillRect(540, 100, 10, 35);
+                g.fillRect(540, 180, 10, 35);
+                g.fillRect(540, 260, 10, 35);
+                g.fillRect(540, 520, 10, 35);
+                g.fillRect(540, 600, 10, 35);
+                g.fillRect(540, 680, 10, 35);
+                g.fillRect(540, 760, 10, 35);
+            }
+            else if (isYellowOneAndThree) {
+                g.setColor(Color.YELLOW);
+                //top two veritcal
+                g.fillRect(370, 20, 35, 270);
+                g.fillRect(680, 20, 35, 270);
+                //bottom two vertical
+                g.fillRect(370, 520, 35, 270);
+                g.fillRect(680, 520, 35, 270);
+                g.setColor(Color.RED);
+                //top two horizontal
+                g.fillRect(115, 280, 290, 35);
+                g.fillRect(680, 280, 290, 35);
+                //bottom two horizontal
+                g.fillRect(115, 490, 290, 35);
+                g.fillRect(680, 490, 290, 35);
+                g.setColor(Color.BLACK);
+                //Horizontal lane dashes
+                g.fillRect(115, 395, 35, 10);
+                g.fillRect(195, 395, 35, 10);
+                g.fillRect(275, 395, 35, 10);
+                g.fillRect(355, 395, 35, 10);
+                g.fillRect(680, 395, 35, 10);
+                g.fillRect(760, 395, 35, 10);
+                g.fillRect(840, 395, 35, 10);
+                g.fillRect(920, 395, 35, 10);
+                //Vertical lane dashes
+                g.fillRect(540, 20, 10, 35);
+                g.fillRect(540, 100, 10, 35);
+                g.fillRect(540, 180, 10, 35);
+                g.fillRect(540, 260, 10, 35);
+                g.fillRect(540, 520, 10, 35);
+                g.fillRect(540, 600, 10, 35);
+                g.fillRect(540, 680, 10, 35);
+                g.fillRect(540, 760, 10, 35);
+            }
+            else if (enableYellow) {
+                g.setColor(Color.RED);
+                //top two veritcal
+                g.fillRect(370, 20, 35, 270);
+                g.fillRect(680, 20, 35, 270);
+                //bottom two vertical
+                g.fillRect(370, 520, 35, 270);
+                g.fillRect(680, 520, 35, 270);
+                g.setColor(Color.YELLOW);
                 //top two horizontal
                 g.fillRect(115, 280, 290, 35);
                 g.fillRect(680, 280, 290, 35);
