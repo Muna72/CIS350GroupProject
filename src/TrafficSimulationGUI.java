@@ -434,7 +434,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     public void run(){
         try {
 
-             totalTime = 1000 * 50; //set 50 seconds simulation run time (for now)
+             totalTime = 1000 * 69; //set 50 seconds simulation run time (for now)
              trafficMap.setSecsTillNextVehicle(secsTillNextVehicle);
              trafficMap.setTotalTime(totalTime);
              trafficMap.setTimeForUserCar(uCarTime);
