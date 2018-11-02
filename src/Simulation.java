@@ -35,6 +35,7 @@ public class Simulation extends JPanel {
     private double timeVehicleAdded;
     private double userThruTime;
     private int numOfVehicles;
+    private int numOfAccidents;
     private int finished;
     private boolean firstPer = false;
     private boolean enableYellow = false;
@@ -68,6 +69,7 @@ public class Simulation extends JPanel {
         totalTime = totTime;
         lTime = laneTime;
         numOfVehicles = 0;
+        numOfAccidents = 0;
         timeVehicleAdded = 0;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
@@ -278,6 +280,7 @@ public class Simulation extends JPanel {
     public void reset() {
         
         secsTillNextVehicle = 0;
+        numOfAccidents = 0;
         totalTime = 0;
         avgStoppedSec = 0;
         timeVehicleAdded = 0;
@@ -584,6 +587,7 @@ public class Simulation extends JPanel {
                     }
                     current.setNumSteps(current.getNumSteps() + 1);
                     last = current; //TODO make sure this goes here
+                    isAccident(current);
                 }
             }
     }
@@ -668,12 +672,16 @@ public class Simulation extends JPanel {
         }
     }
 
-    public boolean isAccident() { //Check if there will be an accident
-        return true;
+    public void isAccident(Vehicle v) {//Check if there will be an accident
+        for(int i = 0; i < allVehicles.size(); ++i) {
+            if(v.getLocation() == allVehicles.get(i).getLocation()) {
+                hadAccident(v, allVehicles.get(i));
+            }
+        }
     }
 
     public void hadAccident(Vehicle v1, Vehicle v2) { //remove both vehicles from simulation if they crash
-
+        ++numOfAccidents;
     }
 
     /**
@@ -891,7 +899,7 @@ public class Simulation extends JPanel {
      * Method to paint the simulation
      * @param g 
      */ 
-    public void paintComponent(Graphics g){
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         for(int row=0; row<ROWS; row++){
             for(int col=0; col<COLUMNS; col++) {
@@ -902,7 +910,7 @@ public class Simulation extends JPanel {
                     g.setColor(Color.WHITE);
                     // set color to vehicle color
                 } else {
-                    g.setColor(v.getColor());
+                   g.setColor(v.getColor());
                 }
 
                 // paint the location of the vehicle
