@@ -682,6 +682,8 @@ public class Simulation extends JPanel {
 
     public void hadAccident(Vehicle v1, Vehicle v2) { //remove both vehicles from simulation if they crash
         ++numOfAccidents;
+       // remove(v1);
+       // remove(v2);
     }
 
     /**
