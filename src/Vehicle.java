@@ -23,6 +23,16 @@ public abstract class Vehicle {
 
     protected int stepsToTurn = 12;
 
+    protected double timeStopped;
+
+    public double getTimeStopped() {
+        return timeStopped;
+    }
+
+    public void setTimeStopped(double t) {
+        timeStopped = t;
+    }
+
     public int getStepsToTurn() {
         return stepsToTurn;
     }

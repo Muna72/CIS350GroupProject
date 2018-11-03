@@ -420,10 +420,12 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
         //Will up actively as simulation runs
         out1.setText(trafficMap.getFinished() + " with max = 80");
+        out2.setText(String.valueOf(trafficMap.getNumLightsRun()));
+        out3.setText(String.valueOf(trafficMap.getNumOfAccidents()));
         out4.setText(df.format(trafficMap.getAvgStoppedTime()) + " seconds");
+        out5.setText(df.format(trafficMap.getAvgVehicleSpeed()) + " mph");
         out6.setText(df.format(trafficMap.getUserThruTime()) + " seconds");
         out7.setText(df.format(trafficMap.getTotalAvgVehicleTime()) + " seconds");
-
 
         //WILL NEED TO UPDATE LIGHTS RUN AND ACCIDENTS HERE ONLY (out2 nad out3)
     }

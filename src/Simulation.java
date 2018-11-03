@@ -27,6 +27,7 @@ public class Simulation extends JPanel {
 
     //Instance variable declarations
     private double secsTillNextVehicle;
+    private double currTime;
     private double vTime;
     private double lTime;
     private double avgStoppedSec;
@@ -35,6 +36,7 @@ public class Simulation extends JPanel {
     private double timeVehicleAdded;
     private double userThruTime;
     private int numOfVehicles;
+    private int numLightsRun;
     private int numOfAccidents;
     private int finished;
     private boolean firstPer = false;
@@ -56,7 +58,7 @@ public class Simulation extends JPanel {
      * @param totTime total simulation run time
      * @param laneTime time when each lane will "move forward"
      */
-    public Simulation(double secNext, double totTime, int laneTime){
+    public Simulation(double secNext, double totTime, double laneTime){
 
         route = new Vehicle[ROWS][COLUMNS];
         allVehicles = new ArrayList<Vehicle>();
@@ -97,7 +99,29 @@ public class Simulation extends JPanel {
     public void setVTime(double pt) {
         vTime = pt;
     }
-    
+
+    public void setNumOfAccidents(int num) {
+        numOfAccidents = num;
+    }
+
+    public int getNumOfAccidents() {
+        return numOfAccidents;
+    }
+
+    public double getAvgVehicleSpeed() {
+        double avgVehicleSpeed = 0;
+
+        if(lTime == 500) {
+            avgVehicleSpeed = 50;
+        } else if(lTime == 700) {
+            avgVehicleSpeed = 35.5;
+        } else if(lTime == 800) {
+            avgVehicleSpeed = 31.25;
+        } else if(lTime == 1000) {
+            avgVehicleSpeed = 25;
+        }
+        return avgVehicleSpeed;
+    }
     /**
      * Method to place Vehicle in a lane que
      * @param v vehicle to be placed
@@ -286,6 +310,7 @@ public class Simulation extends JPanel {
         timeVehicleAdded = 0;
         finished = 0;
         userThruTime = 0;
+        currTime = 0;
         allVehicles.clear();
         allAvgTimes.clear();
         allAvgTimeStopped.clear();
@@ -315,6 +340,14 @@ public class Simulation extends JPanel {
      */
     public double getSimTimeLeft() {
         return simTimeLeft;
+    }
+
+    public void setNumLightsRun(int num) {
+        numLightsRun = num;
+    }
+
+    public int getNumLightsRun() {
+        return numLightsRun;
     }
 
     /**
@@ -420,6 +453,7 @@ public class Simulation extends JPanel {
                             crossIntersection(current);
                         } else {
                             //Continue so steps do not get incremented for this vehicle
+                            current.setTimeStopped(currTime);
                             last = current;
                             continue;
                         }
@@ -427,10 +461,15 @@ public class Simulation extends JPanel {
                     if(current.getNumSteps() != 10) {
                         if(current.getNumSteps() < 10 && last != null) {
                             //continue if you are about to take as many steps as the guy in front of you
-                          if(current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
+                          if(current.getNumSteps() == (last.getNumSteps() - 1)) {
+                              current.setTimeStopped(currTime);
                               last = current;
                               continue;
                           }
+                        }
+                        //Now that car is moving again, calculate how long they had been stopped TODO does this work?
+                        if(current.getTimeStopped() > 0) {
+                            allAvgTimeStopped.add(current.getTimeStopped() - currTime);
                         }
                         Location temp;
                         if(current.getLocation().getCol() <= 100) {
@@ -441,7 +480,6 @@ public class Simulation extends JPanel {
                         route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
                         //set location to current location plus [] columns to the right
                         current.setLocation(temp);
-                        //System.out.println("Current vehicle in lane 6, with step count: " + current.getNumSteps() + " with max steps: " + current.getMaxSteps());
                         route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
                         //switch lanes
                         if(current.getNumSteps() == current.getStepsToTurn()) {
@@ -587,9 +625,9 @@ public class Simulation extends JPanel {
                     }
                     current.setNumSteps(current.getNumSteps() + 1);
                     last = current; //TODO make sure this goes here
-                    isAccident(current);
                 }
             }
+            checkForAccident();
     }
 
     /**
@@ -672,18 +710,20 @@ public class Simulation extends JPanel {
         }
     }
 
-    public void isAccident(Vehicle v) {//Check if there will be an accident
+    public void checkForAccident() {//Check if there will be an accident
         for(int i = 0; i < allVehicles.size(); ++i) {
-            if(v.getLocation() == allVehicles.get(i).getLocation()) {
-                hadAccident(v, allVehicles.get(i));
+            Vehicle v1 = allVehicles.get(i);
+            for(int y = allVehicles.size() - 1; y > 0; --y) {
+                Vehicle v2 = allVehicles.get(y);
+                if(v1.getLocation() == v2.getLocation() && v1 != v2) {
+                    removeVehicle(v1, currTime);
+                    removeVehicle(v2, currTime);
+                    ++numOfAccidents;
+                    break;
+                }
             }
         }
-    }
-
-    public void hadAccident(Vehicle v1, Vehicle v2) { //remove both vehicles from simulation if they crash
-        ++numOfAccidents;
-       // remove(v1);
-       // remove(v2);
+       // repaint();
     }
 
     /**
@@ -767,7 +807,7 @@ public class Simulation extends JPanel {
      */
     public void takeAction(){
         
-        double currTime = getSimTimeLeft();
+        currTime = getSimTimeLeft();
         LinkedList<Vehicle> laneHolder = null;
         started = true;
 
