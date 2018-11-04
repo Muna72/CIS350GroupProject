@@ -1,40 +1,39 @@
 import java.awt.Color;
-import java.util.LinkedList;
 
+/**
+ * Car extends the Vehicle class. The car has a default size of one and is colored blue, unless it is the drivers
+ * car, then it will be red
+ *
+ * @author Johnathon Killeen
+ * @version 1.0
+ */
 public class Car extends Vehicle {
-	
-	private boolean isUserCar;
-	
-	public Car(){
-		super();
-		isUserCar = false;
-	}
-	
-	public Car(int size, int mph, Direction[] path,
-			Location loc, double createTime, 
-			LinkedList<Vehicle> currentList, boolean isUserCar){
-		this.size = size;
-		this.mph = mph;
-		this.path = path;
-		this.loc = loc;
-		this.createTime = createTime;
-		this.currentList = currentList;
-		this.isUserCar = isUserCar;
-		this.color = null;
-		if(isUserCar == true){
-			this.setColor(Color.red);
-		}
-		else{
-			this.setColor(Color.blue);
-		}
-		
-	}
-	
-	void setUserCar(boolean isUserCar){
-		this.isUserCar = isUserCar;
-	}
-	
-	boolean getUserCar(){
-		return isUserCar;
-	}
+
+    //Determines if the car belongs to the user
+    private boolean isUserCar;
+
+    /**
+     * The default constructor of Car
+     */
+    public Car(){
+        size = 1;
+        color = Color.blue;
+    }
+    /**
+     * Constructor of Car
+     *
+     * @param isUserCar is true if the car belongs to the user
+     */
+    public Car(boolean isUserCar){
+        this.size = 1;
+        this.isUserCar = isUserCar;
+        if(isUserCar == true){
+            this.setColor(Color.red);
+        }
+        else{
+            this.setColor(Color.blue);
+        }
+
+    }
+
 }
