@@ -299,6 +299,8 @@ public class Simulation extends JPanel {
         
         secsTillNextVehicle = 0;
         numOfAccidents = 0;
+        numOfVehicles = 0;
+        numLightsRun = 0;
         totalTime = 0;
         avgStoppedSec = 0;
         timeVehicleAdded = 0;
@@ -312,6 +314,11 @@ public class Simulation extends JPanel {
         enableYellow = false;
         isYellowLight = false;
         isYellowOneAndThree = false;
+        isLanesOneAndThree = false;
+        isLanesZeroAndTwo = false;
+        greenLightTimer = 0;
+        yellowLightTimer = 0;
+        started = false;
 
         for(int i = 0; i < ROWS; ++i) {
             for(int y = 0; y < COLUMNS; ++y) {
