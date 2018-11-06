@@ -25,6 +25,16 @@ public abstract class Vehicle {
 
     protected double timeStopped;
 
+    protected boolean goodDriver;
+
+    public void setGoodDriver(boolean b) {
+        goodDriver = b;
+    }
+
+    public boolean getGoodDriver() {
+        return goodDriver;
+    }
+
     public double getTimeStopped() {
         return timeStopped;
     }

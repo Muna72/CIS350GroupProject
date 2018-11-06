@@ -1,5 +1,3 @@
-import sun.awt.image.ImageWatched;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -39,16 +37,16 @@ public class Simulation extends JPanel {
     private int numLightsRun;
     private int numOfAccidents;
     private int finished;
-    private boolean firstPer = false;
-    private boolean enableYellow = false;
-    private boolean isLanesOneAndThree = false;
-    private boolean isLanesZeroAndTwo = false;
-    private boolean isYellowOneAndThree = false;
-    private boolean isYellowLight = false;
-    private double greenLightTimer = 0;
-    private double yellowLightTimer = 0;
+    private boolean firstPer;
+    private boolean enableYellow;
+    private boolean isLanesOneAndThree;
+    private boolean isLanesZeroAndTwo;
+    private boolean isYellowOneAndThree;
+    private boolean isYellowLight;
+    private double greenLightTimer;
+    private double yellowLightTimer;
     private Random rand = new Random();
-    private boolean started = false;
+    private boolean started;
     private double timeForUserCar;
 
 
@@ -72,7 +70,17 @@ public class Simulation extends JPanel {
         lTime = laneTime;
         numOfVehicles = 0;
         numOfAccidents = 0;
+        avgStoppedSec = 0;
         timeVehicleAdded = 0;
+        firstPer = false;
+        enableYellow = false;
+        isLanesOneAndThree = false;
+        isLanesZeroAndTwo = false;
+        isYellowOneAndThree = false;
+        isYellowLight = false;
+        started = false;
+        greenLightTimer = 0;
+        yellowLightTimer = 0;
         setPreferredSize(new Dimension(COLUMNS*SIZE, ROWS*SIZE));
     }
     
@@ -100,14 +108,18 @@ public class Simulation extends JPanel {
         vTime = pt;
     }
 
-    public void setNumOfAccidents(int num) {
-        numOfAccidents = num;
-    }
-
+    /**
+     * Method to get the number of accidents
+     * @return
+     */
     public int getNumOfAccidents() {
         return numOfAccidents;
     }
 
+    /**
+     * Method to calculate the average vehicle speed, based on the value of lTime
+     * @return
+     */
     public double getAvgVehicleSpeed() {
         double avgVehicleSpeed = 0;
 
@@ -343,10 +355,10 @@ public class Simulation extends JPanel {
         return simTimeLeft;
     }
 
-    public void setNumLightsRun(int num) {
-        numLightsRun = num;
-    }
-
+    /**
+     * Method to get the number of lights run
+     * @return
+     */
     public int getNumLightsRun() {
         return numLightsRun;
     }
@@ -399,6 +411,7 @@ public class Simulation extends JPanel {
             v = new Car(true);
         }
             v.setCreateTime(getSimTimeLeft());
+            isGoodDriver(v);
             placeVehicle(v);
             allVehicles.add(v);
             ++numOfVehicles;
@@ -453,10 +466,14 @@ public class Simulation extends JPanel {
                         if (isLanesZeroAndTwo) {
                             crossIntersection(current);
                         } else {
-                            //Continue so steps do not get incremented for this vehicle
-                            current.setTimeStopped(currTime);
-                            last = current;
-                            continue;
+                            if(current.getGoodDriver() == true) {
+                                //Continue so steps do not get incremented for this vehicle
+                                current.setTimeStopped(currTime);
+                                last = current;
+                                continue;
+                            } else {
+                                current.setNumSteps(11);
+                            }
                         }
                     }
                     if(current.getNumSteps() != 10) {
@@ -492,7 +509,7 @@ public class Simulation extends JPanel {
                         }
                     }
                     current.setNumSteps(current.getNumSteps() + 1);
-                    last = current; //TODO make sure this goes here
+                    last = current;
                 }
             }
             if(lane == intersection1.entryPoint[1] || lane == intersection1.entryPoint[7]) {
@@ -535,7 +552,7 @@ public class Simulation extends JPanel {
                         }
                     }
                     current.setNumSteps(current.getNumSteps() + 1);
-                    last = current; //TODO make sure this goes here
+                    last = current;
                 }
             }
             if(lane == intersection1.entryPoint[4] || lane == intersection1.entryPoint[2]) {
@@ -579,7 +596,7 @@ public class Simulation extends JPanel {
                         }
                     }
                     current.setNumSteps(current.getNumSteps() + 1);
-                    last = current; //TODO make sure this goes here
+                    last = current;
                 }
             }
             if(lane == intersection1.entryPoint[3] || lane == intersection1.entryPoint[5]) {
@@ -709,12 +726,19 @@ public class Simulation extends JPanel {
         }
     }
 
-    public void checkForAccident() {//Check if there will be an accident
+    /**
+     * Method to check and see if any two vehicle have moved to the same place, causing them to collide
+     */
+    public void checkForAccident() { //TODO MAKE SURE THIS WORKS!!
         for(int i = 0; i < allVehicles.size(); ++i) {
             Vehicle v1 = allVehicles.get(i);
+
             for(int y = allVehicles.size() - 1; y > 0; --y) {
                 Vehicle v2 = allVehicles.get(y);
-                if(v1.getLocation() == v2.getLocation() && v1 != v2) {
+                int rowDiff = Math.abs(v1.getLocation().getRow() - v2.getLocation().getRow());
+                int colDiff = Math.abs(v1.getLocation().getCol() - v2.getLocation().getCol());
+
+                if(rowDiff < 2 && colDiff < 2 && v1 != v2) {
                     removeVehicle(v1, currTime);
                     removeVehicle(v2, currTime);
                     ++numOfAccidents;
@@ -722,7 +746,19 @@ public class Simulation extends JPanel {
                 }
             }
         }
-       // repaint();
+       repaint();
+    }
+
+
+    public void isGoodDriver(Vehicle v) {
+        int gen = rand.nextInt(4) + 1;
+
+        if(gen == 3) {
+            v.setGoodDriver(false);
+        } else {
+            v.setGoodDriver(true);
+        }
+
     }
 
     /**
@@ -924,13 +960,16 @@ public class Simulation extends JPanel {
     public double getAvgStoppedTime() {
         
         double sum = 0;
-        double totalAvgStoppedTime;
-        
-        for(int i = 0; i < allAvgTimeStopped.size(); ++i) {
-            sum = sum + allAvgTimeStopped.get(i);
-        }  
-        totalAvgStoppedTime = (sum / numOfVehicles) / 1000;
-        return totalAvgStoppedTime;
+
+        if(allAvgTimeStopped.size() > 0) {
+            for (int i = 0; i < allAvgTimeStopped.size(); ++i) {
+                sum = sum + allAvgTimeStopped.get(i);
+            }
+            avgStoppedSec = (sum / allAvgTimeStopped.size()) / 1000;
+        } else {
+            avgStoppedSec = 0;
+        }
+        return avgStoppedSec;
     }
 
     /**
