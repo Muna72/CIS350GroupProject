@@ -472,7 +472,8 @@ public class Simulation extends JPanel {
                                 last = current;
                                 continue;
                             } else {
-                                current.setNumSteps(11);
+                                crossIntersection(current);
+                                ++numLightsRun;
                             }
                         }
                     }
@@ -485,7 +486,7 @@ public class Simulation extends JPanel {
                               continue;
                           }
                         }
-                        //Now that car is moving again, calculate how long they had been stopped TODO does this work?
+                        //Now that car is moving again, calculate how long they had been stopped
                         if(current.getTimeStopped() > 0) {
                             allAvgTimeStopped.add(current.getTimeStopped() - currTime);
                         }
@@ -520,8 +521,15 @@ public class Simulation extends JPanel {
                         if (isLanesOneAndThree) {
                             crossIntersection(current);
                         } else {
-                            last = current;
-                            continue;
+                            if(current.getGoodDriver() == true) {
+                                //Continue so steps do not get incremented for this vehicle
+                                current.setTimeStopped(currTime);
+                                last = current;
+                                continue;
+                            } else {
+                                crossIntersection(current);
+                                ++numLightsRun;
+                            }
                         }
                     }
                     if (current.getNumSteps() != 10) {
@@ -564,8 +572,15 @@ public class Simulation extends JPanel {
                         if (isLanesZeroAndTwo) {
                             crossIntersection(current);
                         } else {
-                            last = current;
-                            continue;
+                            if(current.getGoodDriver() == true) {
+                                //Continue so steps do not get incremented for this vehicle
+                                current.setTimeStopped(currTime);
+                                last = current;
+                                continue;
+                            } else {
+                                crossIntersection(current);
+                                ++numLightsRun;
+                            }
                         }
                     }
                     if(current.getNumSteps() != 10) {
@@ -608,8 +623,15 @@ public class Simulation extends JPanel {
                         if (isLanesOneAndThree) {
                             crossIntersection(current);
                         } else {
-                            last = current;
-                            continue;
+                            if(current.getGoodDriver() == true) {
+                                //Continue so steps do not get incremented for this vehicle
+                                current.setTimeStopped(currTime);
+                                last = current;
+                                continue;
+                            } else {
+                                crossIntersection(current);
+                                ++numLightsRun;
+                            }
                         }
                     }
                     if(current.getNumSteps() != 10) {
@@ -669,6 +691,7 @@ public class Simulation extends JPanel {
             }
             if(collisionChance){
                 v.setNumSteps(9);
+                System.out.println("Made vehicle wait to turn");
             } else {
                 v.setNumSteps(11);
             }
@@ -686,6 +709,7 @@ public class Simulation extends JPanel {
             }
             if(collisionChance){
                 v.setNumSteps(9);
+                System.out.println("Made vehicle wait to turn");
             } else {
                 v.setNumSteps(11);
             }
@@ -703,6 +727,7 @@ public class Simulation extends JPanel {
             }
             if(collisionChance){
                 v.setNumSteps(9);
+                System.out.println("Made vehicle wait to turn");
             } else {
                 v.setNumSteps(11);
             }
@@ -720,6 +745,7 @@ public class Simulation extends JPanel {
             }
             if(collisionChance){
                 v.setNumSteps(9);
+                System.out.println("Made vehicle wait to turn");
             } else {
                 v.setNumSteps(11);
             }
@@ -729,16 +755,16 @@ public class Simulation extends JPanel {
     /**
      * Method to check and see if any two vehicle have moved to the same place, causing them to collide
      */
-    public void checkForAccident() { //TODO MAKE SURE THIS WORKS!!
+    public void checkForAccident() {
         for(int i = 0; i < allVehicles.size(); ++i) {
             Vehicle v1 = allVehicles.get(i);
-
+            int v1Row = v1.getLocation().getRow();
+            int v1Col = v1.getLocation().getCol();
             for(int y = allVehicles.size() - 1; y > 0; --y) {
                 Vehicle v2 = allVehicles.get(y);
-                int rowDiff = Math.abs(v1.getLocation().getRow() - v2.getLocation().getRow());
-                int colDiff = Math.abs(v1.getLocation().getCol() - v2.getLocation().getCol());
-
-                if(rowDiff < 2 && colDiff < 2 && v1 != v2) {
+                int v2Row = v2.getLocation().getRow();
+                int v2Col = v2.getLocation().getCol();
+                if(v1Row == v2Row && v1Col == v2Col && v1 != v2) {
                     removeVehicle(v1, currTime);
                     removeVehicle(v2, currTime);
                     ++numOfAccidents;
@@ -751,9 +777,9 @@ public class Simulation extends JPanel {
 
 
     public void isGoodDriver(Vehicle v) {
-        int gen = rand.nextInt(4) + 1;
+        int gen = rand.nextInt(14) + 1;
 
-        if(gen == 3) {
+        if(gen == 9) {
             v.setGoodDriver(false);
         } else {
             v.setGoodDriver(true);
