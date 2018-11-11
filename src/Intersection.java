@@ -1,27 +1,44 @@
 import java.util.LinkedList;
 import java.util.Random;
-
+/**
+ * This class creates the intersection and the linked lists of vehicles that are entering and leaving the intersection.
+ *
+ * @author Brianne Kerr
+ * @version 1.0
+ */
 public class Intersection
 {
-    //Holds list of vehicles going in a specified direction
-    //entryPoint[0] = NORTH, entryPoint[1] = EAST,
-    //entryPoint[2] = SOUTH, entryPoint[3] = WEST
+    /**
+     * Holds list of vehicles going in a specified direction
+     * entryPoint[0] = NORTH, entryPoint[1] = EAST,
+     * entryPoint[2] = SOUTH, entryPoint[3] = WEST
+     */
     public LinkedList<Vehicle>[] entryPoint = new LinkedList[8];
 
-    //Holds the number of vehicles that have passed through
-    //a lane in a specified direction; corresponds to entryPoint[]
+    /**
+     * Holds the number of vehicles that have passed through
+     * a lane in a specified direction; corresponds to entryPoint[]
+     */
     private int[] entryPointCounter = new int[8];
 
-    //Holds the number of cars that have passed through the intersection
+    /**
+     * Holds the number of vehicles that have passed through the intersection
+     */
     private int interCounter = 0;
 
+
+    /**
+     * Holds the number type of vehicle
+     */
     private String type;
 
-    //Used to generate pseudo-random numbers
+    /**
+     * Used to generate pseudo-random numbers
+     */
     private Random rand = new Random();
 
-    /*
-     * Initialize each entry point with an empty linked list
+    /**
+     * Default class constructor, initializing the linked lists and counters
      */
     public Intersection()
     {
@@ -45,9 +62,16 @@ public class Intersection
 
     }
 
-    /*
-     * Initialize each entry point with a linked list with a specified
+    /**
+     * Intersection class constructor
+     * Initializes each entry point with a linked list with a specified
      * number of random vehicles
+     *
+     * @param horizCycleCars
+     * @param horizCycleTime
+     * @param vertCycleCars
+     * @param vertCycleTime
+     * @param type
      */
     public Intersection(int horizCycleTime, int horizCycleCars, int vertCycleTime,
                         int vertCycleCars, String type)
@@ -66,7 +90,9 @@ public class Intersection
         this.type = type;
     }
 
-
+    /**
+     * Clears all linked lists connected to the intersection
+     */
     public void clear() {
         entryPoint[0].clear();
         entryPoint[1].clear();
@@ -78,14 +104,29 @@ public class Intersection
         entryPoint[7].clear();
     }
 
-
+    /**
+     * Sets the given linked list to a lane within the intersection
+     *
+     * @param list A linked list of vehicles lined up at the intersection
+     * @param loc The lane that the linked list will be assigned to
+     */
     public void setLocation(LinkedList<Vehicle> list, Location loc) {
 
     }
-
+    /**
+     * Sets the vehicle type
+     *
+     * @param t The vehicle type
+     */
     public void setType(String t) {
         type = t;
     }
+
+    /**
+     * Returns the type of the vehicle
+     *
+     * @return type The type of vehicle
+     */
     public String getType() {
         return type;
     }

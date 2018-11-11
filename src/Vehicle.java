@@ -21,7 +21,7 @@ public abstract class Vehicle {
 
     protected int maxSteps;
 
-    protected int stepsToTurn = 12;
+    protected int stepsToTurn = 11;
 
     protected double timeStopped;
 

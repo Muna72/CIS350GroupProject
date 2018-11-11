@@ -1,7 +1,7 @@
 /**
- *
+ * A class that tracks the lane of the intersection
  * @author Muna
- * @version March 2017
+ * @version 1.0
  */
 public class Location {
 
@@ -9,7 +9,8 @@ public class Location {
     private int row;
     private int col;
 
-    /**Class constructor
+    /**
+     * Class constructor
      *
      * @param r row
      * @param c column
@@ -19,7 +20,8 @@ public class Location {
         col = c;
     }
 
-    /**Method to set row
+    /**
+     * Method to set row
      *
      * @param r row
      */
@@ -27,7 +29,8 @@ public class Location {
         r = row;
     }
 
-    /**Method to set column
+    /**
+     * Method to set column
      *
      * @param c column
      */
@@ -35,14 +38,17 @@ public class Location {
         c = col;
     }
 
-    /**Method to get row
+    /**
+     * Method to get row
+     *
      * @return row for row
      */
     public int getRow() {
         return row;
     }
 
-    /**Method to get column
+    /**
+     * Method to get column
      *
      * @return col for column
      */
@@ -50,4 +56,3 @@ public class Location {
         return col;
     }
 }
-
