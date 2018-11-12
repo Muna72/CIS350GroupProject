@@ -10,7 +10,7 @@ import java.awt.event.WindowEvent;
 /**
  *
  * @author Muna Gigowski
- * @version September 2018
+ * @version 1.0 (September 2018)
  */
 public class TrafficSimulationGUI extends JFrame implements ActionListener, Runnable{
 

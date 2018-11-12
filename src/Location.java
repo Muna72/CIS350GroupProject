@@ -1,6 +1,6 @@
 /**
  * A class that tracks the lane of the intersection
- * @author Muna
+ * @author Muna Gigowski
  * @version 1.0
  */
 public class Location {
