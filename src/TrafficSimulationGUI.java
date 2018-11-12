@@ -21,15 +21,11 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private boolean firstTimeStartPressed;
     private boolean loop = true;
     private double secsTillNextVehicle;
-    private double avgIntersectionWaitTime;
     private double totalTime;
     private double timeLeft;
-    private double vTime;
     private double moveForwardTime;
     private double uCarTime;
-    private int numOfIntersections;
     public Timer simTimer;
-    private Location startLoc;
     private Random r = new Random();
     DecimalFormat df = new DecimalFormat("#.00");
     private JPanel input;
@@ -53,8 +49,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     private JLabel in1Lab;
     private JLabel in2Lab;
     private JLabel in3Lab;
-    private JLabel in4Lab;
-    private JLabel in5Lab;
     private JLabel thru;
     private JLabel avgStarFin;
     private JLabel userStarFin;
@@ -112,7 +106,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     /**
      * Class constructor initializes instance variables
      */
-    public TrafficSimulationGUI(){
+    public TrafficSimulationGUI() {
 
         isRunning = false;
         firstTimeStartPressed = true;
@@ -135,7 +129,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
         add(statsArea,position);
 
-        trafficMap = new Simulation(secsTillNextVehicle, totalTime, 500); //TODO make lTime variable
+        trafficMap = new Simulation(secsTillNextVehicle, totalTime, moveForwardTime);
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
         position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
@@ -433,7 +427,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
     /**
      * Run method called by the thread
      */
-    public void run(){
+    public void run() {
         try {
 
              totalTime = 1000 * 69; //set 50 seconds simulation run time (for now)
@@ -441,7 +435,6 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
              trafficMap.setTotalTime(totalTime);
              trafficMap.setTimeForUserCar(uCarTime);
              trafficMap.setLTime(moveForwardTime);
-            // may use later: trafficMap.setNumOfIntersections(numOfIntersections);
             trafficMap.setVTime(secsTillNextVehicle*0.1*r.nextGaussian() + secsTillNextVehicle);
 
             timeLeft = totalTime;
@@ -491,7 +484,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
      * @param align
      * @return
      */
-    private GridBagConstraints makeConstraints(int x, int y, int h, int w, int align){
+    private GridBagConstraints makeConstraints(int x, int y, int h, int w, int align) {
         GridBagConstraints rtn = new GridBagConstraints();
         rtn.gridx = x;
         rtn.gridy = y;
