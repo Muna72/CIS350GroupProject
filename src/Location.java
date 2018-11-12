@@ -26,7 +26,7 @@ public class Location {
      * @param r row
      */
     public void setRow(int r) {
-        r = row;
+        row = r;
     }
 
     /**
@@ -35,7 +35,7 @@ public class Location {
      * @param c column
      */
     public void setCol(int c) {
-        c = col;
+        col = c;
     }
 
     /**

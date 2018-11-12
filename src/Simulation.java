@@ -20,7 +20,7 @@ public class Simulation extends JPanel {
     public ArrayList<Integer> allQueLengths;
     public Intersection intersection1;
 
-    private final int ROWS=80, COLUMNS=120, SIZE=10;
+    private final int ROWS = 80, COLUMNS = 120, SIZE = 10;
     private final int MAX_VEHICLES = 80;
 
     //Instance variable declarations
@@ -124,13 +124,13 @@ public class Simulation extends JPanel {
     public double getAvgVehicleSpeed() {
         double avgVehicleSpeed = 0;
 
-        if(lTime == 500) {
+        if (lTime == 500) {
             avgVehicleSpeed = 50;
-        } else if(lTime == 700) {
+        } else if (lTime == 700) {
             avgVehicleSpeed = 35.5;
-        } else if(lTime == 800) {
+        } else if (lTime == 800) {
             avgVehicleSpeed = 31.25;
-        } else if(lTime == 1000) {
+        } else if (lTime == 1000) {
             avgVehicleSpeed = 25;
         }
         return avgVehicleSpeed;
@@ -171,7 +171,7 @@ public class Simulation extends JPanel {
                 break;
         }
 
-        if(firstPer == true) {
+        if (firstPer == true) {
             v.setCreateTime(getSimTimeLeft());
             firstPer = false;
         }
@@ -188,7 +188,7 @@ public class Simulation extends JPanel {
         LinkedList<Vehicle> laneHolder = v.getQue();
         int dirGen = rand.nextInt(3 - 1 + 1) + 1;
 
-        if(laneHolder == intersection1.entryPoint[0]) {
+        if (laneHolder == intersection1.entryPoint[0]) {
             switch (dirGen) {
                 case 1:
                     v.setPath(Direction.NORTH);
@@ -204,7 +204,7 @@ public class Simulation extends JPanel {
                     break;
             }
         }
-        if(laneHolder == intersection1.entryPoint[1]) {
+        if (laneHolder == intersection1.entryPoint[1]) {
             switch (dirGen) {
                 case 1:
                     v.setPath(Direction.WEST);
@@ -220,7 +220,7 @@ public class Simulation extends JPanel {
                     break;
             }
         }
-        if(laneHolder == intersection1.entryPoint[2]) {
+        if (laneHolder == intersection1.entryPoint[2]) {
             switch (dirGen) {
                 case 1:
                     v.setPath(Direction.NORTH);
@@ -236,7 +236,7 @@ public class Simulation extends JPanel {
                     break;
             }
         }
-        if(laneHolder == intersection1.entryPoint[3]) {
+        if (laneHolder == intersection1.entryPoint[3]) {
             switch (dirGen) {
                 case 1:
                     v.setPath(Direction.NORTH);
@@ -262,17 +262,17 @@ public class Simulation extends JPanel {
     public void calculateMaxAndTurnSteps(Vehicle v) {
         LinkedList<Vehicle> laneHolder = v.getQue();
 
-        if(laneHolder == intersection1.entryPoint[0]) {
-            if(v.getPath() == Direction.NORTH) {
+        if (laneHolder == intersection1.entryPoint[0]) {
+            if (v.getPath() == Direction.NORTH) {
                 v.setMaxSteps(31);
                 v.setStepsToTurn(16);
-            } else if(v.getPath() == Direction.EAST) {
+            } else if (v.getPath() == Direction.EAST) {
                 v.setMaxSteps(28);
             } else {
                 v.setMaxSteps(23);
             }
         }
-        if(laneHolder == intersection1.entryPoint[1]) {
+        if (laneHolder == intersection1.entryPoint[1]) {
             if(v.getPath() == Direction.EAST) {
                 v.setMaxSteps(32);
                 v.setStepsToTurn(13);
@@ -282,18 +282,18 @@ public class Simulation extends JPanel {
                 v.setMaxSteps(23);
             }
         }
-        if(laneHolder == intersection1.entryPoint[2]) {
-            if(v.getPath() == Direction.SOUTH) {
+        if (laneHolder == intersection1.entryPoint[2]) {
+            if (v.getPath() == Direction.SOUTH) {
                 v.setMaxSteps(30);
                 v.setStepsToTurn(15);
-            } else if(v.getPath() == Direction.WEST) {
+            } else if (v.getPath() == Direction.WEST) {
                 v.setMaxSteps(28);
             } else {
                 v.setMaxSteps(23);
             }
         }
-        if(laneHolder == intersection1.entryPoint[3]) {
-            if(v.getPath() == Direction.WEST) {
+        if (laneHolder == intersection1.entryPoint[3]) {
+            if (v.getPath() == Direction.WEST) {
                 v.setMaxSteps(32);
                 v.setStepsToTurn(14);
             } else if (v.getPath() == Direction.NORTH) {
@@ -333,8 +333,8 @@ public class Simulation extends JPanel {
         yellowLightTimer = 0;
         started = false;
 
-        for(int i = 0; i < ROWS; ++i) {
-            for(int y = 0; y < COLUMNS; ++y) {
+        for (int i = 0; i < ROWS; ++i) {
+            for (int y = 0; y < COLUMNS; ++y) {
                 route[i][y] = null;
             }
         }
@@ -375,7 +375,7 @@ public class Simulation extends JPanel {
 
         route[v.getLocation().getRow()][v.getLocation().getCol()] = null;
         allAvgTimes.add(v.getCreateTime() - timeNow);
-        if(v.getColor() == Color.RED) {
+        if (v.getColor() == Color.RED) {
             userThruTime = (v.getCreateTime() - timeNow) / 1000;
         }
         holder.remove(v);
@@ -391,27 +391,40 @@ public class Simulation extends JPanel {
     public void addVehicle(boolean isUserCar){
 
         Vehicle v = null;
-        if(!isUserCar) {
-            int typeGen = rand.nextInt(4 - 1 + 1) + 1;
+        int typeGen = rand.nextInt(4 - 1 + 1) + 1;
 
-            if (numOfVehicles <= MAX_VEHICLES) {
+        if (numOfVehicles <= MAX_VEHICLES) {
+            if (!isUserCar) {
+                    if (typeGen == 1) {
+                        v = new Car();
+                    }
+                    if (typeGen == 2) {
+                        v = new UtilityVehicle();
+                    }
+                    if (typeGen == 3) {
+                        v = new SemiTruck();
+                    }
+                    if (typeGen == 4) {
+                        v = new Car();
+                    }
+            } else {
                 if (typeGen == 1) {
-                    v = new Car();
+                    v = new Car(true);
                 }
                 if (typeGen == 2) {
-                    v = new UtilityVehicle();
+                    v = new UtilityVehicle(true);
                 }
                 if (typeGen == 3) {
-                    v = new SemiTruck();
+                    v = new SemiTruck(true);
                 }
                 if (typeGen == 4) {
-                    v = new Car();
+                    v = new Car(true);
                 }
             }
-        } else {
-            v = new Car(true);
         }
-        v.setCreateTime(getSimTimeLeft()); //TODO MAKE SIM STOP GENERATING CARS WHEN TIME IS GONNA RUN OUT
+        if (getSimTimeLeft() > 0) {
+            v.setCreateTime(getSimTimeLeft());
+        }
         isGoodDriver(v);
         placeVehicle(v);
         allVehicles.add(v);
@@ -460,8 +473,8 @@ public class Simulation extends JPanel {
 
         Vehicle last = null;
 
-        if(lane == intersection1.entryPoint[0] || lane == intersection1.entryPoint[6]) {
-            for(int v = 0; v < lane.size(); ++v ) {
+        if (lane == intersection1.entryPoint[0] || lane == intersection1.entryPoint[6]) {
+            for (int v = 0; v < lane.size(); ++v ) {
                 Vehicle current = lane.get(v);
                 goodToCross = false;
                 if(lane == intersection1.entryPoint[6]) {
@@ -472,65 +485,7 @@ public class Simulation extends JPanel {
                     if (isLanesZeroAndTwo) {
                         crossIntersection(current);
                     } else {
-                        if(current.getGoodDriver() == true) {
-                            //Continue so steps do not get incremented for this vehicle
-                            current.setTimeStopped(currTime);
-                            last = current;
-                            continue;
-                        } else {
-                            crossIntersection(current);
-                            ++numLightsRun;
-                        }
-                    }
-                }
-                if(current.getNumSteps() != 10 || goodToCross) {
-                    if(current.getNumSteps() < 10 && last != null) {
-                        //continue if you are about to take as many steps as the guy in front of you
-                        if(current.getNumSteps() == (last.getNumSteps() - 1)) {
-                            current.setTimeStopped(currTime);
-                            last = current;
-                            continue;
-                        }
-                    }
-                    //Now that car is moving again, calculate how long they had been stopped
-                    if(current.getTimeStopped() > 0) {
-                        allAvgTimeStopped.add(current.getTimeStopped() - currTime);
-                    }
-                    Location temp;
-                    if(current.getLocation().getCol() <= 100) {
-                        temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() + 3));
-                    } else {
-                        temp = new Location(current.getLocation().getRow(), 100);
-                    }
-                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
-                    //set location to current location plus [] columns to the right
-                    current.setLocation(temp);
-                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
-                    //switch lanes
-                    if(current.getNumSteps() == current.getStepsToTurn()) {
-                        switchLanes(current);
-                        v = v-1;
-                    }
-                    //remove from simulation
-                    if (current.getNumSteps() == current.getMaxSteps()) {
-                        removeVehicle(current, currTime);
-                        v = v-1;
-                    }
-                }
-                current.setNumSteps(current.getNumSteps() + 1);
-                last = current;
-            }
-        }
-        if(lane == intersection1.entryPoint[1] || lane == intersection1.entryPoint[7]) {
-            for(int v = 0; v < lane.size(); ++v ) {
-
-                Vehicle current = lane.get(v);
-                goodToCross = false;
-                if (current.getNumSteps() == 10) {
-                    if (isLanesOneAndThree) {
-                        crossIntersection(current);
-                    } else {
-                        if(current.getGoodDriver() == true) {
+                        if (current.getGoodDriver() == true) {
                             //Continue so steps do not get incremented for this vehicle
                             current.setTimeStopped(currTime);
                             last = current;
@@ -542,15 +497,73 @@ public class Simulation extends JPanel {
                     }
                 }
                 if (current.getNumSteps() != 10 || goodToCross) {
-                    if(current.getNumSteps() < 10 && last != null) {
+                    if (current.getNumSteps() < 10 && last != null) {
                         //continue if you are about to take as many steps as the guy in front of you
-                        if(current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
+                        if (current.getNumSteps() == (last.getNumSteps() - 1)) {
+                            current.setTimeStopped(currTime);
+                            last = current;
+                            continue;
+                        }
+                    }
+                    //Now that car is moving again, calculate how long they had been stopped
+                    if (current.getTimeStopped() > 0) {
+                        allAvgTimeStopped.add(current.getTimeStopped() - currTime);
+                    }
+                    Location temp;
+                    if (current.getLocation().getCol() <= 100) {
+                        temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() + 3));
+                    } else {
+                        temp = new Location(current.getLocation().getRow(), 100);
+                    }
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
+                    //set location to current location plus [] columns to the right
+                    current.setLocation(temp);
+                    route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
+                    //switch lanes
+                    if (current.getNumSteps() == current.getStepsToTurn()) {
+                        switchLanes(current);
+                        v = v-1;
+                    }
+                    //remove from simulation
+                    if (current.getNumSteps() == current.getMaxSteps()) {
+                        removeVehicle(current, currTime);
+                        v = v-1;
+                    }
+                }
+                current.setNumSteps(current.getNumSteps() + 1);
+                last = current;
+            }
+        }
+        if (lane == intersection1.entryPoint[1] || lane == intersection1.entryPoint[7]) {
+            for (int v = 0; v < lane.size(); ++v ) {
+
+                Vehicle current = lane.get(v);
+                goodToCross = false;
+                if (current.getNumSteps() == 10) {
+                    if (isLanesOneAndThree) {
+                        crossIntersection(current);
+                    } else {
+                        if (current.getGoodDriver() == true) {
+                            //Continue so steps do not get incremented for this vehicle
+                            current.setTimeStopped(currTime);
+                            last = current;
+                            continue;
+                        } else {
+                            crossIntersection(current);
+                            ++numLightsRun;
+                        }
+                    }
+                }
+                if (current.getNumSteps() != 10 || goodToCross) {
+                    if (current.getNumSteps() < 10 && last != null) {
+                        //continue if you are about to take as many steps as the guy in front of you
+                        if (current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
                             last = current;
                             continue;
                         }
                     }
                     Location temp;
-                    if(current.getLocation().getRow() <= 76) {
+                    if (current.getLocation().getRow() <= 76) {
                         temp = new Location((current.getLocation().getRow() + 3), (current.getLocation().getCol()));
                     } else {
                         temp = new Location(79, (current.getLocation().getCol()));
@@ -560,7 +573,7 @@ public class Simulation extends JPanel {
                     current.setLocation(temp);
                     route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
                     //switch lanes
-                    if(current.getNumSteps() == current.getStepsToTurn()) {
+                    if (current.getNumSteps() == current.getStepsToTurn()) {
                         switchLanes(current);
                         v = v-1;
                     }
@@ -574,8 +587,8 @@ public class Simulation extends JPanel {
                 last = current;
             }
         }
-        if(lane == intersection1.entryPoint[4] || lane == intersection1.entryPoint[2]) {
-            for(int v = 0; v < lane.size(); ++v ) {
+        if (lane == intersection1.entryPoint[4] || lane == intersection1.entryPoint[2]) {
+            for (int v = 0; v < lane.size(); ++v ) {
 
                 Vehicle current = lane.get(v);
                 goodToCross = false;
@@ -584,7 +597,7 @@ public class Simulation extends JPanel {
                     if (isLanesZeroAndTwo) {
                         crossIntersection(current);
                     } else {
-                        if(current.getGoodDriver() == true) {
+                        if (current.getGoodDriver() == true) {
                             //Continue so steps do not get incremented for this vehicle
                             current.setTimeStopped(currTime);
                             last = current;
@@ -595,16 +608,16 @@ public class Simulation extends JPanel {
                         }
                     }
                 }
-                if(current.getNumSteps() != 10 || goodToCross) {
-                    if(current.getNumSteps() < 10 && last != null) {
+                if (current.getNumSteps() != 10 || goodToCross) {
+                    if (current.getNumSteps() < 10 && last != null) {
                         //continue if you are about to take as many steps as the guy in front of you
-                        if(current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
+                        if (current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
                             last = current;
                             continue;
                         }
                     }
                     Location temp;
-                    if(current.getLocation().getCol() >= 3) {
+                    if (current.getLocation().getCol() >= 3) {
                         temp = new Location(current.getLocation().getRow(), (current.getLocation().getCol() - 3));
                     } else {
                         temp = new Location(current.getLocation().getRow(), 0);
@@ -614,7 +627,7 @@ public class Simulation extends JPanel {
                     current.setLocation(temp);
                     route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
                     //switch lanes
-                    if(current.getNumSteps() == current.getStepsToTurn()) {
+                    if (current.getNumSteps() == current.getStepsToTurn()) {
                         switchLanes(current);
                         v = v-1;
                     }
@@ -628,8 +641,8 @@ public class Simulation extends JPanel {
                 last = current;
             }
         }
-        if(lane == intersection1.entryPoint[3] || lane == intersection1.entryPoint[5]) {
-            for(int v = 0; v < lane.size(); ++v ) {
+        if (lane == intersection1.entryPoint[3] || lane == intersection1.entryPoint[5]) {
+            for (int v = 0; v < lane.size(); ++v ) {
 
                 Vehicle current = lane.get(v);
                 goodToCross = false;
@@ -638,7 +651,7 @@ public class Simulation extends JPanel {
                     if (isLanesOneAndThree) {
                         crossIntersection(current);
                     } else {
-                        if(current.getGoodDriver() == true) {
+                        if (current.getGoodDriver() == true) {
                             //Continue so steps do not get incremented for this vehicle
                             current.setTimeStopped(currTime);
                             last = current;
@@ -649,16 +662,16 @@ public class Simulation extends JPanel {
                         }
                     }
                 }
-                if(current.getNumSteps() != 10 || goodToCross) {
-                    if(current.getNumSteps() < 10 && last != null) {
+                if (current.getNumSteps() != 10 || goodToCross) {
+                    if (current.getNumSteps() < 10 && last != null) {
                         //continue if you are about to take as many steps as the guy in front of you
-                        if(current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
+                        if (current.getNumSteps() == (last.getNumSteps() - 1)) { //Never entered
                             last = current;
                             continue;
                         }
                     }
                     Location temp;
-                    if(current.getLocation().getRow() >= 3) {
+                    if (current.getLocation().getRow() >= 3) {
                         temp = new Location((current.getLocation().getRow() - 3), (current.getLocation().getCol()));
                     } else {
                         temp = new Location(0, (current.getLocation().getCol()));
@@ -668,7 +681,7 @@ public class Simulation extends JPanel {
                     current.setLocation(temp);
                     route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
                     //switch lanes
-                    if(current.getNumSteps() == current.getStepsToTurn()) {
+                    if (current.getNumSteps() == current.getStepsToTurn()) {
                         switchLanes(current);
                         v = v-1;
                     }
@@ -695,8 +708,8 @@ public class Simulation extends JPanel {
         boolean collisionChance = false;
         boolean impasse = false;
 
-        if(lane == intersection1.entryPoint[0]) {
-            if(v.getPath() == Direction.NORTH) {
+        if (lane == intersection1.entryPoint[0]) {
+            if (v.getPath() == Direction.NORTH) {
                 if (intersection1.entryPoint[2].size() > 0) {
                     for (int t = 0; t < intersection1.entryPoint[2].size(); ++t) {
                         Vehicle curr = intersection1.entryPoint[2].get(t);
@@ -709,18 +722,18 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if(collisionChance){
+            if (collisionChance){
                     Vehicle oncoming = intersection1.entryPoint[2].get(0);
-                    if(oncoming.getPath() == Direction.SOUTH) {
-                        for(int h = 0; h < intersection1.entryPoint[0].size(); ++h) {
+                    if (oncoming.getPath() == Direction.SOUTH) {
+                        for (int h = 0; h < intersection1.entryPoint[0].size(); ++h) {
                             Vehicle c = intersection1.entryPoint[0].get(h);
-                            if(c.getNumSteps() == 3) {
+                            if (c.getNumSteps() == 3) {
                                 impasse = true;
                                 break;
                             }
                         }
                     }
-                    if(impasse) {
+                    if (impasse) {
                         goodToCross = true; //If there is an impass, lane 0 gets the right-of-way
                     } else {
                         v.setNumSteps(9);
@@ -730,8 +743,8 @@ public class Simulation extends JPanel {
                 goodToCross = true;
             }
         }
-        if(lane == intersection1.entryPoint[1]) {
-            if(v.getPath() == Direction.EAST) {
+        if (lane == intersection1.entryPoint[1]) {
+            if (v.getPath() == Direction.EAST) {
                 if (intersection1.entryPoint[3].size() > 0) {
                     for (int t = 0; t < intersection1.entryPoint[3].size(); ++t) {
                         Vehicle curr = intersection1.entryPoint[3].get(t);
@@ -743,18 +756,18 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if(collisionChance){
+            if (collisionChance){
                 Vehicle oncoming = intersection1.entryPoint[3].get(0);
-                if(oncoming.getPath() == Direction.WEST) {
-                    for(int h = 0; h < intersection1.entryPoint[1].size(); ++h) {
+                if (oncoming.getPath() == Direction.WEST) {
+                    for (int h = 0; h < intersection1.entryPoint[1].size(); ++h) {
                         Vehicle c = intersection1.entryPoint[1].get(h);
-                        if(c.getNumSteps() == 6 || c.getNumSteps() == 5) {
+                        if (c.getNumSteps() == 6 || c.getNumSteps() == 5) {
                             impasse = true;
                             break;
                         }
                     }
                 }
-                if(impasse) {
+                if (impasse) {
                     goodToCross = true; //If there is an impass, lane 1 gets the right-of-way
                 } else {
                     v.setNumSteps(9);
@@ -763,9 +776,9 @@ public class Simulation extends JPanel {
                 goodToCross = true;
             }
         }
-        if(lane == intersection1.entryPoint[2]) {
-            if(v.getPath() == Direction.SOUTH) {
-                if(intersection1.entryPoint[0].size() > 0) {
+        if (lane == intersection1.entryPoint[2]) {
+            if (v.getPath() == Direction.SOUTH) {
+                if (intersection1.entryPoint[0].size() > 0) {
                     for (int t = 0; t < intersection1.entryPoint[0].size(); ++t) {
                         Vehicle curr = intersection1.entryPoint[0].get(t);
                         if (curr.getNumSteps() == 6 || curr.getNumSteps() == 5) {
@@ -776,14 +789,14 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if(collisionChance){
+            if (collisionChance){
                 v.setNumSteps(9);
             } else {
                 goodToCross = true;
             }
         }
-        if(lane == intersection1.entryPoint[3]) {
-            if(v.getPath() == Direction.WEST) {
+        if (lane == intersection1.entryPoint[3]) {
+            if (v.getPath() == Direction.WEST) {
                 if (intersection1.entryPoint[1].size() > 0) {
                     for (int t = 0; t < intersection1.entryPoint[1].size(); ++t) {
                         Vehicle curr = intersection1.entryPoint[1].get(t);
@@ -795,7 +808,7 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if(collisionChance){
+            if (collisionChance){
                 v.setNumSteps(9);
             } else {
                 goodToCross = true;
@@ -807,15 +820,15 @@ public class Simulation extends JPanel {
      * Method to check and see if any two vehicle have moved to the same place, causing them to collide
      */
     public void checkForAccident() {
-        for(int i = 0; i < allVehicles.size(); ++i) {
+        for (int i = 0; i < allVehicles.size(); ++i) {
             Vehicle v1 = allVehicles.get(i);
             int v1Row = v1.getLocation().getRow();
             int v1Col = v1.getLocation().getCol();
-            for(int y = allVehicles.size() - 1; y > 0; --y) {
+            for (int y = allVehicles.size() - 1; y > 0; --y) {
                 Vehicle v2 = allVehicles.get(y);
                 int v2Row = v2.getLocation().getRow();
                 int v2Col = v2.getLocation().getCol();
-                if(v1Row == v2Row && v1Col == v2Col && v1 != v2) {
+                if (v1Row == v2Row && v1Col == v2Col && v1 != v2) {
                     removeVehicle(v1, currTime);
                     removeVehicle(v2, currTime);
                     ++numOfAccidents;
@@ -830,7 +843,7 @@ public class Simulation extends JPanel {
     public void isGoodDriver(Vehicle v) {
         int gen = rand.nextInt(14) + 1;
 
-        if(gen == 9) {
+        if (gen == 9) {
             v.setGoodDriver(false);
         } else {
             v.setGoodDriver(true);
@@ -847,32 +860,32 @@ public class Simulation extends JPanel {
         int r = 0;
         int y = 0;
 
-        if(v.getQue() == intersection1.entryPoint[0]) {
+        if (v.getQue() == intersection1.entryPoint[0]) {
             r = 45;
             y = 9;
         }
 
-        if(v.getQue() == intersection1.entryPoint[1]){
+        if (v.getQue() == intersection1.entryPoint[1]){
             r = 0;
             y = 45;
         }
 
-        if(v.getQue() == intersection1.entryPoint[2]) {
+        if (v.getQue() == intersection1.entryPoint[2]) {
             r = 35;
             y = 96;
         }
 
-        if(v.getQue() == intersection1.entryPoint[3]) {
+        if (v.getQue() == intersection1.entryPoint[3]) {
             r = 79;
             y = 60;
         }
 
-        if(v.getQue() == intersection1.entryPoint[4]) {
+        if (v.getQue() == intersection1.entryPoint[4]) {
             r = 35;
             y = 11; //wrong, 40
         }
 
-        if(v.getQue() == intersection1.entryPoint[5]) {
+        if (v.getQue() == intersection1.entryPoint[5]) {
             r = 2; //wrong, 2
             y = 60;
         }
@@ -923,34 +936,34 @@ public class Simulation extends JPanel {
         started = true;
 
         //generate first Vehicle shortly into simulation
-        if(currTime == totalTime - 500) {
+        if (currTime == totalTime - 500) {
             firstPer = true;
             addVehicle(false);
             timeVehicleAdded = currTime;
         }
 
         //generate another Vehicle at every vTime seconds (or asap after if delay causes simulation to pass vTime)
-        if((timeVehicleAdded - currTime) >= vTime) {
+        if ((timeVehicleAdded - currTime) >= vTime) {
             addVehicle(false);
             timeVehicleAdded = currTime;
         }
 
         //Generate user car at specified time
-        if(currTime == totalTime - timeForUserCar) {
+        if (currTime == totalTime - timeForUserCar) {
             addVehicle(true);
         }
 
         //Generate first green/red light soon after simulation starts
-        if(currTime == totalTime - 100) {
+        if (currTime == totalTime - 100) {
             generateFirstGreen();
             greenLightTimer = currTime;
             enableYellow = true;
         }
 
         //Every eight seconds switch which lanes have green light
-        if(!isYellowLight && (greenLightTimer - currTime) >= 10000) {
+        if (!isYellowLight && (greenLightTimer - currTime) >= 10000) {
             //Turn whichever lane had green light previously to yellow, stopping the flow of traffic from that lane
-            if(isLanesOneAndThree) {
+            if (isLanesOneAndThree) {
                 isLanesOneAndThree = false;
                 isYellowOneAndThree = true; //TODO make sure all these values are set to zero when simulation clears!!
             } else {
@@ -961,8 +974,8 @@ public class Simulation extends JPanel {
             yellowLightTimer = currTime;
         }
         //Every eight seconds switch which lanes have green light
-        if(isYellowLight && (yellowLightTimer - currTime) >= 5000) {
-            if(isYellowOneAndThree) {
+        if (isYellowLight && (yellowLightTimer - currTime) >= 5000) {
+            if (isYellowOneAndThree) {
                 isLanesZeroAndTwo = true;
             } else {
                 isLanesOneAndThree = true;
@@ -972,7 +985,7 @@ public class Simulation extends JPanel {
         }
 
         //loop through all lanes and move them if they have the right-of-way
-        if((totalTime - currTime) % lTime == 0) {
+        if ((totalTime - currTime) % lTime == 0) {
             for (int u = 7; u >= 0; --u) {
 
                 laneHolder = intersection1.entryPoint[u];
@@ -1023,7 +1036,7 @@ public class Simulation extends JPanel {
         double sum = 0;
         double totalAvgVehicleTime;
 
-        for(int i = 0; i < allAvgTimes.size(); ++i) {
+        for (int i = 0; i < allAvgTimes.size(); ++i) {
             sum = sum + allAvgTimes.get(i);
         }
         totalAvgVehicleTime = (sum / numOfVehicles) / 1000;
@@ -1038,7 +1051,7 @@ public class Simulation extends JPanel {
 
         double sum = 0;
 
-        if(allAvgTimeStopped.size() > 0) {
+        if (allAvgTimeStopped.size() > 0) {
             for (int i = 0; i < allAvgTimeStopped.size(); ++i) {
                 sum = sum + allAvgTimeStopped.get(i);
             }
@@ -1055,8 +1068,8 @@ public class Simulation extends JPanel {
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for(int row=0; row<ROWS; row++){
-            for(int col=0; col<COLUMNS; col++) {
+        for (int row=0; row<ROWS; row++){
+            for (int col=0; col<COLUMNS; col++) {
                 Vehicle v = route[row][col];
 
                 // set color to white if no vehicle here
@@ -1079,7 +1092,7 @@ public class Simulation extends JPanel {
                 }
             }
         }
-        if(started == false) {
+        if (started == false) {
 
             g.setColor(Color.BLACK);
             //top two veritcal
@@ -1113,7 +1126,7 @@ public class Simulation extends JPanel {
             g.fillRect(540, 680, 10, 35);
             g.fillRect(540, 760, 10, 35);
         } else {
-            if(isLanesOneAndThree) {
+            if (isLanesOneAndThree) {
                 g.setColor(Color.GREEN);
                 //top two veritcal
                 g.fillRect(370, 10, 35, 280);

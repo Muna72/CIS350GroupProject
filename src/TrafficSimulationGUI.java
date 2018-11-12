@@ -81,7 +81,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
      * @param args
      */
     public static void main(String[] args) {
-        try{
+        try {
             TrafficSimulationGUI gui = new TrafficSimulationGUI();
             gui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             gui.setTitle("Traffic Simulation");
@@ -98,7 +98,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                                     " will cause you to lose all simulation data. Proceed in closing?", "Close Window?",
                             JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
-                    if(dialogResult == JOptionPane.YES_OPTION) {
+                    if (dialogResult == JOptionPane.YES_OPTION) {
                         System.exit(0);
                     }
                 }
@@ -399,13 +399,13 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
             //set where user's car generates based on input
             if (e.getSource() == leaveTime) {
                 isRunning = false;
-                if (leaveTime.getSelectedItem().toString() == "Left Early") {
+                if (leaveTime.getSelectedItem().toString().equals("Left Early")) {
                     uCarTime = 900;
                 }
-                if (leaveTime.getSelectedItem().toString() == "On Time") {
+                if (leaveTime.getSelectedItem().toString().equals("On Time")) {
                     uCarTime = 10200;
                 }
-                if (leaveTime.getSelectedItem().toString() == "Left Late") {
+                if (leaveTime.getSelectedItem().toString().equals("Left Late")) {
                     uCarTime = 25200;
                 }
             }
@@ -454,7 +454,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
                     timeLeft = timeLeft - DELAY;
 
-                    if(timeLeft <= 0) {
+                    if (timeLeft <= 0) {
                         simTimer.stop();
                         updateGUI();
                         isRunning = false;

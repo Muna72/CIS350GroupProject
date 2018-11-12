@@ -12,7 +12,6 @@ public class UtilityVehicle extends Vehicle {
     //Determines if the UtilityVehicle belongs to the user
     private boolean isUserCar;
 
-
     /**
      * The default constructor of UtilityVehicle
      */
