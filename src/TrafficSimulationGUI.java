@@ -12,7 +12,7 @@ import java.awt.event.WindowEvent;
  * @author Muna Gigowski
  * @version 1.0 (September 2018)
  */
-public class TrafficSimulationGUI extends JFrame implements ActionListener, Runnable{
+public class TrafficSimulationGUI extends JFrame implements ActionListener, Runnable {
 
 
     //Declaring instance variables
@@ -79,7 +79,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
             TrafficSimulationGUI gui = new TrafficSimulationGUI();
             gui.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
             gui.setTitle("Traffic Simulation");
-            gui.setPreferredSize(new Dimension(1800,1000));
+            gui.setPreferredSize(new Dimension(1800, 1000));
             gui.pack();
             gui.setVisible(true);
             gui.addWindowListener(new WindowAdapter() {
@@ -98,7 +98,7 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
                 }
             });
         }
-        catch(Exception e){
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -121,25 +121,25 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         //Adding all panels to JFrame
         input = new JPanel(new GridBagLayout());
         input.setBorder(new EmptyBorder(30, 0, 30, 120));
-        position = makeConstraints(10,0,1,1,GridBagConstraints.LINE_END);
+        position = makeConstraints(10, 0, 1, 1, GridBagConstraints.LINE_END);
         add(input,position);
 
         statsArea = new JPanel(new GridBagLayout());
         statsArea.setBorder(new EmptyBorder(30, 200, 0, 120));
-        position = makeConstraints(10,5,1,1,GridBagConstraints.LINE_END);
+        position = makeConstraints(10, 5, 1, 1, GridBagConstraints.LINE_END);
         add(statsArea,position);
 
         trafficMap = new Simulation(secsTillNextVehicle, totalTime, moveForwardTime);
         trafficMap.setMinimumSize(trafficMap.getPreferredSize());
-        position = makeConstraints(0,0,10,10,GridBagConstraints.FIRST_LINE_START);
+        position = makeConstraints(0, 0, 10, 10, GridBagConstraints.FIRST_LINE_START);
         add(trafficMap, position);
 
         //Adding input text fields and labels
         inputLabel = new JLabel("Input Information");
         inputLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
         inputLabel.setFont(font);
-        position = makeConstraints(2,1,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,120,0,20);
+        position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, 120, 0, 20);
         input.add(inputLabel, position);
 
         font = new Font("SansSerif Bold", Font.BOLD, 13);
@@ -153,35 +153,35 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
         leaveTime = new JComboBox<>(leaveTimes);
         leaveTime.setMinimumSize(leaveTime.getPreferredSize());
-        position = makeConstraints(3,3,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-20,0,20);
+        position = makeConstraints(3, 3, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, -20, 0, 20);
         input.add(leaveTime, position);
         in1Lab = new JLabel("Commute departure time: ");
         in1Lab.setFont(font);
-        position = makeConstraints(2,3,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,0,0,20);
+        position = makeConstraints(2, 3, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, 0, 0, 20);
         input.add(in1Lab, position);
 
         congestionLevel = new JComboBox<>(congestionOptions);
         congestionLevel.setMinimumSize(congestionLevel.getPreferredSize());
-        position = makeConstraints(3,4,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-20,0,20);
+        position = makeConstraints(3, 4, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -20, 0, 20);
         input.add(congestionLevel, position);
         in2Lab = new JLabel("Current level of road congestion: ");
         in2Lab.setFont(font);
-        position = makeConstraints(2,4,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 4, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         input.add(in2Lab, position);
 
         weatherConditions = new JComboBox<>(weatherOptions);
         weatherConditions.setMinimumSize(weatherConditions.getPreferredSize());
-        position = makeConstraints(3,5,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-20,0,20);
+        position = makeConstraints(3, 5, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -20, 0, 20);
         input.add(weatherConditions, position);
         in3Lab = new JLabel("Current weather conditions: ");
         in3Lab.setFont(font);
-        position = makeConstraints(2,5,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 5, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         input.add(in3Lab, position);
 
 
@@ -189,8 +189,8 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
         outputLabel = new JLabel("Output Information");
         font = new Font("SansSerif Bold", Font.BOLD, 14);
         outputLabel.setFont(font);
-        position = makeConstraints(1,0,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-185,0,0);
+        position = makeConstraints(1, 0, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, -185, 0, 0);
         outputLabel.setBorder(new EmptyBorder(10, 0, 30, 0));
         statsArea.add(outputLabel, position);
 
@@ -198,88 +198,88 @@ public class TrafficSimulationGUI extends JFrame implements ActionListener, Runn
 
         thru = new JLabel("Throughput:");
         thru.setFont(font);
-        position = makeConstraints(0,1,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-110,0,20);
+        position = makeConstraints(0, 1, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, -110, 0, 20);
         statsArea.add(thru, position);
         out1 = new JLabel("TBD");
         out1 = new JLabel(trafficMap.getFinished() + " with max = 80");
         out1.setFont(font);
-        position = makeConstraints(2,1,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 1, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         statsArea.add(out1, position);
 
         numLRun = new JLabel("Number of Lights Run");
         numLRun.setFont(font);
-        position = makeConstraints(0,2,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(0,-110,0,20);
+        position = makeConstraints(0, 2, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(0, -110, 0, 20);
         statsArea.add(numLRun, position);
         out2 = new JLabel("TBD");
         out2.setFont(font);
-        position = makeConstraints(2,2,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 2, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         statsArea.add(out2, position);
 
         numOfAcc = new JLabel("Number of Accidents:");
         numOfAcc.setFont(font);
-        position = makeConstraints(0,3,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-110,0,20);
+        position = makeConstraints(0, 3, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -110, 0, 20);
         statsArea.add(numOfAcc, position);
         out3 = new JLabel("TBD");
         out3.setFont(font);
-        position = makeConstraints(2,3,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 3, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         statsArea.add(out3, position);
 
         avgTimStop = new JLabel("Average Vehicle Time Stopped:");
         avgTimStop.setFont(font);
-        position = makeConstraints(0,4,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-110,0,20);
+        position = makeConstraints(0, 4, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -110, 0, 20);
         statsArea.add(avgTimStop, position);
         out4 = new JLabel("TBD");
         out4.setFont(font);
-        position = makeConstraints(2,4,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 4, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         statsArea.add(out4, position);
 
         avgVSpeed = new JLabel("Average Vehicle Speed:");
         avgVSpeed.setFont(font);
-        position = makeConstraints(0,5,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-110,0,20);
+        position = makeConstraints(0, 5, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -110, 0, 20);
         statsArea.add(avgVSpeed, position);
         out5 = new JLabel("TBD");
         out5.setFont(font);
-        position = makeConstraints(2,5,1,1,GridBagConstraints.LINE_START);
-        position.insets = new Insets(10,0,0,20);
+        position = makeConstraints(2, 5, 1, 1, GridBagConstraints.LINE_START);
+        position.insets = new Insets(10, 0, 0, 20);
         statsArea.add(out5, position);
 
         userStarFin = new JLabel("Your Route Completion Time:");
         userStarFin.setFont(font);
-        position = makeConstraints(0,6,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-110,0,20);
+        position = makeConstraints(0, 6, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -110, 0, 20);
         statsArea.add(userStarFin, position);
         out6 = new JLabel("TBD");
         out6.setFont(font);
-        position = makeConstraints(2,6,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 6, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         statsArea.add(out6, position);
 
         avgStarFin = new JLabel("Average Vehicle Route Completion Time:");
         avgStarFin.setFont(font);
-        position = makeConstraints(0,7,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,-110,0,20);
+        position = makeConstraints(0, 7, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, -110, 0, 20);
         statsArea.add(avgStarFin, position);
         out7 = new JLabel("TBD");
         out7.setFont(font);
-        position = makeConstraints(2,7,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(10,0,0,20);
+        position = makeConstraints(2, 7, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(10, 0, 0, 20);
         statsArea.add(out7, position);
 
 
         //place each button
         start = new JButton( "Start" );
         start.setForeground(Color.GREEN);
-        position = makeConstraints(3,7,1,1,GridBagConstraints.LINE_START);
-        position.insets =  new Insets(40,-170,0,20);
+        position = makeConstraints(3, 7, 1, 1, GridBagConstraints.LINE_START);
+        position.insets =  new Insets(40, -170, 0, 20);
         input.add(start, position);
 
         stop = new JButton( "Stop" );
