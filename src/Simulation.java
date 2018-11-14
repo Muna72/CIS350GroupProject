@@ -47,7 +47,7 @@ public class Simulation extends JPanel {
     private boolean goodToCross;
     private double greenLightTimer;
     private double yellowLightTimer;
-    private Random rand = new Random();
+    private RandomInterface rand;
     private boolean started;
     private double timeForUserCar;
 
@@ -58,7 +58,7 @@ public class Simulation extends JPanel {
      * @param totTime total simulation run time
      * @param laneTime time when each lane will "move forward"
      */
-    public Simulation(double secNext, double totTime, double laneTime) {
+    public Simulation(double secNext, double totTime, double laneTime, RandomInterface randObject) {
 
         route = new Vehicle[ROWS][COLUMNS];
         allVehicles = new ArrayList<Vehicle>();
@@ -85,6 +85,8 @@ public class Simulation extends JPanel {
         greenLightTimer = 0;
         yellowLightTimer = 0;
         setPreferredSize(new Dimension(COLUMNS * SIZE, ROWS * SIZE));
+        
+        rand = randObject;
     }
 
     /**
