@@ -20,8 +20,8 @@ public class Simulation extends JPanel {
     public ArrayList<Integer> allQueLengths;
     public Intersection intersection1;
 
-    private final int ROWS = 80, COLUMNS = 120, SIZE = 10;
-    private final int MAX_VEHICLES = 80;
+    private final static int ROWS = 80, COLUMNS = 120, SIZE = 10;
+    private final static int MAX_VEHICLES = 80;
 
     //Instance variable declarations
     private double secsTillNextVehicle;
@@ -33,6 +33,7 @@ public class Simulation extends JPanel {
     private double simTimeLeft;
     private double timeVehicleAdded;
     private double userThruTime;
+    private double avgVehicleSpeed;
     private int numOfVehicles;
     private int numLightsRun;
     private int numOfAccidents;
@@ -72,6 +73,7 @@ public class Simulation extends JPanel {
         numOfVehicles = 0;
         numOfAccidents = 0;
         avgStoppedSec = 0;
+        avgVehicleSpeed = 0;
         timeVehicleAdded = 0;
         firstPer = false;
         enableYellow = false;
@@ -122,8 +124,6 @@ public class Simulation extends JPanel {
      * @return
      */
     public double getAvgVehicleSpeed() {
-        double avgVehicleSpeed = 0;
-
         if (lTime == 500) {
             avgVehicleSpeed = 50;
         } else if (lTime == 700) {
@@ -316,6 +316,7 @@ public class Simulation extends JPanel {
         numLightsRun = 0;
         totalTime = 0;
         avgStoppedSec = 0;
+        avgVehicleSpeed = 0;
         timeVehicleAdded = 0;
         finished = 0;
         userThruTime = 0;
@@ -425,6 +426,7 @@ public class Simulation extends JPanel {
         if (getSimTimeLeft() > 0) {
             v.setCreateTime(getSimTimeLeft());
         }
+        //add null check
         isGoodDriver(v);
         placeVehicle(v);
         allVehicles.add(v);
@@ -477,10 +479,6 @@ public class Simulation extends JPanel {
             for (int v = 0; v < lane.size(); ++v ) {
                 Vehicle current = lane.get(v);
                 goodToCross = false;
-                if(lane == intersection1.entryPoint[6]) {
-                }
-                if(lane == intersection1.entryPoint[0]) {
-                }
                 if (current.getNumSteps() == 10) {
                     if (isLanesZeroAndTwo) {
                         crossIntersection(current);
