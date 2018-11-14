@@ -13,6 +13,10 @@ public class FakeRandom implements RandomInterface
         this.value = value;
     }
     
+    public void setValue(int value) {
+        this.value = value;
+     }
+    
     public int nextInt(int max) {
         return value;
     }
