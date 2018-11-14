@@ -1,5 +1,4 @@
 import java.util.LinkedList;
-import java.util.Random;
 /**
  * This class creates the intersection and the linked lists of vehicles that are entering and leaving the intersection.
  *

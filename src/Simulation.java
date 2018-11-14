@@ -3,7 +3,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Random;
 import javax.swing.*;
 /**
  *
@@ -428,11 +427,12 @@ public class Simulation extends JPanel {
         if (getSimTimeLeft() > 0) {
             v.setCreateTime(getSimTimeLeft());
         }
-        //add null check
-        isGoodDriver(v);
-        placeVehicle(v);
-        allVehicles.add(v);
-        ++numOfVehicles;
+        if(v != null) {
+            isGoodDriver(v);
+            placeVehicle(v);
+            allVehicles.add(v);
+            ++numOfVehicles;
+        }
     }
 
     /**
@@ -936,7 +936,7 @@ public class Simulation extends JPanel {
         started = true;
 
         //generate first Vehicle shortly into simulation
-        if (currTime == totalTime - 500) {
+        if (Double.compare(currTime, totalTime - 500) == 0) {
             firstPer = true;
             addVehicle(false);
             timeVehicleAdded = currTime;
