@@ -31,11 +31,14 @@ public class SimulationTest {
     }
 
 
-    @Test (expected = NullPointerException.class)
+    @Test
     public void testReset(){
+        s = new Simulation(20.0, 10.0, 1000);
         s.reset();
+        assertEquals(s.getTotalTime(),0,0);
         assertEquals(s.getSimTimeLeft(),0,0);
-
-
+        assertEquals(s.getAvgVehicleSpeed(),0,0);
+        assertEquals(s.getTotalAvgVehicleTime(),0,0);
+        assertEquals(s.getAvgStoppedTime(),0,0);
     }
 }
