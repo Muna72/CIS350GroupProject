@@ -50,7 +50,6 @@ public class Simulation extends JPanel {
     private boolean started;
     private double timeForUserCar;
 
-
     /**
      *  Class Constructor initializes instance variables.
      * @param secNext seconds until the next vehicle will be generated
@@ -60,10 +59,10 @@ public class Simulation extends JPanel {
     public Simulation(double secNext, double totTime, double laneTime, RandomInterface randObject) {
 
         route = new Vehicle[ROWS][COLUMNS];
-        allVehicles = new ArrayList<Vehicle>();
-        allAvgTimes = new ArrayList<Double>();
-        allAvgTimeStopped = new ArrayList<Double>();
-        allQueLengths = new ArrayList<Integer>();
+        allVehicles = new ArrayList<>();
+        allAvgTimes = new ArrayList<>();
+        allAvgTimeStopped = new ArrayList<>();
+        allQueLengths = new ArrayList<>();
         intersection1 = new Intersection();
 
         secsTillNextVehicle = secNext;
@@ -84,8 +83,12 @@ public class Simulation extends JPanel {
         greenLightTimer = 0;
         yellowLightTimer = 0;
         setPreferredSize(new Dimension(COLUMNS * SIZE, ROWS * SIZE));
-        
+
         rand = randObject;
+
+        if (totTime < 0 || secNext <0 || laneTime <0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -172,7 +175,7 @@ public class Simulation extends JPanel {
                 break;
         }
 
-        if (firstPer == true) {
+        if (firstPer) {
             v.setCreateTime(getSimTimeLeft());
             firstPer = false;
         }
@@ -397,18 +400,18 @@ public class Simulation extends JPanel {
 
         if (numOfVehicles <= MAX_VEHICLES) {
             if (!isUserCar) {
-                    if (typeGen == 1) {
-                        v = new Car();
-                    }
-                    if (typeGen == 2) {
-                        v = new UtilityVehicle();
-                    }
-                    if (typeGen == 3) {
-                        v = new SemiTruck();
-                    }
-                    if (typeGen == 4) {
-                        v = new Car();
-                    }
+                if (typeGen == 1) {
+                    v = new Car();
+                }
+                if (typeGen == 2) {
+                    v = new UtilityVehicle();
+                }
+                if (typeGen == 3) {
+                    v = new SemiTruck();
+                }
+                if (typeGen == 4) {
+                    v = new Car();
+                }
             } else {
                 if (typeGen == 1) {
                     v = new Car(true);
@@ -723,21 +726,21 @@ public class Simulation extends JPanel {
                 }
             }
             if (collisionChance){
-                    Vehicle oncoming = intersection1.entryPoint[2].get(0);
-                    if (oncoming.getPath() == Direction.SOUTH) {
-                        for (int h = 0; h < intersection1.entryPoint[0].size(); ++h) {
-                            Vehicle c = intersection1.entryPoint[0].get(h);
-                            if (c.getNumSteps() == 3) {
-                                impasse = true;
-                                break;
-                            }
+                Vehicle oncoming = intersection1.entryPoint[2].get(0);
+                if (oncoming.getPath() == Direction.SOUTH) {
+                    for (int h = 0; h < intersection1.entryPoint[0].size(); ++h) {
+                        Vehicle c = intersection1.entryPoint[0].get(h);
+                        if (c.getNumSteps() == 3) {
+                            impasse = true;
+                            break;
                         }
                     }
-                    if (impasse) {
-                        goodToCross = true; //If there is an impass, lane 0 gets the right-of-way
-                    } else {
-                        v.setNumSteps(9);
-                    }
+                }
+                if (impasse) {
+                    goodToCross = true; //If there is an impass, lane 0 gets the right-of-way
+                } else {
+                    v.setNumSteps(9);
+                }
 
             } else {
                 goodToCross = true;
@@ -1268,4 +1271,3 @@ public class Simulation extends JPanel {
         }
     }
 }
-    
