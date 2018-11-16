@@ -960,7 +960,7 @@ public class Simulation extends JPanel {
             enableYellow = true;
         }
 
-        //Every eight seconds switch which lanes have green light
+        //Every alternate green/red lights for ten second increments
         if (!isYellowLight && (greenLightTimer - currTime) >= 10000) {
             //Turn whichever lane had green light previously to yellow, stopping the flow of traffic from that lane
             if (isLanesOneAndThree) {
@@ -973,7 +973,7 @@ public class Simulation extends JPanel {
             isYellowLight = true;
             yellowLightTimer = currTime;
         }
-        //Every eight seconds switch which lanes have green light
+        //After tens seconds of green light, run yellow light for five seconds
         if (isYellowLight && (yellowLightTimer - currTime) >= 5000) {
             if (isYellowOneAndThree) {
                 isLanesZeroAndTwo = true;
