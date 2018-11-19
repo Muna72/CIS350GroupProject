@@ -140,7 +140,7 @@ public class Simulation extends JPanel {
      * Method to place Vehicle in a lane que.
      * @param v vehicle to be placed
      */
-    private void placeVehicle(Vehicle v) {
+    public void placeVehicle(Vehicle v) {
 
         int gen = rand.nextInt(4) + 1;
 
@@ -390,7 +390,7 @@ public class Simulation extends JPanel {
      * Method to add new vehicle to the simulation
      * @param isUserCar to determine if the car being added is the user's car or not
      */
-    public void addVehicle(boolean isUserCar) {
+    public Vehicle addVehicle(boolean isUserCar) {
 
         Vehicle v = null;
         int typeGen = rand.nextInt(4 - 1 + 1) + 1;
@@ -433,6 +433,7 @@ public class Simulation extends JPanel {
             allVehicles.add(v);
             ++numOfVehicles;
         }
+        return v;
     }
 
     /**
