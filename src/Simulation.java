@@ -86,6 +86,10 @@ public class Simulation extends JPanel {
         setPreferredSize(new Dimension(COLUMNS * SIZE, ROWS * SIZE));
         
         rand = randObject;
+        
+        if (secNext < 0 || totTime <0 || laneTime <0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
