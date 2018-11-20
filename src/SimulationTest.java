@@ -8,6 +8,9 @@ import static org.junit.Assert.*;
  */
 public class SimulationTest {
     private Simulation s;
+    private FakeRandom r;
+    private Vehicle v;
+
     @Test
     public void testConstructor() {
         s = new Simulation(20.0, 10.0, 500, new FakeRandom(3));
@@ -20,7 +23,7 @@ public class SimulationTest {
         assertEquals(s.getAvgVehicleSpeed(), 25,0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+   @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors1() {
         new Simulation(-1,0,500, new FakeRandom(3));
     }
@@ -35,26 +38,92 @@ public class SimulationTest {
         new Simulation(0,-2,500, new FakeRandom(3));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorWithErrors4() {
+        new Simulation(-1,0,-500, new FakeRandom(3));
+    }
 
-    @Test
-    public void testReset(){
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorWithErrors5() {
+        new Simulation(-1,-7,500, new FakeRandom(3));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorWithErrors6() {
+        new Simulation(-1,-10,-500, new FakeRandom(3));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorWithErrors7() {
+        new Simulation(1,-10,-500, new FakeRandom(3));
+    }
+
+@Test
+    public void testReset1(){
         s = new Simulation(20.0, 10.0, 1000, new FakeRandom(3));
         s.reset();
         assertEquals(s.getSimTimeLeft(),0,0);
-        //assertEquals(s.getAvgVehicleSpeed(),0,0); //failed
-        //assertEquals(s.getTotalAvgVehicleTime(),0,0); 
         assertEquals(s.getAvgStoppedTime(),0,0);
         assertEquals(s.getAvgStoppedTime(), 0,0);
-        assertEquals(s.getSimTimeLeft(),0,0);
         assertEquals(s.getNumOfAccidents(),0,0);
         assertEquals(s.getUserThruTime(),0,0);
+        assertEquals(s.getNumLightsRun(),0,0);
+    }
+
+    @Test
+    public void testReset2(){
+        s = new Simulation(20.0, 10.0, 1000, new FakeRandom(3));
+        s.reset();
+        assertEquals(s.getAvgVehicleSpeed(),0,0); //failed
+        assertEquals(s.getTotalAvgVehicleTime(),0,0); //failed
+    }
+
+    @Test
+    public void testIsGoodDriver1() {
+        r = new FakeRandom(0);
+        s = new Simulation(100, 100000, 300, r);
+        v = new Car();
+
+        r.setValue(9);
+        s.isGoodDriver(v);
+        assertEquals(v.getGoodDriver(), false);
+
+    }
+
+    @Test
+    public void testIsGoodDriver2(){
+        r = new FakeRandom(0);
+        s = new Simulation(100, 100000, 300, r);
+        v = new Car();
+
+        for (int i = 1 ; i < 15; i++) {
+            r.setValue(i);
+            s.isGoodDriver(v);
+            if (i != 9 ) {
+                assertEquals(v.getGoodDriver(), true);
+            }
+        }
+    }
+
+    @Test
+    public void testGenerateFirstGreen() {
+        r = new FakeRandom(0);
+        s = new Simulation(100, 100000, 300, r);
+
+        r.setValue(1);
+        s.generateFirstGreen();
+        assertEquals(s.isLanesOneAndThree(), true);
+
+        r.setValue(2);
+        s.generateFirstGreen();
+        assertEquals(s.isLanesZeroAndTwo(), true);
     }
     
     @Test
     public void testSetPath() {
-        FakeRandom r = new FakeRandom(0);
+        r = new FakeRandom(0);
         s = new Simulation(100, 100000, 300, r);
-        Vehicle v = new Car();
+        v = new Car();
         
         //entryPoint[0], all options
         v.setQue(s.intersection1.entryPoint[0]);
@@ -119,9 +188,9 @@ public class SimulationTest {
     
     @Test
     public void testPlaceVehicle() {
-        FakeRandom r = new FakeRandom(0);
+        r = new FakeRandom(0);
         s = new Simulation(100, 100000, 300, r);
-        Vehicle v = new Car();
+        v = new Car();
         
         //test empty list
         assertEquals(s.intersection1.entryPoint[0].size(), 0);
@@ -167,7 +236,7 @@ public class SimulationTest {
     
     @Test
     public void testAddVehicle() {
-        FakeRandom r = new FakeRandom(0);
+        r = new FakeRandom(0);
         s = new Simulation(100, 100000, 300, r);
         
         Vehicle v = s.addVehicle(true);
