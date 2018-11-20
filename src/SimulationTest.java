@@ -68,6 +68,8 @@ public class SimulationTest {
         assertEquals(s.getNumOfAccidents(),0,0);
         assertEquals(s.getUserThruTime(),0,0);
         assertEquals(s.getNumLightsRun(),0,0);
+        assertEquals(s.isLanesZeroAndTwo(), false);
+        assertEquals(s.isLanesOneAndThree(),false);
     }
 
     @Test
