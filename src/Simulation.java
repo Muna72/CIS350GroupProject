@@ -122,6 +122,38 @@ public class Simulation extends JPanel {
      */
     public int getNumOfAccidents() {
         return numOfAccidents;
+    } 
+    
+    /**
+     * To check if it's Lane one and three
+     * @return
+     */
+    public boolean isLanesOneAndThree() {
+        return isLanesOneAndThree;
+    }
+
+    /**
+     * Set lane one and three
+     * @param lanesOneAndThree
+     */
+    public void setLanesOneAndThree(boolean lanesOneAndThree) {
+        isLanesOneAndThree = lanesOneAndThree;
+    }
+
+    /**
+     * To get the lane 0 and 2
+     * @return
+     */
+    public boolean isLanesZeroAndTwo() {
+        return isLanesZeroAndTwo;
+    }
+
+    /**
+     * Set lane 0 and 2
+     * @param lanesZeroAndTwo
+     */
+    public void setLanesZeroAndTwo(boolean lanesZeroAndTwo) {
+        isLanesZeroAndTwo = lanesZeroAndTwo;
     }
 
     /**
@@ -397,7 +429,7 @@ public class Simulation extends JPanel {
     public Vehicle addVehicle(boolean isUserCar) {
 
         Vehicle v = null;
-        int typeGen = rand.nextInt(4 - 1 + 1) + 1;
+        int typeGen = rand.nextInt(4) + 1;
 
         if (numOfVehicles <= MAX_VEHICLES) {
             if (!isUserCar) {
@@ -916,7 +948,7 @@ public class Simulation extends JPanel {
      */
     public void generateFirstGreen() {
 
-        int gen = rand.nextInt(2 - 1 + 1) + 1;
+        int gen = rand.nextInt(2) + 1;
 
         switch(gen) {
             case 1:
