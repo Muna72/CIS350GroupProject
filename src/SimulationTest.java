@@ -112,11 +112,11 @@ public class SimulationTest {
         r = new FakeRandom(0);
         s = new Simulation(100, 100000, 300, r);
 
-        r.setValue(1);
+        r.setValue(0);
         s.generateFirstGreen();
         assertEquals(s.isLanesOneAndThree(), true);
 
-        r.setValue(2);
+        r.setValue(1);
         s.generateFirstGreen();
         assertEquals(s.isLanesZeroAndTwo(), true);
     }
