@@ -191,7 +191,7 @@ public class Simulation extends JPanel {
     public void setPath(Vehicle v) {
 
         LinkedList<Vehicle> laneHolder = v.getQue();
-        int dirGen = rand.nextInt(3 - 1 + 1) + 1;
+        int dirGen = rand.nextInt(3) + 1;
 
         if (laneHolder == intersection1.entryPoint[0]) {
             switch (dirGen) {
