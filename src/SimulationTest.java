@@ -86,7 +86,7 @@ public class SimulationTest {
         s = new Simulation(100, 100000, 300, r);
         v = new Car();
 
-        r.setValue(9);
+        r.setValue(8);
         s.isGoodDriver(v);
         assertEquals(v.getGoodDriver(), false);
 
@@ -98,10 +98,10 @@ public class SimulationTest {
         s = new Simulation(100, 100000, 300, r);
         v = new Car();
 
-        for (int i = 1 ; i < 15; i++) {
+        for (int i = 0 ; i < 14; i++) {
             r.setValue(i);
             s.isGoodDriver(v);
-            if (i != 9 ) {
+            if (i != 8 ) {
                 assertEquals(v.getGoodDriver(), true);
             }
         }
