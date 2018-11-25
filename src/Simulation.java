@@ -86,6 +86,10 @@ public class Simulation extends JPanel {
         setPreferredSize(new Dimension(COLUMNS * SIZE, ROWS * SIZE));
         
         rand = randObject;
+        
+        if (secNext < 0 || totTime <0 || laneTime <0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -118,6 +122,38 @@ public class Simulation extends JPanel {
      */
     public int getNumOfAccidents() {
         return numOfAccidents;
+    } 
+    
+    /**
+     * To check if it's Lane one and three
+     * @return
+     */
+    public boolean isLanesOneAndThree() {
+        return isLanesOneAndThree;
+    }
+
+    /**
+     * Set lane one and three
+     * @param lanesOneAndThree
+     */
+    public void setLanesOneAndThree(boolean lanesOneAndThree) {
+        isLanesOneAndThree = lanesOneAndThree;
+    }
+
+    /**
+     * To get the lane 0 and 2
+     * @return
+     */
+    public boolean isLanesZeroAndTwo() {
+        return isLanesZeroAndTwo;
+    }
+
+    /**
+     * Set lane 0 and 2
+     * @param lanesZeroAndTwo
+     */
+    public void setLanesZeroAndTwo(boolean lanesZeroAndTwo) {
+        isLanesZeroAndTwo = lanesZeroAndTwo;
     }
 
     /**
@@ -140,7 +176,7 @@ public class Simulation extends JPanel {
      * Method to place Vehicle in a lane que.
      * @param v vehicle to be placed
      */
-    private void placeVehicle(Vehicle v) {
+    public void placeVehicle(Vehicle v) {
 
         int gen = rand.nextInt(4) + 1;
 
@@ -187,7 +223,7 @@ public class Simulation extends JPanel {
     public void setPath(Vehicle v) {
 
         LinkedList<Vehicle> laneHolder = v.getQue();
-        int dirGen = rand.nextInt(3 - 1 + 1) + 1;
+        int dirGen = rand.nextInt(3) + 1;
 
         if (laneHolder == intersection1.entryPoint[0]) {
             switch (dirGen) {
@@ -390,10 +426,10 @@ public class Simulation extends JPanel {
      * Method to add new vehicle to the simulation
      * @param isUserCar to determine if the car being added is the user's car or not
      */
-    public void addVehicle(boolean isUserCar) {
+    public Vehicle addVehicle(boolean isUserCar) {
 
         Vehicle v = null;
-        int typeGen = rand.nextInt(4 - 1 + 1) + 1;
+        int typeGen = rand.nextInt(4) + 1;
 
         if (numOfVehicles <= MAX_VEHICLES) {
             if (!isUserCar) {
@@ -433,6 +469,7 @@ public class Simulation extends JPanel {
             allVehicles.add(v);
             ++numOfVehicles;
         }
+        return v;
     }
 
     /**
@@ -911,7 +948,7 @@ public class Simulation extends JPanel {
      */
     public void generateFirstGreen() {
 
-        int gen = rand.nextInt(2 - 1 + 1) + 1;
+        int gen = rand.nextInt(2) + 1;
 
         switch(gen) {
             case 1:
