@@ -13,24 +13,24 @@ public class Car extends Vehicle {
     private boolean isUserCar;
 
     /**
-     * The default constructor of Car
+     * The default constructor of Car.
      */
-    public Car(){
+    public Car() {
         size = 1;
         color = Color.blue;
     }
     /**
-     * Constructor of Car
+     * Constructor of Car.
      *
      * @param isUserCar is true if the car belongs to the user
      */
-    public Car(boolean isUserCar){
+    public Car(boolean isUserCar) {
         this.size = 1;
         this.isUserCar = isUserCar;
-        if(isUserCar == true){
+        if (isUserCar == true) {
             this.setColor(Color.red);
         }
-        else{
+        else {
             this.setColor(Color.blue);
         }
 

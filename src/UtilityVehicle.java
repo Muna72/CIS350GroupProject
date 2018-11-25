@@ -13,15 +13,15 @@ public class UtilityVehicle extends Vehicle {
     private boolean isUserCar;
 
     /**
-     * The default constructor of UtilityVehicle
+     * The default constructor of UtilityVehicle.
      */
-    public UtilityVehicle(){
+    public UtilityVehicle() {
         size = 2;
         color = Color.orange;
     }
 
     /**
-     * The constructor of UtilityVehicle
+     * The constructor of UtilityVehicle.
      *
      * @param isUserCar is true if the UtilityVehicle belongs to the user
      */

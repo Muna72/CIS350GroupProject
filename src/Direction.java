@@ -4,7 +4,6 @@
  * @author Brianne Kerr
  * @version 1.0
  */
-public enum Direction
-{
+public enum Direction {
     NORTH, SOUTH, EAST, WEST
 }

@@ -12,25 +12,25 @@ public class SemiTruck extends Vehicle {
     private boolean isUserCar;
 
     /**
-     * The default constructor of Semitruck
+     * The default constructor of Semitruck.
      */
-    public SemiTruck(){
+    public SemiTruck() {
         size = 3;
         color = Color.green;
     }
 
     /**
-     * Constructor for Semitruck
+     * Constructor for Semitruck.
      *
      * @param isUserCar is true if the truck belongs to the user
      */
-    public SemiTruck(boolean isUserCar){
+    public SemiTruck(boolean isUserCar) {
         this.size = 3;
         this.isUserCar = isUserCar;
-        if(isUserCar == true){
+        if (isUserCar == true) {
             this.setColor(Color.red);
         }
-        else{
+        else {
             this.setColor(Color.green);
         }
 

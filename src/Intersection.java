@@ -5,20 +5,18 @@ import java.util.LinkedList;
  * @author Brianne Kerr
  * @version 1.0
  */
-public class Intersection
-{
+public class Intersection {
     /**
-     * Holds list of vehicles going in a specified direction
+     * Holds list of vehicles going in a specified direction.
      * entryPoint[0] = NORTH, entryPoint[1] = EAST,
      * entryPoint[2] = SOUTH, entryPoint[3] = WEST
      */
     public LinkedList<Vehicle>[] entryPoint = new LinkedList[8];
 
     /**
-     * Default class constructor, initializing the linked lists and counters
+     * Default class constructor, initializing the linked lists and counters.
      */
-    public Intersection()
-    {
+    public Intersection() {
         entryPoint[0] = new LinkedList<Vehicle>();
         entryPoint[1] = new LinkedList<Vehicle>();
         entryPoint[2] = new LinkedList<Vehicle>();
@@ -30,7 +28,7 @@ public class Intersection
     }
 
     /**
-     * Clears all linked lists connected to the intersection
+     * Clears all linked lists connected to the intersection.
      */
     public void clear() {
         entryPoint[0].clear();

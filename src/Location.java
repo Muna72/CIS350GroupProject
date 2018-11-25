@@ -1,5 +1,5 @@
 /**
- * A class that tracks the lane of the intersection
+ * A class that tracks the lane of the intersection.
  * @author Muna Gigowski
  * @version 1.0
  */
@@ -10,7 +10,7 @@ public class Location {
     private int col;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * @param r row
      * @param c column
@@ -21,7 +21,7 @@ public class Location {
     }
 
     /**
-     * Method to set row
+     * Method to set row.
      *
      * @param r row
      */
@@ -30,7 +30,7 @@ public class Location {
     }
 
     /**
-     * Method to set column
+     * Method to set column.
      *
      * @param c column
      */
@@ -39,7 +39,7 @@ public class Location {
     }
 
     /**
-     * Method to get row
+     * Method to get row.
      *
      * @return row for row
      */
@@ -48,7 +48,7 @@ public class Location {
     }
 
     /**
-     * Method to get column
+     * Method to get column.
      *
      * @return col for column
      */
