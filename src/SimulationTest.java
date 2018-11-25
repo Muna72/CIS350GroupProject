@@ -50,4 +50,3 @@ public class SimulationTest {
         assertEquals(s.getUserThruTime(),0,0);
     }
 }
-
