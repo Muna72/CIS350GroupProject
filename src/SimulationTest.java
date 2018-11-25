@@ -1,4 +1,5 @@
 import org.junit.Test;
+import java.awt.Color;
 import static org.junit.Assert.*;
 
 /**

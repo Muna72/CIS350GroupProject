@@ -56,6 +56,7 @@ public class Simulation extends JPanel {
      * @param secNext seconds until the next vehicle will be generated
      * @param totTime total simulation run time
      * @param laneTime time when each lane will "move forward"
+     * @param randObject for random interface object
      */
     public Simulation(double secNext, double totTime, double laneTime, RandomInterface randObject) {
 
@@ -87,14 +88,14 @@ public class Simulation extends JPanel {
         
         rand = randObject;
         
-        if (secNext < 0 || totTime <0 || laneTime <0) {
+        if (secNext < 0 || totTime < 0 || laneTime < 0) {
             throw new IllegalArgumentException();
         }
     }
 
     /**
      * Method to set average seconds until next Vehicle is generated.
-     * @param secNext
+     * @param secNext for seconds until next vehicle is generated
      */
     public void setSecsTillNextVehicle(double secNext) {
         secsTillNextVehicle = secNext;
@@ -102,7 +103,7 @@ public class Simulation extends JPanel {
 
     /**
      * Method to set total simulation time.
-     * @param totTime
+     * @param totTime for total simulation run time
      */
     public void setTotalTime(double totTime) {
         totalTime = totTime;
@@ -110,7 +111,7 @@ public class Simulation extends JPanel {
 
     /**
      * Method to set the time between when vehicles are generated.
-     * @param pt
+     * @param pt for time between vehicle generating
      */
     public void setVTime(double pt) {
         vTime = pt;
@@ -118,47 +119,31 @@ public class Simulation extends JPanel {
 
     /**
      * Method to get the number of accidents.
-     * @return
+     * @return numOfAccidents
      */
     public int getNumOfAccidents() {
         return numOfAccidents;
     } 
     
     /**
-     * To check if it's Lane one and three
-     * @return
+     * To check if it's Lane one and three.
+     * @return isLanesOneAndThree
      */
     public boolean isLanesOneAndThree() {
         return isLanesOneAndThree;
     }
 
     /**
-     * Set lane one and three
-     * @param lanesOneAndThree
-     */
-    public void setLanesOneAndThree(boolean lanesOneAndThree) {
-        isLanesOneAndThree = lanesOneAndThree;
-    }
-
-    /**
-     * To get the lane 0 and 2
-     * @return
+     * To get the lane 0 and 2.
+     * @return isLanesZeroAndTwo
      */
     public boolean isLanesZeroAndTwo() {
         return isLanesZeroAndTwo;
     }
 
     /**
-     * Set lane 0 and 2
-     * @param lanesZeroAndTwo
-     */
-    public void setLanesZeroAndTwo(boolean lanesZeroAndTwo) {
-        isLanesZeroAndTwo = lanesZeroAndTwo;
-    }
-
-    /**
      * Method to calculate the average vehicle speed, based on the value of lTime.
-     * @return
+     * @return avgVehicleSpeed
      */
     public double getAvgVehicleSpeed() {
         if (lTime == 500) {
@@ -313,7 +298,7 @@ public class Simulation extends JPanel {
             if (v.getPath() == Direction.EAST) {
                 v.setMaxSteps(32);
                 v.setStepsToTurn(13);
-            } else if (v.getPath() == Direction.SOUTH){
+            } else if (v.getPath() == Direction.SOUTH) {
                 v.setMaxSteps(27);
             } else {
                 v.setMaxSteps(23);
@@ -425,6 +410,7 @@ public class Simulation extends JPanel {
     /**
      * Method to add new vehicle to the simulation
      * @param isUserCar to determine if the car being added is the user's car or not
+     * @return v
      */
     public Vehicle addVehicle(boolean isUserCar) {
 
@@ -463,7 +449,7 @@ public class Simulation extends JPanel {
         if (getSimTimeLeft() > 0) {
             v.setCreateTime(getSimTimeLeft());
         }
-        if(v != null) {
+        if (v != null) {
             isGoodDriver(v);
             placeVehicle(v);
             allVehicles.add(v);
@@ -473,7 +459,7 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to switch vehicle to whatever lane associates with the direction it is trying to go
+     * Method to switch vehicle to whatever lane associates with the direction it is trying to go.
      * @param v vehicle that is switching lanes
      */
     public void switchLanes(Vehicle v) {
@@ -506,7 +492,7 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to move entire lane of cars forward one step
+     * Method to move entire lane of cars forward one step.
      * @param lane lane to be moved forward
      * @param currTime current simulation time
      */
@@ -515,7 +501,7 @@ public class Simulation extends JPanel {
         Vehicle last = null;
 
         if (lane == intersection1.entryPoint[0] || lane == intersection1.entryPoint[6]) {
-            for (int v = 0; v < lane.size(); ++v ) {
+            for (int v = 0; v < lane.size(); ++v) {
                 Vehicle current = lane.get(v);
                 goodToCross = false;
                 if (current.getNumSteps() == 10) {
@@ -572,7 +558,7 @@ public class Simulation extends JPanel {
             }
         }
         if (lane == intersection1.entryPoint[1] || lane == intersection1.entryPoint[7]) {
-            for (int v = 0; v < lane.size(); ++v ) {
+            for (int v = 0; v < lane.size(); ++v) {
 
                 Vehicle current = lane.get(v);
                 goodToCross = false;
@@ -625,7 +611,7 @@ public class Simulation extends JPanel {
             }
         }
         if (lane == intersection1.entryPoint[4] || lane == intersection1.entryPoint[2]) {
-            for (int v = 0; v < lane.size(); ++v ) {
+            for (int v = 0; v < lane.size(); ++v) {
 
                 Vehicle current = lane.get(v);
                 goodToCross = false;
@@ -679,7 +665,7 @@ public class Simulation extends JPanel {
             }
         }
         if (lane == intersection1.entryPoint[3] || lane == intersection1.entryPoint[5]) {
-            for (int v = 0; v < lane.size(); ++v ) {
+            for (int v = 0; v < lane.size(); ++v) {
 
                 Vehicle current = lane.get(v);
                 goodToCross = false;
@@ -759,7 +745,7 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if (collisionChance){
+            if (collisionChance) {
                     Vehicle oncoming = intersection1.entryPoint[2].get(0);
                     if (oncoming.getPath() == Direction.SOUTH) {
                         for (int h = 0; h < intersection1.entryPoint[0].size(); ++h) {
@@ -793,7 +779,7 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if (collisionChance){
+            if (collisionChance) {
                 Vehicle oncoming = intersection1.entryPoint[3].get(0);
                 if (oncoming.getPath() == Direction.WEST) {
                     for (int h = 0; h < intersection1.entryPoint[1].size(); ++h) {
@@ -826,7 +812,7 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if (collisionChance){
+            if (collisionChance) {
                 v.setNumSteps(9);
             } else {
                 goodToCross = true;
@@ -845,7 +831,7 @@ public class Simulation extends JPanel {
                     }
                 }
             }
-            if (collisionChance){
+            if (collisionChance) {
                 v.setNumSteps(9);
             } else {
                 goodToCross = true;
@@ -854,7 +840,7 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to check and see if any two vehicle have moved to the same place, causing them to collide
+     * Method to check and see if any two vehicle have moved to the same place, causing them to collide.
      */
     public void checkForAccident() {
         for (int i = 0; i < allVehicles.size(); ++i) {
@@ -889,7 +875,7 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to initially place vehicle visually in the GUI in a location depending on their queue
+     * Method to initially place vehicle visually in the GUI in a location depending on their queue.
      * @param v vehicle to be visually represented
      */
     public void setStartingPosition(Vehicle v) {
@@ -902,7 +888,7 @@ public class Simulation extends JPanel {
             y = 9;
         }
 
-        if (v.getQue() == intersection1.entryPoint[1]){
+        if (v.getQue() == intersection1.entryPoint[1]) {
             r = 0;
             y = 45;
         }
@@ -944,13 +930,13 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to randomly choose which lanes will be first to have a green light in the simulation
+     * Method to randomly choose which lanes will be first to have a green light in the simulation.
      */
     public void generateFirstGreen() {
 
         int gen = rand.nextInt(2) + 1;
 
-        switch(gen) {
+        switch (gen) {
             case 1:
                 isLanesOneAndThree = true;
                 break;
@@ -964,7 +950,7 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method that progresses the simulation
+     * Method that progresses the simulation.
      */
     public void takeAction() {
 
@@ -1033,7 +1019,7 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Get the number of vehicles that finished the simulation
+     * Get the number of vehicles that finished the simulation.
      * @return finished
      */
     public int getFinished() {
@@ -1041,32 +1027,32 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to get the amount of time it took the user's car to finish the simulation
-     * @return
+     * Method to get the amount of time it took the user's car to finish the simulation.
+     * @return userThruTime
      */
     public double getUserThruTime() {
         return userThruTime;
     }
 
     /**
-     * Method to get the time that the user's car will enter the simulation
-     * @param time
+     * Method to get the time that the user's car will enter the simulation.
+     * @param time for the time the user car is generated
      */
     public void setTimeForUserCar(double time) {
         timeForUserCar = time;
     }
 
     /**
-     * Method to set the time increment by which lanes to be updated
-     * @param time
+     * Method to set the time increment by which lanes to be updated.
+     * @param time for the time each lane is updated
      */
     public void setLTime(double time) {
         lTime = time;
     }
 
     /**
-     * Get the total average time for a Vehicle from start to finish //TODO this is not done yet
-     * @return
+     * Get the total average time for a Vehicle from start to finish.
+     * @return totalAvgVehicleTime
      */
     public double getTotalAvgVehicleTime() {
 
@@ -1081,8 +1067,8 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to get average time stopped
-     * @return
+     * Method to get average time stopped.
+     * @return avgStoppedSec
      */
     public double getAvgStoppedTime() {
 
@@ -1100,13 +1086,13 @@ public class Simulation extends JPanel {
     }
 
     /**
-     * Method to paint the simulation
-     * @param g
+     * Method to paint the simulation.
+     * @param g for graphics object
      */
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        for (int row=0; row<ROWS; row++){
-            for (int col=0; col<COLUMNS; col++) {
+        for (int row = 0; row < ROWS; row++){
+            for (int col = 0; col < COLUMNS; col++) {
                 Vehicle v = route[row][col];
 
                 // set color to white if no vehicle here
