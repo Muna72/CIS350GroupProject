@@ -33,6 +33,7 @@ public class Simulation extends JPanel {
     private double timeVehicleAdded;
     private double userThruTime;
     private double avgVehicleSpeed;
+    private double totalAvgVehicleTime;
     private int numOfVehicles;
     private int numLightsRun;
     private int numOfAccidents;
@@ -74,6 +75,7 @@ public class Simulation extends JPanel {
         numOfAccidents = 0;
         avgStoppedSec = 0;
         avgVehicleSpeed = 0;
+        totalAvgVehicleTime = 0;
         timeVehicleAdded = 0;
         firstPer = false;
         enableYellow = false;
@@ -146,7 +148,7 @@ public class Simulation extends JPanel {
      * @return avgVehicleSpeed
      */
     public double getAvgVehicleSpeed() {
-        if (lTime == 500) {
+        if (lTime == 500 && started) {
             avgVehicleSpeed = 50;
         } else if (lTime == 700) {
             avgVehicleSpeed = 35.5;
@@ -339,6 +341,7 @@ public class Simulation extends JPanel {
         totalTime = 0;
         avgStoppedSec = 0;
         avgVehicleSpeed = 0;
+        totalAvgVehicleTime = 0;
         timeVehicleAdded = 0;
         finished = 0;
         userThruTime = 0;
@@ -1057,12 +1060,13 @@ public class Simulation extends JPanel {
     public double getTotalAvgVehicleTime() {
 
         double sum = 0;
-        double totalAvgVehicleTime;
 
-        for (int i = 0; i < allAvgTimes.size(); ++i) {
-            sum = sum + allAvgTimes.get(i);
+        if(allAvgTimes.size() > 0) {
+            for (int i = 0; i < allAvgTimes.size(); ++i) {
+                sum = sum + allAvgTimes.get(i);
+            }
+            totalAvgVehicleTime = (sum / numOfVehicles) / 1000;
         }
-        totalAvgVehicleTime = (sum / numOfVehicles) / 1000;
         return totalAvgVehicleTime;
     }
 
