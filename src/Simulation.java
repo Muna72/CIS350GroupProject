@@ -148,7 +148,7 @@ public class Simulation extends JPanel {
      * @return avgVehicleSpeed
      */
     public double getAvgVehicleSpeed() {
-        if (lTime == 500 && started) {
+        if (lTime == 500) {
             avgVehicleSpeed = 50;
         } else if (lTime == 700) {
             avgVehicleSpeed = 35.5;
