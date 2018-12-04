@@ -156,6 +156,8 @@ public class Simulation extends JPanel {
             avgVehicleSpeed = 31.25;
         } else if (lTime == 1000) {
             avgVehicleSpeed = 25;
+        } else {
+            avgVehicleSpeed = 0;
         }
         return avgVehicleSpeed;
     }
@@ -339,6 +341,7 @@ public class Simulation extends JPanel {
         numOfVehicles = 0;
         numLightsRun = 0;
         totalTime = 0;
+        lTime = 0;
         avgStoppedSec = 0;
         avgVehicleSpeed = 0;
         totalAvgVehicleTime = 0;
