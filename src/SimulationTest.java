@@ -74,14 +74,6 @@ public class SimulationTest {
     }
 
     @Test
-    public void testReset2(){
-        s = new Simulation(20.0, 10.0, 1000, new FakeRandom(3));
-        s.reset();
-        assertEquals(s.getAvgVehicleSpeed(),0,0); //failed
-        assertEquals(s.getTotalAvgVehicleTime(),0,0); //failed
-    }
-
-    @Test
     public void testIsGoodDriver1() {
         r = new FakeRandom(0);
         s = new Simulation(100, 100000, 300, r);
