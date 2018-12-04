@@ -542,7 +542,7 @@ public class Simulation extends JPanel {
                         temp = new Location(current.getLocation().getRow(), 100);
                     }
                     route[current.getLocation().getRow()][current.getLocation().getCol()] = null;
-                    //set location to current location plus [] columns to the right
+                    //set location to current location plus columns to the right
                     current.setLocation(temp);
                     route[current.getLocation().getRow()][current.getLocation().getCol()] = current;
                     //switch lanes
@@ -975,12 +975,12 @@ public class Simulation extends JPanel {
         }
 
         //Generate user car at specified time
-        if (currTime == totalTime - timeForUserCar) {
+        if (Double.compare(currTime, totalTime - timeForUserCar) == 0) {
             addVehicle(true);
         }
 
         //Generate first green/red light soon after simulation starts
-        if (currTime == totalTime - 100) {
+        if (Double.compare(currTime, totalTime - 100) == 0) {
             generateFirstGreen();
             greenLightTimer = currTime;
             enableYellow = true;
