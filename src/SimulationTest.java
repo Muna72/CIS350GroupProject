@@ -12,7 +12,8 @@ public class SimulationTest {
     private FakeRandom r;
     private Vehicle v;
 
-    @Test
+    //UNT 1
+    @Test 
     public void testConstructor() {
         s = new Simulation(20.0, 10.0, 500, new FakeRandom(3));
         assertEquals(s.getAvgVehicleSpeed(), 50,0);
@@ -24,42 +25,49 @@ public class SimulationTest {
         assertEquals(s.getAvgVehicleSpeed(), 25,0);
     }
 
+   //UNT 1
    @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors1() {
         new Simulation(-1,0,500, new FakeRandom(3));
     }
-
+    //UNT 1
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors2() {
         new Simulation(0,2,-6, new FakeRandom(3));
     }
 
+    //UNT 1
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors3() {
         new Simulation(0,-2,500, new FakeRandom(3));
     }
 
+    //UNT 1
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors4() {
         new Simulation(-1,0,-500, new FakeRandom(3));
     }
 
+    //UNT 1
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors5() {
         new Simulation(-1,-7,500, new FakeRandom(3));
     }
 
+    //UNT 1
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors6() {
         new Simulation(-1,-10,-500, new FakeRandom(3));
     }
 
+    //UNT 1
     @Test(expected = IllegalArgumentException.class)
     public void testConstructorWithErrors7() {
         new Simulation(1,-10,-500, new FakeRandom(3));
     }
 
-@Test
+    //UNT 2
+    @Test
     public void testReset1(){
         s = new Simulation(20.0, 10.0, 1000, new FakeRandom(3));
         s.reset();
@@ -73,6 +81,7 @@ public class SimulationTest {
         assertEquals(s.isLanesOneAndThree(),false);
     }
 
+    //UNT 2
     @Test
     public void testReset2(){
         s = new Simulation(20.0, 10.0, 1000, new FakeRandom(3));
@@ -81,6 +90,7 @@ public class SimulationTest {
         assertEquals(s.getTotalAvgVehicleTime(),0,0); //failed
     }
 
+    //UNT 3
     @Test
     public void testIsGoodDriver1() {
         r = new FakeRandom(0);
@@ -90,9 +100,9 @@ public class SimulationTest {
         r.setValue(8);
         s.isGoodDriver(v);
         assertEquals(v.getGoodDriver(), false);
-
     }
 
+    //UNT 3
     @Test
     public void testIsGoodDriver2(){
         r = new FakeRandom(0);
@@ -108,6 +118,7 @@ public class SimulationTest {
         }
     }
 
+    //UNT 4
     @Test
     public void testGenerateFirstGreen() {
         r = new FakeRandom(0);
@@ -122,6 +133,7 @@ public class SimulationTest {
         assertEquals(s.isLanesZeroAndTwo(), true);
     }
     
+    //UNT 5
     @Test
     public void testSetPath() {
         r = new FakeRandom(0);
@@ -189,6 +201,7 @@ public class SimulationTest {
         
     }
     
+    //UNT 6
     @Test
     public void testPlaceVehicle() {
         r = new FakeRandom(0);
@@ -237,6 +250,7 @@ public class SimulationTest {
         assertEquals(s.intersection1.entryPoint[0].size(), 3);
     }
     
+    //UNT 7
     @Test
     public void testAddVehicle() {
         r = new FakeRandom(0);
