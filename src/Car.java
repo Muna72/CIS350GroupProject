@@ -9,9 +9,6 @@ import java.awt.Color;
  */
 public class Car extends Vehicle {
 
-    //Determines if the car belongs to the user
-    private boolean isUserCar;
-
     /**
      * The default constructor of Car.
      */
@@ -26,7 +23,6 @@ public class Car extends Vehicle {
      */
     public Car(boolean isUserCar) {
         this.size = 1;
-        this.isUserCar = isUserCar;
         if (isUserCar == true) {
             this.setColor(Color.red);
         }

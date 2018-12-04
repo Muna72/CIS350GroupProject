@@ -8,9 +8,6 @@ import java.awt.Color;
  */
 public class SemiTruck extends Vehicle {
 
-    //tracks if this is the users vehicle
-    private boolean isUserCar;
-
     /**
      * The default constructor of Semitruck.
      */
@@ -26,7 +23,6 @@ public class SemiTruck extends Vehicle {
      */
     public SemiTruck(boolean isUserCar) {
         this.size = 3;
-        this.isUserCar = isUserCar;
         if (isUserCar == true) {
             this.setColor(Color.red);
         }
