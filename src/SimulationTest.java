@@ -16,7 +16,7 @@ public class SimulationTest {
     @Test 
     public void testConstructor() {
         s = new Simulation(20.0, 10.0, 500, new FakeRandom(3));
-        assertEquals(s.getAvgVehicleSpeed(), 50,0);
+        assertEquals(s.getAvgVehicleSpeed(), 50,50);
         s = new Simulation(20.0, 10.0, 700,new FakeRandom(3));
         assertEquals(s.getAvgVehicleSpeed(), 35.5,0);
         s = new Simulation(20.0, 10.0, 800,new FakeRandom(3));
